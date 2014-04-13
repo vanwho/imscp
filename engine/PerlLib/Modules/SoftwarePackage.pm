@@ -64,7 +64,7 @@ sub process
 
 	$self->{'software_id'} = $_[1];
 
-	my $rs = $self->loadData();
+	my $rs = $self->_loadData();
 	return $rs if $rs;
 
 	my @sql;
