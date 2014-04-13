@@ -163,6 +163,34 @@ sub run
 		"
 	);
 
+	## Process softwares packages toadd tasks
+	unless($rs) {
+		$rs ||= _process(
+			'SoftwarePackages'
+			"
+				SELECT
+					software_id AS, software_name AS name, software_status AS status
+				FROM
+					web_software
+				WHERE
+					software_status = 'toadd'
+			"
+		);
+	}
+
+	# Process software instances toadd|todelete tasks
+	$rs ||= _process(
+		'SoftwareInstance'
+		"
+			SELECT
+				software_id AS id, software_name AS name, software_status AS status
+			FROM
+				web_software_inst
+			WHERE
+				software_status IN ('toadd', 'todelete')
+		"
+	);
+
 	# Process toadd|tochange users tasks
 	$rs ||= _process(
 		'User',
@@ -393,139 +421,139 @@ sub run
 	unless($rs) {
 		my $db = iMSCP::Database->factory();
 
-		my $rdata = $db->doQuery(
-			'software_id',
-			"
-				SELECT
-					domain_id, alias_id, subdomain_id, subdomain_alias_id, software_id, path, software_prefix,
-					db, database_user, database_tmp_pwd, install_username, install_password, install_email,
-					software_status, software_depot, software_master_id
-				FROM
-					web_software_inst
-				WHERE
-					software_status IN ('toadd', 'todelete')
-				ORDER BY
-					domain_id
-			"
-		);
-		unless(ref $rdata eq 'HASH'){
-			error($rdata);
-			$rs = 1;
-		} else {
-			my $count = scalar keys %{$rdata};
-
-			newDebug('imscp_sw_mngr_engine') if $count;
-
-			for (keys %$rdata) {
-				my (
-					$sw_domain_id, $sw_aliasdomain_id, $sw_subdomain_id, $sw_aliassubdomain_id, $sw_software_id,
-					$sw_path, $sw_software_prefix, $sw_database, $sw_database_user, $sw_database_tmp_pwd,
-					$sw_install_username, $sw_install_password, $sw_install_email, $sw_software_status,
-					$sw_software_depot, $sw_software_master_id
-				) = (
-					$rdata->{$_}->{'domain_id'}, $rdata->{$_}->{'alias_id'}, $rdata->{$_}->{'subdomain_id'},
-					$rdata->{$_}->{'subdomain_alias_id'}, $rdata->{$_}->{'software_id'}, $rdata->{$_}->{'path'},
-					$rdata->{$_}->{'software_prefix'}, $rdata->{$_}->{'db'}, $rdata->{$_}->{'database_user'},
-					$rdata->{$_}->{'database_tmp_pwd'}, $rdata->{$_}->{'install_username'},
-					$rdata->{$_}->{'install_password'}, $rdata->{$_}->{'install_email'},
-					$rdata->{$_}->{'software_status'}, $rdata->{$_}->{'software_depot'},
-					$rdata->{$_}->{'software_master_id'}
-				);
-
-				# Encoding data to push to another script
-				my $imscp_sw_mngr_pushstring = encode_base64(
-					"$sw_domain_id,$sw_software_id,$sw_path,$sw_software_prefix,$sw_database,$sw_database_user," .
-					"$sw_database_tmp_pwd,$sw_install_username,$sw_install_password,$sw_install_email," .
-					"$sw_software_status,$sw_software_depot,$sw_software_master_id,$sw_aliasdomain_id," .
-					"$sw_subdomain_id,$sw_aliassubdomain_id"
-				);
-
-				debug("Processing encoded pushtring: $imscp_sw_mngr_pushstring.");
-
-				my ($stdout, $stderr);
-				$rs = execute(
-					"$main::imscpConfig{'CMD_PERL'} $main::imscpConfig{'ENGINE_ROOT_DIR'}/imscp-sw-mngr " .
-						"\"$imscp_sw_mngr_pushstring\"",
-					\$stdout,
-					\$stderr
-				);
-				debug($stdout) if $stdout;
-				error($stderr) if $stderr && $rs;
-				last if $rs;
-
-				$rs = execute(
-					"$main::imscpConfig{'CMD_RM'} -fR /tmp/sw-$sw_domain_id-$sw_software_id", \$stdout, \$stderr
-				);
-				debug($stdout) if $stdout;
-				error($stderr) if $stderr && $rs;
-				last if $rs;
-			}
-
-			endDebug() if $count;
-
-			unless($rs) {
-				$rdata = $db->doQuery(
-					'software_id',
-					"
-						SELECT
-							software_id, reseller_id, software_archive, software_status, software_depot
-						FROM
-							web_software
-						WHERE
-							software_status = 'toadd'
-						ORDER BY
-							reseller_id
-					"
-				);
-				unless(ref $rdata eq 'HASH'){
-					error($rdata);
-					$rs = 1;
-				} else {
-					$count = scalar keys %$rdata;
-
-					newDebug('imscp_pkt_mngr_engine.log') if $count;
-
-					for (keys %$rdata) {
-						my (
-							$sw_software_id, $sw_reseller_id, $sw_software_archive, $sw_software_status,
-							$sw_software_depot
-						) = (
-							$rdata->{$_}->{'software_id'}, $rdata->{$_}->{'reseller_id'},
-							$rdata->{$_}->{'software_archive'}, $rdata->{$_}->{'software_status'},
-							$rdata->{$_}->{'software_depot'}
-						);
-
-						# Encoding data to push to another script
-						my $pushstring = encode_base64(
-							"$sw_software_id,$sw_reseller_id,$sw_software_archive,$sw_software_status,$sw_software_depot"
-						);
-
-						my ($stdout, $stderr);
-						$rs = execute(
-							"$main::imscpConfig{'CMD_PERL'} $main::imscpConfig{'ENGINE_ROOT_DIR'}/imscp-pkt-mngr " .
-								"\"$pushstring\"",
-							\$stdout,
-							\$stderr
-						);
-						debug($stdout) if $stdout;
-						error($stderr) if $stderr && $rs;
-						last if $rs;
-
-						$rs = execute(
-							"$main::imscpConfig{'CMD_RM'} -fR /tmp/sw-$sw_software_archive-$sw_software_id",
-							\$stdout,
-							\$stderr
-						);
-						debug($stdout) if $stdout;
-						error($stderr) if $stderr && $rs;
-						last if $rs;
-					}
-				}
-			}
-
-			endDebug() if $count;
-		}
-	}
+#		my $rdata = $db->doQuery(
+#			'software_id',
+#			"
+#				SELECT
+#					domain_id, alias_id, subdomain_id, subdomain_alias_id, software_id, path, software_prefix,
+#					db, database_user, database_tmp_pwd, install_username, install_password, install_email,
+#					software_status, software_depot, software_master_id
+#				FROM
+#					web_software_inst
+#				WHERE
+#					software_status IN ('toadd', 'todelete')
+#				ORDER BY
+#					domain_id
+#			"
+#		);
+#		unless(ref $rdata eq 'HASH'){
+#			error($rdata);
+#			$rs = 1;
+#		} else {
+#			my $count = scalar keys %{$rdata};
+#
+#			newDebug('imscp_sw_mngr_engine') if $count;
+#
+#			for (keys %$rdata) {
+#				my (
+#					$sw_domain_id, $sw_aliasdomain_id, $sw_subdomain_id, $sw_aliassubdomain_id, $sw_software_id,
+#					$sw_path, $sw_software_prefix, $sw_database, $sw_database_user, $sw_database_tmp_pwd,
+#					$sw_install_username, $sw_install_password, $sw_install_email, $sw_software_status,
+#					$sw_software_depot, $sw_software_master_id
+#				) = (
+#					$rdata->{$_}->{'domain_id'}, $rdata->{$_}->{'alias_id'}, $rdata->{$_}->{'subdomain_id'},
+#					$rdata->{$_}->{'subdomain_alias_id'}, $rdata->{$_}->{'software_id'}, $rdata->{$_}->{'path'},
+#					$rdata->{$_}->{'software_prefix'}, $rdata->{$_}->{'db'}, $rdata->{$_}->{'database_user'},
+#					$rdata->{$_}->{'database_tmp_pwd'}, $rdata->{$_}->{'install_username'},
+#					$rdata->{$_}->{'install_password'}, $rdata->{$_}->{'install_email'},
+#					$rdata->{$_}->{'software_status'}, $rdata->{$_}->{'software_depot'},
+#					$rdata->{$_}->{'software_master_id'}
+#				);
+#
+#				# Encoding data to push to another script
+#				my $imscp_sw_mngr_pushstring = encode_base64(
+#					"$sw_domain_id,$sw_software_id,$sw_path,$sw_software_prefix,$sw_database,$sw_database_user," .
+#					"$sw_database_tmp_pwd,$sw_install_username,$sw_install_password,$sw_install_email," .
+#					"$sw_software_status,$sw_software_depot,$sw_software_master_id,$sw_aliasdomain_id," .
+#					"$sw_subdomain_id,$sw_aliassubdomain_id"
+#				);
+#
+#				debug("Processing encoded pushtring: $imscp_sw_mngr_pushstring.");
+#
+#				my ($stdout, $stderr);
+#				$rs = execute(
+#					"$main::imscpConfig{'CMD_PERL'} $main::imscpConfig{'ENGINE_ROOT_DIR'}/imscp-sw-mngr " .
+#						"\"$imscp_sw_mngr_pushstring\"",
+#					\$stdout,
+#					\$stderr
+#				);
+#				debug($stdout) if $stdout;
+#				error($stderr) if $stderr && $rs;
+#				last if $rs;
+#
+#				$rs = execute(
+#					"$main::imscpConfig{'CMD_RM'} -fR /tmp/sw-$sw_domain_id-$sw_software_id", \$stdout, \$stderr
+#				);
+#				debug($stdout) if $stdout;
+#				error($stderr) if $stderr && $rs;
+#				last if $rs;
+#			}
+#
+#			endDebug() if $count;
+#
+#			unless($rs) {
+#				$rdata = $db->doQuery(
+#					'software_id',
+#					"
+#						SELECT
+#							software_id, reseller_id, software_archive, software_status, software_depot
+#						FROM
+#							web_software
+#						WHERE
+#							software_status = 'toadd'
+#						ORDER BY
+#							reseller_id
+#					"
+#				);
+#				unless(ref $rdata eq 'HASH'){
+#					error($rdata);
+#					$rs = 1;
+#				} else {
+#					$count = scalar keys %$rdata;
+#
+#					newDebug('imscp_pkt_mngr_engine.log') if $count;
+#
+#					for (keys %$rdata) {
+#						my (
+#							$sw_software_id, $sw_reseller_id, $sw_software_archive, $sw_software_status,
+#							$sw_software_depot
+#						) = (
+#							$rdata->{$_}->{'software_id'}, $rdata->{$_}->{'reseller_id'},
+#							$rdata->{$_}->{'software_archive'}, $rdata->{$_}->{'software_status'},
+#							$rdata->{$_}->{'software_depot'}
+#						);
+#
+#						# Encoding data to push to another script
+#						my $pushstring = encode_base64(
+#							"$sw_software_id,$sw_reseller_id,$sw_software_archive,$sw_software_status,$sw_software_depot"
+#						);
+#
+#						my ($stdout, $stderr);
+#						$rs = execute(
+#							"$main::imscpConfig{'CMD_PERL'} $main::imscpConfig{'ENGINE_ROOT_DIR'}/imscp-pkt-mngr " .
+#								"\"$pushstring\"",
+#							\$stdout,
+#							\$stderr
+#						);
+#						debug($stdout) if $stdout;
+#						error($stderr) if $stderr && $rs;
+#						last if $rs;
+#
+#						$rs = execute(
+#							"$main::imscpConfig{'CMD_RM'} -fR /tmp/sw-$sw_software_archive-$sw_software_id",
+#							\$stdout,
+#							\$stderr
+#						);
+#						debug($stdout) if $stdout;
+#						error($stderr) if $stderr && $rs;
+#						last if $rs;
+#					}
+#				}
+#			}
+#
+#			endDebug() if $count;
+#		}
+#	}
 
 	iMSCP::HooksManager->getInstance()->trigger('afterDispatchRequest', $rs);
 

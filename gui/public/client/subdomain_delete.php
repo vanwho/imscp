@@ -49,47 +49,46 @@ if (customerHasFeature('subdomains') && isset($_GET['id'])) {
 	$subId = clean_input($_GET['id']);
 	$dmnId = get_user_domain_id($_SESSION['user_id']);
 
-	$query = "
-		SELECT
-			`t1`.`subdomain_id`, CONCAT(`t1`.`subdomain_name`, '.', `t2`.`domain_name`) AS `subdomain_name`
-		FROM
-			`subdomain` AS `t1`
-		LEFT JOIN
-			`domain` AS `t2` ON(`t2`.`domain_id` = `t1`.`domain_id`)
-		WHERE
-			`t2`.`domain_id` = ?
-		AND
-			`t1`.`subdomain_id` = ?
-	";
-	$stmt = exec_query($query, array($dmnId, $subId));
+	$stmt = exec_query(
+		'
+			SELECT
+				t1.subdomain_id, CONCAT(t1.subdomain_name, ' . ', t2.domain_name) AS subdomain_name
+			FROM
+				subdomain AS t1
+			INNER JOIN
+				domain AS t2 USING(domain_id)
+			WHERE
+				t2.domain_id = ?
+			AND
+				t1.subdomain_id = ?
+		'
+		, array($dmnId, $subId));
 
 	if ($stmt->rowCount()) {
 		$subName = $stmt->fields['subdomain_name'];
 		$ret = false;
 
 		// Check for mail accounts
-		$query = "
-			SELECT
-				COUNT(`mail_id`) AS `cnt`
-			FROM
-				`mail_users`
-			WHERE
-				(`mail_type` LIKE ? OR `mail_type` = ?)
-			AND
-				`sub_id` = ?
-		";
-		$stmt = exec_query($query, array($subId, MT_SUBDOM_MAIL . '%', MT_SUBDOM_FORWARD));
+		$stmt = exec_query(
+			'
+				SELECT
+					COUNT(mail_id) AS cnt
+				FROM
+					mail_users
+				WHERE
+					(mail_type LIKE ? OR mail_type = ?)
+				AND
+					sub_id = ?
+			',
+			array($subId, MT_SUBDOM_MAIL . '%', MT_SUBDOM_FORWARD));
 
 		if ($stmt->fields['cnt']) {
-			set_page_message(
-				tr('Subdomain you are trying to remove has email accounts. Remove them first.'), 'error'
-			);
+			set_page_message(tr('Subdomain you are trying to remove has email accounts. Remove them first.'), 'error');
 			$ret = true;
 		}
 
 		// Check for Ftp accounts
-		$query = "SELECT count(`userid`) AS `cnt` FROM `ftp_users` WHERE `userid` LIKE ?";
-		$stmt = exec_query($query, "%@$subName");
+		$stmt = exec_query('SELECT count(userid) AS cnt FROM ftp_users WHERE userid LIKE ?', "%@$subName");
 
 		if ($stmt->fields['cnt']) {
 			set_page_message(
@@ -112,11 +111,17 @@ if (customerHasFeature('subdomains') && isset($_GET['id'])) {
 			try {
 				$db->beginTransaction();
 
-				$query = "UPDATE `subdomain` SET `subdomain_status` = ? WHERE `subdomain_id` = ?";
-				$stmt = exec_query($query, array('todelete', $subId));
+				exec_query(
+					'UPDATE subdomain SET subdomain_status = ? WHERE subdomain_id = ?', array('todelete', $subId)
+				);
 
-				$query = "UPDATE `ssl_certs` SET `status` = ? WHERE `id` = ? AND `type` = ?";
-				$stmt = exec_query($query, array('todelete', $subId, 'sub'));
+				exec_query(
+					'UPDATE ssl_certs SET status = ? WHERE id = ? AND type = ?', array('todelete', $subId, 'sub')
+				);
+
+				exec_query(
+					'UPDATE web_software_inst SET software_status = ? WHERE subdomain_id = ?', array('todelete', $subId)
+				);
 
 				$db->commit();
 			} catch (iMSCP_Exception_Database $e) {

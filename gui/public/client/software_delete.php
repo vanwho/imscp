@@ -35,54 +35,39 @@ check_login('user');
 
 customerHasFeature('aps') or showBadRequestErrorPage();
 
-if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-    $domainProps = get_domain_default_props($_SESSION['user_id']);
-    $dmn_id = $domainProps['domain_id'];
-	$query = "
-		SELECT
-			`software_id`, `software_res_del`
-		FROM
-			`web_software_inst`
-		WHERE
-			`software_id` = ?
-		AND
-			`domain_id` = ?
-	";
-	$rs = exec_query($query, array($_GET['id'], $dmn_id));
+if (isset($_GET['id'])) {
+	$softwareId = intval($_GET['id']);
+	$domainProps = get_domain_default_props($_SESSION['user_id']);
+	$dmnId = $domainProps['domain_id'];
 
-	if ($rs->recordCount() != 1) {
-		set_page_message(tr('Wrong software id.'), 'error');
-		redirectTo('software.php');
+	$stmt = exec_query(
+		'SELECT software_id, software_res_del FROM web_software_inst WHERE software_id = ? AND domain_id = ?',
+		array($softwareId, $dmnId)
+	);
+
+	if (!$stmt->rowCount()) {
+		showBadRequestErrorPage();
 	} else {
-		if ($rs->fields['software_res_del'] === '1') {
-			$delete = "
-				DELETE FROM
-					`web_software_inst`
-				WHERE
-					`software_id` = ?
-				AND
-					`domain_id` = ?
-			";
-			$res = exec_query($delete, array($_GET['id'], $dmn_id));
+		$row = $stmt->fetchRow(PDO::FETCH_ASSOC);
+
+		if ($row['software_res_del'] === '1') {
+			exec_query(
+				'DELETE FROM web_software_inst WHERE software_id = ? AND domain_id = ?', array($softwareId, $dmnId)
+			);
+
 			set_page_message(tr('Software deleted.'), 'success');
-		}else{
-			$delete = "
-				UPDATE
-					`web_software_inst`
-				SET
-					`software_status` = ?
-				WHERE
-					`software_id` = ?
-				AND
-					`domain_id` = ?
-			";
-			$res = exec_query($delete, array('todelete', $_GET['id'], $dmn_id));
+		} else {
+			exec_query(
+				'UPDATE web_software_inst SET software_status = ? WHERE software_id = ? AND domain_id = ?',
+				array('todelete', $softwareId, $dmnId)
+			);
+
 			send_request();
 			set_page_message(tr('Software scheduled for deletion.'), 'success');
 		}
-			redirectTo('software.php');
+
+		redirectTo('software.php');
 	}
-} else {
-	set_page_message(tr('Wrong software id.'), 'error');
-	redirectTo('software.php');
 }
+
+showBadRequestErrorPage();

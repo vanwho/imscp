@@ -49,53 +49,51 @@ if (customerHasFeature('domain_aliases') && isset($_GET['id'])) {
 	$alssubId = clean_input($_GET['id']);
 	$dmnId = get_user_domain_id($_SESSION['user_id']);
 
-	$query = "
-		SELECT
-			`t1`.`subdomain_alias_id`,
-			CONCAT(`t1`.`subdomain_alias_name`, '.', `t2`.`alias_name`) AS `subdomain_alias_name`
-		FROM
-			`subdomain_alias` AS `t1`
-		LEFT JOIN
-			`domain_aliasses` AS `t2` ON (`t2`.`alias_id` = `t1`.`alias_id`)
-		WHERE
-			`t2`.`domain_id` = ?
-		AND
-			`t1`.`subdomain_alias_id` = ?
-	";
-	$stmt = exec_query($query, array($dmnId, $alssubId));
+	$stmt = exec_query(
+		'
+			SELECT
+				t1.subdomain_alias_id, CONCAT(t1.subdomain_alias_name, '.', t2.alias_name) AS subdomain_alias_name
+			FROM
+				subdomain_alias AS t1
+			INNERT JOIN
+				domain_aliasses AS t2 USING (alias_id)
+			WHERE
+				t2.domain_id = ?
+			AND
+				t1.subdomain_alias_id = ?
+		'
+		,
+		array($dmnId, $alssubId));
 
 	if ($stmt->rowCount()) {
 		$alssubName = $stmt->fields['subdomain_alias_name'];
 		$ret = false;
 
 		// check for mail accounts
-		$query = "
-			SELECT
-				COUNT(`mail_id`) AS `cnt`
-			FROM
-				`mail_users`
-			WHERE
-				(`mail_type` LIKE ? OR `mail_type` = ?)
-			AND
-				`sub_id` = ?
-		";
-		$stmt = exec_query($query, array(MT_ALSSUB_MAIL . '%', MT_ALSSUB_FORWARD, $alssubId));
+		$stmt = exec_query(
+			'
+				SELECT
+					COUNT(mail_id) AS cnt
+				FROM
+					mail_users
+				WHERE
+					(mail_type LIKE ? OR mail_type = ?)
+				AND
+					sub_id = ?
+			',
+			array(MT_ALSSUB_MAIL . '%', MT_ALSSUB_FORWARD, $alssubId)
+		);
 
 		if ($stmt->fields['cnt']) {
-			set_page_message(
-				tr('Subdomain you are trying to remove has email accounts. Remove them first.'), 'error'
-			);
+			set_page_message(tr('Subdomain you are trying to remove has email accounts. Remove them first.'), 'error');
 			$ret = true;
 		}
 
 		// Check for Ftp accounts
-		$query = "SELECT count(`userid`) AS `cnt` FROM `ftp_users` WHERE `userid` LIKE ?";
-		$stmt = exec_query($query, "%@$alssubName");
+		$stmt = exec_query('SELECT count(userid) AS cnt FROM ftp_users WHERE userid LIKE ?', "%@$alssubName");
 
 		if ($stmt->fields['cnt']) {
-			set_page_message(
-				tr('Subdomain alias you are trying to remove has Ftp accounts. Remove them first.'), 'error'
-			);
+			set_page_message(tr('Subdomain alias you are trying to remove has Ftp accounts. Remove them first.'), 'error');
 			$ret = true;
 		}
 
@@ -110,11 +108,15 @@ if (customerHasFeature('domain_aliases') && isset($_GET['id'])) {
 			try {
 				$db->beginTransaction();
 
-				$query = "UPDATE `subdomain_alias` SET `subdomain_alias_status` = ? WHERE `subdomain_alias_id` = ?";
-				$stmt = exec_query($query, array('todelete', $alssubId));
+				exec_query(
+					'UPDATE subdomain_alias SET subdomain_alias_status = ? WHERE subdomain_alias_id = ?',
+					array('todelete', $alssubId)
+				);
 
-				$query = "UPDATE `ssl_certs` SET `status` = ? WHERE `id` = ? AND `type` = ?";
-				$stmt = exec_query($query, array('todelete', $alssubId, 'alssub'));
+				exec_query(
+					'UPDATE ssl_certs SET status = ? WHERE id = ? AND type = ?',
+					array('todelete', $alssubId, 'alssub')
+				);
 
 				$db->commit();
 			} catch (iMSCP_Exception_Database $e) {
