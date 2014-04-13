@@ -84,7 +84,7 @@ INSERT IGNORE INTO `config` (`name`, `value`) VALUES
 ('PREVENT_EXTERNAL_LOGIN_ADMIN', '1'),
 ('PREVENT_EXTERNAL_LOGIN_RESELLER', '1'),
 ('PREVENT_EXTERNAL_LOGIN_CLIENT', '1'),
-('DATABASE_REVISION', '177'),
+('DATABASE_REVISION', '178'),
 ('PHPINI_ALLOW_URL_FOPEN', 'off'),
 ('PHPINI_DISPLAY_ERRORS', 'off'),
 ('PHPINI_UPLOAD_MAX_FILESIZE', '10'),
@@ -558,37 +558,43 @@ CREATE TABLE IF NOT EXISTS `server_traffic` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sql_database`
+-- Table structure for table `sql_databases`
 --
 
-CREATE TABLE IF NOT EXISTS `sql_database` (
-  `sqld_id` int(10) unsigned NOT NULL auto_increment,
-  `domain_id` int(10) unsigned NOT NULL,
-  `sqld_name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`sqld_id`),
-  KEY `domain_id` (`domain_id`),
-  UNIQUE KEY `sqld_name` (`sqld_name`)
+CREATE TABLE IF NOT EXISTS `sql_databases` (
+  `sql_database_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `sql_database_name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`sql_database_id`),
+  UNIQUE INDEX `sql_database_name` (`sql_database_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sql_user`
+-- Table structure for table `sql_users`
 --
 
-CREATE TABLE IF NOT EXISTS `sql_user` (
-  `sqlu_id` int(10) unsigned NOT NULL auto_increment,
-  `sqld_id` int(10) unsigned NOT NULL,
-  `sqlu_name` varchar(16) collate utf8_unicode_ci NOT NULL,
-  `sqlu_host` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `sqlu_pass` varchar(64) collate utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`sqlu_id`),
-  KEY `sqld_id` (`sqld_id`),
-  KEY `sqlu_name` (`sqlu_name`),
-  KEY `sqlu_host` (`sqlu_host`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+CREATE TABLE IF NOT EXISTS `sql_users` (
+  `sql_user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `sql_user_name` varchar(16) collate utf8_unicode_ci NOT NULL,
+  `sql_user_host` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `sql_user_password` varchar(64) collate utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`sql_user_id`)  UNIQUE INDEX `sql_user_name` (`sql_user_name`, `sql_user_host`)
+" ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
+
+--
+-- Table structure for table `sql_databases_sql_users`
+--
+
+CREATE TABLE IF NOT EXISTS `sql_databases_sql_users` (
+  `sql_database_id` int(10) unsigned NOT NULL,
+  `sql_user_id` int(10) unsigned NOT NULL,
+  `admin_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`sql_database_id`, `sql_user_id`),
+  UNIQUE INDEX `ix_ReversePK` (`sql_user_id`, `sql_database_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Table structure for table `ssl_certs`
