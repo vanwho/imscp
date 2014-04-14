@@ -1,5 +1,11 @@
 #!/usr/bin/perl
 
+=head1 NAME
+
+ i-MSCP Request Manager Script
+
+=cut
+
 # i-MSCP - internet Multi Server Control Panel
 # Copyright (C) 2010-2014 by internet Multi Server Control Panel
 #
@@ -38,25 +44,328 @@ use iMSCP::HooksManager;
 use iMSCP::Execute;
 use MIME::Base64;
 
-# Turn off localisation features to force any command output to be in english
-$ENV{'LC_MESSAGES'} = 'C';
+=head1 DESCRIPTION
 
-# Do not clear screen at end of script
-$ENV{'IMSCP_CLEAR_SCREEN'} = 0;
+ This script is responsible to handle backend requests.
 
-# Mode in which the request dispatcher is triggered
-# For now, this variable is only used by i-MSCP installer/setup scripts
-$main::execmode = shift || '';
+=head1 PUBLIC METHODS
 
-umask(027);
+=over 4
 
-newDebug('imscp-rqst-mngr.log');
+=item dispatch()
 
-silent(1);
+ Dispatch backend request
 
-iMSCP::Bootstrapper->getInstance()->boot({ 'norequirements' => 'yes' });
+ Return int 0 on success, other on failure
 
-sub _process
+=cut
+
+sub dispatch
+{
+	# Process plugins
+	# Should always be processed first to allow plugins to register their listeners on the hooks manager
+	my $rs = _run(
+		'Plugin',
+		"
+			SELECT
+				plugin_id AS id, plugin_name AS name, plugin_status AS status
+			FROM
+				plugin
+			WHERE
+				plugin_status IN ('enabled', 'toinstall', 'toenable', 'toupdate', 'tochange', 'todisable', 'touninstall')
+			AND
+				plugin_error IS NULL
+			AND
+				plugin_backend = 'yes'
+		"
+	);
+
+	$rs ||= iMSCP::HooksManager->getInstance()->trigger('beforeDispatchRequest');
+
+	# Process toadd|tochange SSL certificates tasks
+	$rs ||= _run(
+		'Certificates',
+		"
+			SELECT
+				cert_id AS id, type AS name, status AS status
+			FROM
+				ssl_certs
+			WHERE
+				status IN ('toadd', 'tochange', 'todelete')
+		"
+	);
+
+	# Process toadd softwares packages tasks
+	$rs ||= _run(
+		'SoftwarePackage',
+		"
+			SELECT
+				software_id AS id, software_name AS name, software_status AS status
+			FROM
+				web_software
+			WHERE
+				software_status = 'toadd'
+		"
+	);
+
+	# Process toadd|todelete software instances tasks
+	$rs ||= _run(
+		'SoftwareInstance',
+		"
+			SELECT
+				software_id AS id, software_name AS name, software_status AS status
+			FROM
+				web_software_inst
+			WHERE
+				software_status IN ('toadd', 'todelete')
+		"
+	);
+
+	# Process toadd|tochange users tasks
+	$rs ||= _run(
+		'User',
+		"
+			SELECT
+				admin_id AS id, admin_name AS name, admin_status AS status
+			FROM
+				admin
+			WHERE
+				admin_type = 'user'
+			AND
+				admin_status IN ('toadd', 'tochange')
+		"
+	);
+
+	my $ipsModule = 0;
+
+	# Process toadd|tochange|torestore|toenable|todisable domain tasks
+	$rs ||= _run(
+		'Domain',
+		"
+			SELECT
+				domain_id AS id, domain_name AS name, domain_status AS status
+			FROM
+				domain
+			WHERE
+				domain_status IN ('toadd', 'tochange', 'torestore', 'toenable', 'todisable')
+		",
+		\$ipsModule
+	);
+
+	# Process toadd|tochange|torestore|toenable|todisable subdomains tasks
+	$rs ||= _run(
+		'Subdomain',
+		"
+			SELECT
+				subdomain_id AS id, subdomain_name AS name, subdomain_status AS status
+			FROM
+				subdomain
+			WHERE
+				subdomain_status IN ('toadd', 'tochange', 'torestore', 'toenable', 'todisable')
+		",
+		\$ipsModule
+	);
+
+	# Process toadd|tochange|torestore|toenable|todisable domain aliases tasks
+	$rs ||= _run(
+		'Alias',
+		 "
+			SELECT
+				alias_id AS id, alias_name AS name, alias_status AS status
+			FROM
+				domain_aliasses
+			WHERE
+				alias_status IN ('toadd', 'tochange', 'torestore', 'toenable', 'todisable')
+		 ",
+		 \$ipsModule
+	);
+
+	# Process toadd|tochange|torestore|toenable|todisable subdomains of domain aliases tasks
+	$rs ||= _run(
+		'SubAlias',
+		"
+			SELECT
+				subdomain_alias_id AS id, subdomain_alias_name AS name, subdomain_alias_status AS status
+			FROM
+				subdomain_alias
+			WHERE
+				subdomain_alias_status IN ('toadd', 'tochange', 'torestore', 'toenable', 'todisable')
+		",
+		\$ipsModule
+	);
+
+	# Process toadd|tochange|toenable|todisable|todelete mail tasks
+	$rs ||= _run(
+		'Mail',
+		"
+			SELECT
+				mail_id AS id, mail_addr AS name, status AS status
+			FROM
+				mail_users
+			WHERE
+				status IN ('toadd', 'tochange', 'toenable', 'todelete', 'todisable')
+		"
+	);
+
+	# Process toadd|tochange|todelete Htusers tasks
+	$rs ||= _run(
+		'Htusers',
+		"
+			SELECT
+				id, uname AS name, status
+			FROM
+				htaccess_users
+			WHERE
+				status IN ('toadd', 'tochange', 'todelete')
+		"
+	);
+
+	# Process toadd|tochange|todelete Htgroups tasks
+	$rs ||= _run(
+		'Htgroup',
+		"
+			SELECT
+				id AS id, CONCAT(ugroup, ':', id) AS name, status
+			FROM
+				htaccess_groups
+			WHERE
+				status IN ('toadd', 'tochange', 'todelete')
+		"
+	);
+
+	# Process toadd|tochange|todelete Htaccess tasks
+	$rs ||= _run(
+		'Htaccess',
+		"
+			SELECT
+				id, auth_name AS name, status
+			FROM
+				htaccess
+			WHERE
+				status IN ('toadd', 'tochange', 'todelete')
+		"
+	);
+
+	# Process todelete subdomain aliases tasks
+	$rs ||= _run(
+		'SubAlias',
+		"
+			SELECT
+				subdomain_alias_id AS id, subdomain_alias_name AS name, subdomain_alias_status AS status
+			FROM
+				subdomain_alias
+			WHERE
+				subdomain_alias_status = 'todelete'
+		",
+		\$ipsModule
+	);
+
+	# Process todelete domain aliases tasks
+	$rs ||= _run(
+		'Alias',
+		"
+			SELECT
+				alias_id AS id, alias_name AS name, alias_status AS status
+			FROM
+				domain_aliasses
+			WHERE
+				alias_status = 'todelete'
+		",
+		\$ipsModule
+	);
+
+	# Process todelete subdomains tasks
+	$rs ||= _run(
+		'Subdomain',
+		"
+			SELECT
+				subdomain_id AS id, subdomain_name AS name, subdomain_status AS status
+			FROM
+				subdomain
+			WHERE
+				subdomain_status = 'todelete'
+		",
+		\$ipsModule
+	);
+
+	# Process todelete domains tasks
+	$rs ||= _run(
+		'Domain',
+		"
+			SELECT
+				domain_id AS id, domain_name AS name, domain_status AS status
+			FROM
+				domain
+			WHERE
+				domain_status = 'todelete'
+		",
+		\$ipsModule
+	);
+
+	# Process todelete users tasks
+	$rs ||= _run(
+		'User',
+		"
+			SELECT
+				admin_id AS id, admin_name AS name, admin_status AS status
+			FROM
+				admin
+			WHERE
+				admin_type = 'user'
+			AND
+				admin_status = 'todelete'
+		"
+	);
+
+	# Process network cards tasks
+	$rs ||= _run(
+		'NetCard',
+		"
+			SELECT
+				ip_id AS id, ip_status AS name, ip_status AS status
+			FROM
+				server_ips
+			WHERE
+				ip_status <> 'ok'
+		"
+	);
+
+	# Process IP addresses tasks
+	unless($rs || ! $ipsModule) {
+		newDebug("Ips_module.log");
+
+		eval { require Modules::Ips };
+
+		unless($@) {
+			$rs = Modules::Ips->new()->process();
+		} else {
+			error($@);
+			$rs = 1;
+		}
+
+		endDebug();
+	}
+
+	iMSCP::HooksManager->getInstance()->trigger('afterDispatchRequest', $rs);
+
+	$rs;
+}
+
+=back
+
+=head1 PRIVATE SUBROUTINES
+
+=over 4
+
+=item _run()
+
+ Run the given module
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub _run
 {
 	my ($moduleName, $sql, $ipModule) = @_;
 	my $rs = 0;
@@ -97,12 +406,12 @@ sub _process
 
 			newDebug("${moduleName}_module_$name.log");
 
-			my $package = "Modules::$moduleName";
+			my $module = "Modules::$moduleName";
 
-			eval "require $package";
+			eval "require $module";
 
 			unless($@) {
-				$rs = $package->new()->process($id);
+				$rs = $module->new()->process($id);
 			} else {
 				error($@);
 				$rs = 1;
@@ -128,295 +437,26 @@ sub _process
 	0;
 }
 
-sub run
-{
-	# Process plugins
-	# Should always be processed first to allow plugins to register their listeners on the hooks manager
-	my $rs = _process(
-		'Plugin',
-		"
-			SELECT
-				plugin_id AS id, plugin_name AS name, plugin_status AS status
-			FROM
-				plugin
-			WHERE
-				plugin_status IN ('enabled', 'toinstall', 'toenable', 'toupdate', 'tochange', 'todisable', 'touninstall')
-			AND
-				plugin_error IS NULL
-			AND
-				plugin_backend = 'yes'
-		"
-	);
+=head1 MAIN
 
-	$rs ||= iMSCP::HooksManager->getInstance()->trigger('beforeDispatchRequest');
+=cut
 
-	# Process toadd|tochange SSL certificates tasks
-	$rs ||= _process(
-		'Certificates',
-		"
-			SELECT
-				cert_id AS id, type AS name, status AS status
-			FROM
-				ssl_certs
-			WHERE
-				status IN ('toadd', 'tochange', 'todelete')
-		"
-	);
+# Mode in which the request dispatcher is triggered
+# For now, this variable is only used by i-MSCP installer/setup scripts
+$main::execmode = $ARGV[0] // '';
 
-	## Process softwares packages toadd tasks
-	$rs ||= _process(
-		'SoftwarePackage'
-		"
-			SELECT
-				software_id AS id, software_name AS name, software_status AS status
-			FROM
-				web_software
-			WHERE
-				software_status = 'toadd'
-		"
-	);
+# Turn off localisation features to force any command output to be in english
+$ENV{'LC_MESSAGES'} = 'C';
 
-	# Process software instances toadd|todelete tasks
-	$rs ||= _process(
-		'SoftwareInstance'
-		"
-			SELECT
-				software_id AS id, software_name AS name, software_status AS status
-			FROM
-				web_software_inst
-			WHERE
-				software_status IN ('toadd', 'todelete')
-		"
-	);
+# Do not clear screen at end of script
+$ENV{'IMSCP_CLEAR_SCREEN'} = 0;
 
-	# Process toadd|tochange users tasks
-	$rs ||= _process(
-		'User',
-		"
-			SELECT
-				admin_id AS id, admin_name AS name, admin_status AS status
-			FROM
-				admin
-			WHERE
-				admin_type = 'user'
-			AND
-				admin_status IN ('toadd', 'tochange')
-		"
-	);
+umask(027);
 
-	my $ipsModule = 0;
+newDebug('imscp-rqst-mngr.log');
 
-	# Process toadd|tochange|torestore|toenable|todisable domain tasks
-	$rs ||= _process(
-		'Domain',
-		"
-			SELECT
-				domain_id AS id, domain_name AS name, domain_status AS status
-			FROM
-				domain
-			WHERE
-				domain_status IN ('toadd', 'tochange', 'torestore', 'toenable', 'todisable')
-		",
-		\$ipsModule
-	);
+silent(1);
 
-	# Process toadd|tochange|torestore|toenable|todisable subdomains tasks
-	$rs ||= _process(
-		'Subdomain',
-		"
-			SELECT
-				subdomain_id AS id, subdomain_name AS name, subdomain_status AS status
-			FROM
-				subdomain
-			WHERE
-				subdomain_status IN ('toadd', 'tochange', 'torestore', 'toenable', 'todisable')
-		",
-		\$ipsModule
-	);
+iMSCP::Bootstrapper->getInstance()->boot({ 'norequirements' => 'yes' });
 
-	# Process toadd|tochange|torestore|toenable|todisable domain aliases tasks
-	$rs ||= _process(
-		'Alias',
-		 "
-			SELECT
-				alias_id AS id, alias_name AS name, alias_status AS status
-			FROM
-				domain_aliasses
-			WHERE
-				alias_status IN ('toadd', 'tochange', 'torestore', 'toenable', 'todisable')
-		 ",
-		 \$ipsModule
-	);
-
-	# Process toadd|tochange|torestore|toenable|todisable subdomains of domain aliases tasks
-	$rs ||= _process(
-		'SubAlias',
-		"
-			SELECT
-				subdomain_alias_id AS id, subdomain_alias_name AS name, subdomain_alias_status AS status
-			FROM
-				subdomain_alias
-			WHERE
-				subdomain_alias_status IN ('toadd', 'tochange', 'torestore', 'toenable', 'todisable')
-		",
-		\$ipsModule
-	);
-
-	# Process toadd|tochange|toenable|todisable|todelete mail tasks
-	$rs ||= _process(
-		'Mail',
-		"
-			SELECT
-				mail_id AS id, mail_addr AS name, status AS status
-			FROM
-				mail_users
-			WHERE
-				status IN ('toadd', 'tochange', 'toenable', 'todelete', 'todisable')
-		"
-	);
-
-	# Process toadd|tochange|todelete Htusers tasks
-	$rs ||= _process(
-		'Htusers',
-		"
-			SELECT
-				id, uname AS name, status
-			FROM
-				htaccess_users
-			WHERE
-				status IN ('toadd', 'tochange', 'todelete')
-		"
-	);
-
-	# Process toadd|tochange|todelete Htgroups tasks
-	$rs ||= _process(
-		'Htgroup',
-		"
-			SELECT
-				id AS id, CONCAT(ugroup, ':', id) AS name, status
-			FROM
-				htaccess_groups
-			WHERE
-				status IN ('toadd', 'tochange', 'todelete')
-		"
-	);
-
-	# Process toadd|tochange|todelete Htaccess tasks
-	$rs ||= _process(
-		'Htaccess',
-		"
-			SELECT
-				id, auth_name AS name, status
-			FROM
-				htaccess
-			WHERE
-				status IN ('toadd', 'tochange', 'todelete')
-		"
-	);
-
-	# Process todelete subdomain aliases tasks
-	$rs ||= _process(
-		'SubAlias',
-		"
-			SELECT
-				subdomain_alias_id AS id, subdomain_alias_name AS name, subdomain_alias_status AS status
-			FROM
-				subdomain_alias
-			WHERE
-				subdomain_alias_status = 'todelete'
-		",
-		\$ipsModule
-	);
-
-	# Process todelete domain aliases tasks
-	$rs ||= _process(
-		'Alias',
-		"
-			SELECT
-				alias_id AS id, alias_name AS name, alias_status AS status
-			FROM
-				domain_aliasses
-			WHERE
-				alias_status = 'todelete'
-		",
-		\$ipsModule
-	);
-
-	# Process todelete subdomains tasks
-	$rs ||= _process(
-		'Subdomain',
-		"
-			SELECT
-				subdomain_id AS id, subdomain_name AS name, subdomain_status AS status
-			FROM
-				subdomain
-			WHERE
-				subdomain_status = 'todelete'
-		",
-		\$ipsModule
-	);
-
-	# Process todelete domains tasks
-	$rs ||= _process(
-		'Domain',
-		"
-			SELECT
-				domain_id AS id, domain_name AS name, domain_status AS status
-			FROM
-				domain
-			WHERE
-				domain_status = 'todelete'
-		",
-		\$ipsModule
-	);
-
-	# Process todelete users tasks
-	$rs ||= _process(
-		'User',
-		"
-			SELECT
-				admin_id AS id, admin_name AS name, admin_status AS status
-			FROM
-				admin
-			WHERE
-				admin_type = 'user'
-			AND
-				admin_status = 'todelete'
-		"
-	);
-
-	# Process network cards tasks
-	$rs ||= _process(
-		'NetCard',
-		"
-			SELECT
-				ip_id AS id, ip_status AS name, ip_status AS status
-			FROM
-				server_ips
-			WHERE
-				ip_status <> 'ok'
-		"
-	);
-
-	# Process IP addresses tasks
-	unless($rs || ! $ipsModule) {
-		newDebug("Ips_module.log");
-
-		eval { require Modules::Ips };
-
-		unless($@) {
-			$rs = Modules::Ips->new()->process();
-		} else {
-			error($@);
-			$rs = 1;
-		}
-
-		endDebug();
-	}
-
-	iMSCP::HooksManager->getInstance()->trigger('afterDispatchRequest', $rs);
-
-	$rs;
-}
-
-exit run();
+exit dispatch();
