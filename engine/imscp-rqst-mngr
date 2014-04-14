@@ -87,7 +87,7 @@ sub dispatch
 		'Certificates',
 		"
 			SELECT
-				cert_id AS id, type AS name, status AS status
+				cert_id AS id, type AS name, status
 			FROM
 				ssl_certs
 			WHERE
@@ -199,7 +199,7 @@ sub dispatch
 		'Mail',
 		"
 			SELECT
-				mail_id AS id, mail_addr AS name, status AS status
+				mail_id AS id, mail_addr AS name, status
 			FROM
 				mail_users
 			WHERE
@@ -357,10 +357,13 @@ sub dispatch
 
 =over 4
 
-=item _run()
+=item _run($moduleName, $sql, \$ipModule)
 
  Run the given module
 
+ Param string $moduleName Name of module to run
+ Param string $sql SQL statement allowing to fetch module items to process
+ Param scalar reference $ipModule Reference to a scalar which allow to known if the Modules::Ips must be run
  Return int 0 on success, other on failure
 
 =cut
@@ -377,7 +380,7 @@ sub _run
 		print("Processing $moduleName items.\n");
 	}
 
-	my $rdata = iMSCP::Database->factory()->doQuery('id', $sql);
+	my $rdata = $main::requestManager::db->doQuery('id', $sql);
 	unless(ref $rdata eq 'HASH') {
 		error($rdata);
 		return 1;
@@ -387,12 +390,12 @@ sub _run
 		my $i = 1;
 		my $totalItems = scalar keys %{$rdata};
 
+		$$ipModule++ if $moduleName ~~ ['Domain', 'Subdomain', 'Alias', 'SubAlias'];
+
 		for (keys %{$rdata}) {
 			my $id = $rdata->{$_}->{'id'};
 			my $name = $rdata->{$_}->{'name'};
 			my $status = $rdata->{$_}->{'status'};
-
-			$$ipModule++ if $moduleName ~~ ['Domain', 'Subdomain', 'Alias', 'SubAlias'];
 
 			debug("Processing $id, $name, $status.");
 
@@ -458,5 +461,7 @@ newDebug('imscp-rqst-mngr.log');
 silent(1);
 
 iMSCP::Bootstrapper->getInstance()->boot({ 'norequirements' => 'yes' });
+
+$main::requestManager::db = iMSCP::Database->factory();
 
 exit dispatch();
