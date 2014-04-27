@@ -14,14 +14,15 @@ tool and the Transifex client installed on your system.
 
   1. Installing gettext
 
-    # aptitude install gettext
-
+```bash
+# aptitude install gettext
+```
   2. Installing Transifex client
 
 
-```shell
-    # aptitude install python-setuptools
-    # easy_install --upgrade transifex-client
+```bash
+# aptitude install python-setuptools
+# easy_install --upgrade transifex-client
 ```
 
 ### As normal user:
@@ -32,7 +33,7 @@ tool and the Transifex client installed on your system.
 
 And putting the following content in it:
 
-```
+```bash
 [https://www.transifex.com]
 hostname = https://www.transifex.com
 password = PASSWORD
@@ -50,16 +51,16 @@ login data.
   1. Run the "makemsgs" shell script to get all translation strings from the
     php, phtml and xml files within the i18n/iMSCP.pot file
 
-```shell
-    $ cd {YOUR_WORKING_COPY}/i18n/tools
-    $ sh ./makemsgs
+```bash
+$ cd {YOUR_WORKING_COPY}/i18n/tools
+$ sh ./makemsgs
 ```
 
   2. Push the new iMSCP.pot on Transifex
 
-```shell
-    $ cd {YOUR_WORKING_COPY}/i18n
-    $ tx push -s
+```bash
+$ cd {YOUR_WORKING_COPY}/i18n
+$ tx push -s
 ```
 
 **Note:** The *.po files will be automatically updated by Transifex and no more
@@ -67,9 +68,9 @@ checking is needed from your side.
 
   3. Getting updated *.po files from Transifex
 
-```shell
-    $ cd {YOUR_WORKING_COPY}/i18n
-    $ tx pull -af
+```bash
+$ cd {YOUR_WORKING_COPY}/i18n
+$ tx pull -af
 ```
 
 ## Compiling translation files
@@ -78,9 +79,9 @@ checking is needed from your side.
 
   1. Use the shell script "compilePo" to compile all *.po files
 
-```shell
-    $ cd {YOUR_WORKING_COPY}/i18n/tools
-    $ sh ./compilePo
+```bash
+$ cd {YOUR_WORKING_COPY}/i18n/tools
+$ sh ./compilePo
 ```
 
 Once it's done, you commit the resulting files in your git repository.
