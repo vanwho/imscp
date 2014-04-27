@@ -12,13 +12,12 @@ tool and the Transifex client installed on your system.
 
 ### As root user:
 
-  1. Installing gettext
+  Installing gettext
 
 ```bash
 # aptitude install gettext
 ```
-  2. Installing Transifex client
-
+  Installing Transifex client
 
 ```bash
 # aptitude install python-setuptools
@@ -29,15 +28,17 @@ tool and the Transifex client installed on your system.
 
   3. Creating the Transifex configuration file
 
+```bash
     $ touch ~/.transifexrc
+```
 
 And putting the following content in it:
 
-```bash
+```
 [https://www.transifex.com]
 hostname = https://www.transifex.com
 password = PASSWORD
-    token =
+token =
 username = USERNAME
 ```
 
@@ -48,7 +49,7 @@ login data.
 
 ### As normal user:
 
-  1. Run the "makemsgs" shell script to get all translation strings from the
+  Run the "makemsgs" shell script to get all translation strings from the
     php, phtml and xml files within the i18n/iMSCP.pot file
 
 ```bash
@@ -56,7 +57,7 @@ $ cd {YOUR_WORKING_COPY}/i18n/tools
 $ sh ./makemsgs
 ```
 
-  2. Push the new iMSCP.pot on Transifex
+  Push the new iMSCP.pot on Transifex
 
 ```bash
 $ cd {YOUR_WORKING_COPY}/i18n
@@ -66,7 +67,7 @@ $ tx push -s
 **Note:** The *.po files will be automatically updated by Transifex and no more
 checking is needed from your side.
 
-  3. Getting updated *.po files from Transifex
+  Getting updated *.po files from Transifex
 
 ```bash
 $ cd {YOUR_WORKING_COPY}/i18n
@@ -77,7 +78,7 @@ $ tx pull -af
 
 ### As normal user
 
-  1. Use the shell script "compilePo" to compile all *.po files
+  Use the shell script "compilePo" to compile all *.po files
 
 ```bash
 $ cd {YOUR_WORKING_COPY}/i18n/tools
