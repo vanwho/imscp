@@ -12,12 +12,12 @@ tool and the Transifex client installed on your system.
 
 ### As root user:
 
-  Installing gettext
+  Gettext installation
 
 ```bash
 # aptitude install gettext
 ```
-  Installing Transifex client
+  Transifex client installation
 
 ```bash
 # aptitude install python-setuptools
@@ -26,23 +26,23 @@ tool and the Transifex client installed on your system.
 
 ### As normal user:
 
-  3. Creating the Transifex configuration file
+Creation of Transifex configuration file
 
 ```bash
-    $ touch ~/.transifexrc
+$ touch ~/.transifexrc
 ```
 
-And putting the following content in it:
+and put the following content in it:
 
 ```
 [https://www.transifex.com]
 hostname = https://www.transifex.com
-password = PASSWORD
+password = <PASSWORD>
 token =
-username = USERNAME
+username = <USERNAME>
 ```
 
-Of course, you have to change the PASSWORD and USERNAME with your own Transifex
+Of course, you have to change <PASSWORD> and <USERNAME> with your own Transifex
 login data.
 
 ## Updating translation files
