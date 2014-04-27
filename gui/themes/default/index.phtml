@@ -1,0 +1,34 @@
+<div id="login">
+	<form name="login" action="index.php" method="post">
+		<table>
+			<tr>
+				<td class="left"><label for="uname"><?php tr_e('Username'); ?></label></td>
+				<td class="right"><input type="text" name="uname" id="uname" value="{UNAME}"/></td>
+			</tr>
+			<tr>
+				<td class="left"><label for="upass"><?php tr_e('Password'); ?></label></td>
+				<td class="right"><input type="password" name="upass" id="upass" value="" autocomplete="off"/></td>
+			</tr>
+			<tr>
+				<td colspan="2" class="right">
+					<!-- BDP: lost_password_support -->
+					<a class="link_as_button" href="lostpassword.php"><?php tr_e('Lost Password') ?></a>
+					<!-- EDP: lost_password_support -->
+					<button type="submit" name="submit" tabindex="3"><?php tr_e('Login') ?></button>
+				</td>
+			</tr>
+			<!-- BDP: ssl_support -->
+			<tr>
+				<td colspan="2" class="center">
+					<a class="icon {SSL_IMAGE_CLASS}" href="{SSL_LINK}"
+					   title="<?php !isset($_SERVER['HTTPS']) ? tr('Use secure connection (SSL)') : tr('Use normal connection (No SSL)') ?>">
+						<?php !isset($_SERVER['HTTPS']) ? tr_e('Secure connection') : tr_e('Normal connection') ?>
+					</a>
+				</td>
+			</tr>
+			<!-- EDP: ssl_support -->
+		</table>
+
+		<input type="hidden" name="action" value="login">
+	</form>
+</div>

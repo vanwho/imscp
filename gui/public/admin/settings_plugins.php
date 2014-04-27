@@ -672,8 +672,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/settings_plugins.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/settings_plugins.phtml',
 		'page_message' => 'layout',
 		'plugins_block' => 'page',
 		'plugin_block' => 'plugins_block',
@@ -699,12 +699,12 @@ $tpl->assign(
 		'TR_DEACTIVATE_TOOLTIP' => tr('Deactivate this plugin'),
 		'TR_DEACTIVATE' => tr('Deactivate'),
 		'TR_UNINSTALL' => tr('Uninstall'),
-		'TR_PROTECT' => tojs(tr('Protect', true)),
+		'TR_PROTECT' => tojs(tr('Protect')),
 		'TR_DELETE' => tr('Delete'),
 		'TR_PROTECT_TOOLTIP' => tr('Protect this plugin'),
-		'TR_PLUGIN_CONFIRMATION_TITLE' => tojs(tr('Confirmation for plugin protection', true)),
+		'TR_PLUGIN_CONFIRMATION_TITLE' => tojs(tr('Confirmation for plugin protection')),
 		'TR_PROTECT_CONFIRMATION' => tr("If you protect a plugin, you'll no longer be able to deactivate it from the plugin management interface."),
-		'TR_CANCEL' => tojs(tr('Cancel', true)),
+		'TR_CANCEL' => tojs(tr('Cancel')),
 		'TR_VERSION' => tr('Version'),
 		'TR_BY' => tr('By'),
 		'TR_VISIT_PLUGIN_SITE' => tr('Visit plugin site'),
@@ -714,11 +714,11 @@ $tpl->assign(
 		'TR_UPLOAD' => tr('Upload'),
 		'TR_PLUGIN_ARCHIVE' => tr('Plugin archive'),
 		'TR_PLUGIN_ARCHIVE_TOOLTIP' => tr('Only tar.gz, tar.bz2 and zip archives are accepted.'),
-		'TR_PLUGIN_HINT' => tr('Plugins hook into i-MSCP to extend its functionality with custom features. Plugins are developed independently from the core i-MSCP application by thousands of developers all over the world. You can find new plugins to install by browsing the %s.', true, '<u><a href="http://i-mscp.net/filebase/index.php/Filebase/" target="_blank">' . tr('i-MSCP plugin store') . '</a></u>'),
+		'TR_PLUGIN_HINT' => tr('Plugins hook into i-MSCP to extend its functionality with custom features. Plugins are developed independently from the core i-MSCP application by thousands of developers all over the world. You can find new plugins to install by browsing the %s.', '<u><a href="http://i-mscp.net/filebase/index.php/Filebase/" target="_blank">' . tr('i-MSCP plugin store') . '</a></u>'),
 		'TR_CLICK_FOR_MORE_DETAILS' => tr('Click here for more details'),
-		'TR_ERROR_DETAILS' => tojs(tr('Error details', true)),
-		'TR_FORCE_RETRY' => tojs(tr('Force retry', true)),
-		'TR_CLOSE' => tojs(tr('Close', true))
+		'TR_ERROR_DETAILS' => tojs(tr('Error details')),
+		'TR_FORCE_RETRY' => tojs(tr('Force retry')),
+		'TR_CLOSE' => tojs(tr('Close'))
 	)
 );
 

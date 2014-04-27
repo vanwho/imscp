@@ -176,8 +176,8 @@ if (!customerHasFeature('ftp') && !customerHasFeature('protected_areas')) {
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/simple.tpl',
-		'page' => 'client/ftp_choose_dir.tpl',
+		'layout' => 'shared/layouts/simple.phtml',
+		'page' => 'client/ftp_choose_dir.phtml',
 		'page_message' => 'layout',
 		'ftp_chooser' => 'page',
 		'dir_item' => 'ftp_chooser',

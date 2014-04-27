@@ -52,7 +52,7 @@ switch ($action) {
 			$adminName = $auth->getIdentity()->admin_name;
 			$auth->unsetIdentity();
 			set_page_message(tr('You have been successfully logged out.'), 'success');
-			write_log(sprintf("%s logged out", decode_idna($adminName)), E_USER_NOTICE);
+			write_log(sprintf('"%s logged out', decode_idna($adminName)), E_USER_NOTICE);
 		}
 		break;
 	case 'login':
@@ -63,11 +63,11 @@ switch ($action) {
 		$result = $auth->authenticate();
 
 		if ($result->isValid()) { // Authentication process succeeded
-			write_log(sprintf("%s logged in", $result->getIdentity()->admin_name), E_USER_NOTICE);
+			write_log(sprintf('%s logged in', $result->getIdentity()->admin_name), E_USER_NOTICE);
 		} elseif (($messages = $result->getMessages())) { // Authentication process failed
 			$messages = format_message($messages);
 			set_page_message($messages, 'error');
-			write_log(sprintf("Authentication failed. Reason: %s", $messages), E_USER_NOTICE);
+			write_log(sprintf('Authentication failed. Reason: %s', $messages), E_USER_NOTICE);
 		}
 }
 
@@ -77,7 +77,7 @@ if($action != 'logout') redirectToUiLevel();
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/simple.tpl',
+		'layout' => 'shared/layouts/simple.phtml',
 		'page_message' => 'layout',
 		'lostpwd_button' => 'page'
 	)
@@ -95,7 +95,7 @@ $tpl->assign(
 $cfg = iMSCP_Registry::get('config');
 
 if ($cfg['MAINTENANCEMODE'] && !isset($_REQUEST['admin'])) {
-	$tpl->define_dynamic('page', 'message.tpl');
+	$tpl->define_dynamic('page', 'message.phtml');
 	$tpl->assign(
 		array(
 			'TR_PAGE_TITLE' => tr('i-MSCP - Multi Server Control Panel / Maintenance'),
@@ -109,7 +109,7 @@ if ($cfg['MAINTENANCEMODE'] && !isset($_REQUEST['admin'])) {
 } else {
 	$tpl->define_dynamic(
 		array(
-			'page' => 'index.tpl',
+			'page' => 'index.phtml',
 			'lost_password_support' => 'page',
 			'ssl_support' => 'page'
 		)
@@ -120,9 +120,7 @@ if ($cfg['MAINTENANCEMODE'] && !isset($_REQUEST['admin'])) {
 			'TR_PAGE_TITLE' => tr('i-MSCP - Multi Server Control Panel / Login'),
 			'CONTEXT_CLASS' => '',
 			'TR_LOGIN' => tr('Login'),
-			'TR_USERNAME' => tr('Username'),
 			'UNAME' => isset($_REQUEST['uname']) ? stripslashes($_REQUEST['uname']) : '',
-			'TR_PASSWORD' => tr('Password')
 		)
 	);
 
@@ -139,9 +137,7 @@ if ($cfg['MAINTENANCEMODE'] && !isset($_REQUEST['admin'])) {
 		$tpl->assign('SSL_SUPPORT', '');
 	}
 
-	if ($cfg['LOSTPASSWORD']) {
-		$tpl->assign('TR_LOSTPW', tr('Lost password'));
-	} else {
+	if (!$cfg['LOSTPASSWORD']) {
 		$tpl->assign('LOST_PASSWORD_SUPPORT', '');
 	}
 }

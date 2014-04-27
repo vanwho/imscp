@@ -91,8 +91,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'reseller/layout.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'reseller/layout.phtml',
 		'page_message' => 'layout',
 		'logo_remove_button' => 'page',
 		'layout_colors_block' => 'page',

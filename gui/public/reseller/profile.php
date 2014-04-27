@@ -72,8 +72,8 @@ check_login('reseller');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'reseller/profile.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'reseller/profile.phtml',
 		'page_message' => 'layout'));
 
 $tpl->assign(

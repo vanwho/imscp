@@ -67,9 +67,11 @@ removeOldKeys($cfg->LOSTPASSWORD_TIMEOUT);
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/simple.tpl',
-		'page' => 'lostpassword.tpl',
-		'page_message' => 'layout'));
+		'layout' => 'shared/layouts/simple.phtml',
+		'page' => 'lostpassword.phtml',
+		'page_message' => 'layout'
+	)
+);
 
 $tpl->assign(
 	array(

@@ -1,0 +1,44 @@
+
+<form name="circular_frm" method="post" action="circular.php">
+	<table class="firstColFixed">
+		<thead>
+		<tr>
+			<th colspan="2"><?php tr_e('Circular') ?></th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td><label for="sender_name"><?php tr_e('Sender name') ?></label></td>
+			<td><input type="text" name="sender_name" id="sender_name" value="{SENDER_NAME}"/></td>
+		</tr>
+		<tr>
+			<td><label for="sender_email"><?php tr_e('Sender email') ?></label></td>
+			<td><input type="text" name="sender_email" id="sender_email" value="{SENDER_EMAIL}"/></td>
+		</tr>
+		<tr>
+			<td><label for="rcpt_to"><?php tr_e('Send to') ?></label></td>
+			<td>
+				<select id="rcpt_to" name="rcpt_to">
+					<!-- BDP: rcpt_to_option -->
+					<option value="{RCPT_TO}"{SELECTED}>{TR_RCPT_TO}</option>
+					<!-- EDP: rcpt_to_option -->
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><label for="subject"><?php tr_e('Subject') ?></label></td>
+			<td>
+				<input class="inputTitle" type="text" name="subject" id="subject" value="{SUBJECT}"/>
+			</td>
+		</tr>
+		<tr>
+			<td><label for="body"><?php tr_e('Body') ?></label></td>
+			<td><textarea name="body" id=body">{BODY}</textarea></td>
+		</tr>
+		</tbody>
+	</table>
+	<div class="buttons">
+		<input name="submit" type="submit" value="<?php tr_e('Send') ?>"/>
+		<a class="link_as_button" href="manage_users.php"><?php tr_e('Cancel') ?></a>
+	</div>
+</form>

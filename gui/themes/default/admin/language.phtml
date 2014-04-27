@@ -1,0 +1,25 @@
+
+<form name="adminChangeLanguage" method="post" action="language.php">
+	<table class="firstColFixed">
+		<thead>
+		<tr>
+			<th colspan="2"><?php tr_e('Language') ?></th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td><label for="def_language"><?php tr_e('Choose language') ?></label></td>
+			<td>
+				<select name="def_language" id="def_language">
+					<!-- BDP: def_language -->
+					<option value="{LANG_VALUE}" {LANG_SELECTED}>{LANG_NAME}</option>
+					<!-- EDP: def_language -->
+				</select>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+	<div class="buttons">
+		<input name="submit" type="submit" value="<?php tr_e('Update') ?>"/>
+	</div>
+</form>

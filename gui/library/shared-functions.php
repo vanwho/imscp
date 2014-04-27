@@ -1856,7 +1856,7 @@ function write_log($msg, $logLevel = E_USER_WARNING)
 
 	$clientIp = (isset($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : 'unknown';
 
-	$msg = replace_html($msg . '<br /><small>User IP: ' . $clientIp . '</small>', ENT_COMPAT, tr('encoding'));
+	$msg = replace_html($msg . '<br /><small>User IP: ' . $clientIp . '</small>', ENT_COMPAT, 'UTF-8');
 
 	exec_query("INSERT INTO `log` (`log_time`,`log_message`) VALUES(NOW(), ?)", $msg);
 
@@ -2252,7 +2252,7 @@ function get_webdepot_software_list($tpl, $userId)
 					array(
 						'PACKAGE_HTTP_URL' => $stmt->fields['package_download_link'],
 						'TR_PACKAGE_INSTALL' => tr('Start installation'),
-						'TR_MESSAGE_INSTALL' => tr('Are you sure you want to install this package from the Web software repository?', true)
+						'TR_MESSAGE_INSTALL' => tr('Are you sure you want to install this package from the Web software repository?')
 					)
 				);
 
@@ -2817,18 +2817,18 @@ function getDataTablesPluginTranslations()
 					<option value="15">15</option>
 					<option value="20">20</option>
 					<option value="50">50</option>
-					<option value="-1">'. tr('All', true) . '</option>
+					<option value="-1">'. tr('All') . '</option>
 					</select>
 				'
 			),
-			//'sLengthMenu' => tr('Show %s records per page', true, '_MENU_'),
-			'sZeroRecords' => tr('Nothing found - sorry', true),
-			'sInfo' => tr('Showing %s to %s of %s records', true, '_START_', '_END_', '_TOTAL_'),
-			'sInfoEmpty' => tr('Showing 0 to 0 of 0 records', true),
-			'sInfoFiltered' => tr('(filtered from %s total records)', true, '_MAX_'),
-			'sSearch' => tr('Search', true),
-			'oPaginate' => array('sPrevious' => tr('Previous', true), 'sNext' => tr('Next', true)),
-			'sProcessing' => tr('Processing...', true),
+			//'sLengthMenu' => tr('Show %s records per page', '_MENU_'),
+			'sZeroRecords' => tr('Nothing found - sorry'),
+			'sInfo' => tr('Showing %s to %s of %s records', '_START_', '_END_', '_TOTAL_'),
+			'sInfoEmpty' => tr('Showing 0 to 0 of 0 records'),
+			'sInfoFiltered' => tr('(filtered from %s total records)', '_MAX_'),
+			'sSearch' => tr('Search'),
+			'oPaginate' => array('sPrevious' => tr('Previous'), 'sNext' => tr('Next')),
+			'sProcessing' => tr('Processing...'),
 		)
 	);
 }

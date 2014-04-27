@@ -196,7 +196,7 @@ function send_activated_sw($reseller_id, $file_name, $sw_id)
 	Package Name: {SOFTWARE}
 	Package ID: {SOFTWARE_ID}
 
-	Please login into your i-MSCP control panel for more details.', true);
+	Please login into your i-MSCP control panel for more details.');
 
 	$subject = str_replace($search, $replace, $subject);
 	$message = str_replace($search, $replace, $message);
@@ -264,7 +264,7 @@ function send_deleted_sw($reseller_id, $file_name, $sw_id, $subject_input, $mess
 	Package ID: {SOFTWARE_ID}
 
 	Message from {ADMIN}:
-	' . $message_input, true);
+	' . $message_input);
 
 	$subject = str_replace($search, $replace, $subject);
 	$message = str_replace($search, $replace, $message);
@@ -499,7 +499,7 @@ function get_avail_softwaredepot($tpl)
 
 						set_page_message(
 							tr(
-								'This package already exists in the depot of the reseller "%1$s"!',
+								'This package already exists in the depot of the reseller "%s"!',
 								$rs_res->fields['resellername']
 							), 'warning');
 					}
@@ -593,7 +593,7 @@ function get_installed_res_software($tpl, $reseller_id)
 			}
 
 			if ($rs->fields['swdepot'] == "yes") {
-				$tpl->assign('TR_NAME', tr('%1$s - (Softwaredepot)', $rs->fields['name']));
+				$tpl->assign('TR_NAME', tr('%s - (Softwaredepot)', $rs->fields['name']));
 				$tpl->assign('SOFTWARE_IS_NOT_IN_SOFTWAREDEPOT', '');
 				$tpl->parse('SOFTWARE_IS_IN_SOFTWAREDEPOT', 'software_is_in_softwaredepot');
 			} else {
@@ -616,14 +616,14 @@ function get_installed_res_software($tpl, $reseller_id)
 							  'TR_TYPE' => $rs->fields['type'],
 							  'TR_ADMIN' => 'List',
 							  'TR_RESELLER' => $rs->fields['admin'],
-							  'TR_SOFTWARE_DEPOT' => tr('%1$s`s - Software', $rs->fields['admin']),
+							  'TR_SOFTWARE_DEPOT' => tr('%s`s - Software', $rs->fields['admin']),
 							  'TR_IMPORT' => tr('Import'),
 							  'TR_SOFTWARE_IMPORT' => tr('Depot import'),
 							  'TR_SOFTWARE_DELETE' => tr('Delete'),
 							  'TR_DELETE' => tr('Delete'),
 							  'IS_IN_SOFTWAREDEPOT' => tr('N/A'),
-							  'TR_MESSAGE_IMPORT' => tr('Are you sure you want to import this package into the software depot?', true),
-							  'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete this package?', true)));
+							  'TR_MESSAGE_IMPORT' => tr('Are you sure you want to import this package into the software depot?'),
+							  'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete this package?')));
 
 			$tpl->parse('LIST_SOFTWAREDEPOT', '.list_softwaredepot');
 			$rs->moveNext();
@@ -643,7 +643,7 @@ function get_installed_res_software($tpl, $reseller_id)
 		if ($reseller->recordCount() > 0) {
 			$tpl->assign(array(
 							  'NO_SOFTWAREDEPOT' => tr('No software available'),
-							  'TR_SOFTWARE_DEPOT' => tr('%1$s`s - Software', $reseller->fields['admin']),
+							  'TR_SOFTWARE_DEPOT' => tr('%s`s - Software', $reseller->fields['admin']),
 							  'TR_SOFTWARE_IMPORT' => tr('Depot import'),
 							  'TR_SOFTWARE_DELETE' => tr('Delete')));
 
@@ -827,7 +827,7 @@ function get_reseller_rights($tpl, $software_id)
 							  'RESELLER' => $rs->fields['reseller'],
 							  'ADMINISTRATOR' => $added_by,
 							  'TR_REMOVE_RIGHT' => tr('Remove'),
-							  'TR_MESSAGE_REMOVE' => tr('Are you sure to remove the permissions ?', true),
+							  'TR_MESSAGE_REMOVE' => tr('Are you sure to remove the permissions?'),
 							  'REMOVE_RIGHT_LINK' => $remove_rights_url));
 
 			$tpl->parse('LIST_RESELLER', '.list_reseller');
@@ -981,7 +981,7 @@ function send_new_sw_upload($reseller_id, $file_name, $sw_id)
 	Package Name: {SOFTWARE}
 	Package ID: {SOFTWARE_ID}
 
-	Please login into your i-MSCP control panel for more details.', true);
+	Please login into your i-MSCP control panel for more details.');
 
 	$subject = str_replace($search, $replace, $subject);
 	$message = str_replace($search, $replace, $message);
@@ -1290,14 +1290,14 @@ function gen_user_software_action($software_id, $dmn_id, $tpl)
 	} elseif ($software_status == 'installed') {
 		$tpl->assign(
 			array(
-				'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete this package?', true),
+				'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete this package?'),
 				'SOFTWARE_ACTION_INSTALL' => ''));
 
 		return array(tr('Uninstall'), 'software_delete.php?id=' . $software_id, 'software_view.php?id=' . $software_id, $software_status, $software_icon);
 	} else {
 		$tpl->assign(
 			array(
-				'TR_MESSAGE_INSTALL' => tr('Are you sure to install this package?', true),
+				'TR_MESSAGE_INSTALL' => tr('Are you sure to install this package?'),
 				'SOFTWARE_ACTION_DELETE' => ''));
 
 		return array(tr('Install'), 'software_install.php?id=' . $software_id, 'software_view.php?id=' . $software_id, $software_status, $software_icon);
@@ -1344,8 +1344,7 @@ function gen_software_list($tpl, $domainId, $resellerId)
 				$tpl->assign(
 					array(
 						'DEL_SOFTWARE_ACTION' => tr('Uninstall'),
-						'TR_RES_MESSAGE_DELETE' => tr('Are you sure you want to delete this package?', true
-						)
+						'TR_RES_MESSAGE_DELETE' => tr('Are you sure you want to delete this package?')
 					)
 				);
 			} elseif ($stmt->fields['software_status'] == 'toadd') {
@@ -1354,7 +1353,7 @@ function gen_software_list($tpl, $domainId, $resellerId)
 				$tpl->assign(
 					array(
 						'DEL_SOFTWARE_ACTION' => tr('Uninstall'),
-						'TR_RES_MESSAGE_DELETE' => tr('Are you sure you want to delete this package?', true)
+						'TR_RES_MESSAGE_DELETE' => tr('Are you sure you want to delete this package?')
 					)
 				);
 			} elseif ($stmt->fields['software_status'] == 'todelete') {

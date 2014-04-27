@@ -53,8 +53,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/server_status.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/server_status.phtml',
 		'page_message' => 'layout',
 		'service_status' => 'page'
 	)

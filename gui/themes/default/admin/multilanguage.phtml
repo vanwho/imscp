@@ -1,0 +1,76 @@
+
+<script>
+	$(document).ready(function () {
+		$('.datatable').dataTable(
+			{
+				"oLanguage": <?php echo getDataTablesPluginTranslations() ?>,
+				"bStateSave": true
+			}
+		);
+		$('.dataTables_paginate div').imscpTooltip();
+	});
+</script>
+
+<form name="i18nFrm" action="multilanguage.php" method="post" enctype="multipart/form-data">
+	<!-- BDP: languages_block -->
+	<table class="datatable firstColFixed">
+		<thead>
+		<tr>
+			<th><?php tr_e('Language name') ?></th>
+			<th><?php tr_e('Translated strings') ?></th>
+			<th><?php tr_e('Revision date') ?></th>
+			<th><?php tr_e('Last translator') ?></th>
+			<th><?php tr_e('Default language') ?></th>
+		</tr>
+		</thead>
+		<tfoot>
+		<tr>
+			<td class="buttons" colspan="5" style="height:auto;padding:0;margin: 0">
+				<button name="rebuildIndex" type="submit"
+						onclick="$('#uaction').val('rebuildIndex')"><?php tr_e('Rebuild language index') ?></button>
+				<button name="changeLanguage" type="submit"
+						onclick="$('#uaction').val('changeLanguage')"><?php tr_e('Save') ?></button>
+			</td>
+		</tr>
+		</tfoot>
+		<tbody>
+		<!-- BDP: language_block -->
+		<tr>
+			<td>
+				<label for="defaultLanguage_{LOCALE}"><span lang="ar" dir="ltr" xml:lang="ar" class="icon i_locale">{LANGUAGE_NAME}</span></label>
+			</td>
+			<td>{NUMBER_TRANSLATED_STRINGS}</td>
+			<td>{LANGUAGE_REVISION}</td>
+			<td>{LAST_TRANSLATOR}</td>
+			<td><input type="radio" name="defaultLanguage" id="defaultLanguage_{LOCALE}" value="{LOCALE}"{LOCALE_CHECKED}/></td>
+		</tr>
+		<!-- EDP: language_block -->
+		</tbody>
+	</table>
+	<!-- EDP: languages_block -->
+
+	<table class="firstColFixed">
+		<thead>
+		<tr>
+			<th colspan="2"><?php tr_e('New language') ?></th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td>
+				<?php tr_e('Language file') ?>
+				<span class="tips icon i_help" title="{TR_UPLOAD_HELP}"></span>
+			</td>
+			<td>
+				<input type="file" name="languageFile"/>
+				<button name="uploadLanguage" type="submit" onclick="$('#uaction').val('uploadLanguage')"><?php tr_e('Upload') ?></button>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+
+	<div class="buttons">
+		<input type="hidden" name="uaction" id="uaction" value=""/>
+		<a class="link_as_button" href="settings.php"><?php tr_e('Cancel') ?></a>
+	</div>
+</form>

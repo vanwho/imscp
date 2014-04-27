@@ -249,11 +249,11 @@ function generate_users_list($tpl, $resellerId)
 					'CHANGE_INTERFACE' => tr('Switch'),
 					'DISK_USAGE' => ($stmt->fields['domain_disk_limit'])
 						? tr(
-							'%1$s of %2$s',
+							'%s of %s',
 							bytesHuman($stmt->fields['domain_disk_usage']),
 							mebibyteHuman($stmt->fields['domain_disk_limit'])
 						)
-						: tr('%1$s of <b>unlimited</b>', bytesHuman($stmt->fields['domain_disk_usage']))
+						: tr('%s of <b>unlimited</b>', bytesHuman($stmt->fields['domain_disk_usage']))
 				)
 			);
 
@@ -313,8 +313,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'reseller/users.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'reseller/users.phtml',
 		'user_search' => 'page',
 		'usr_message' => 'page',
 		'users_list' => 'page',
@@ -341,7 +341,7 @@ $tpl->assign(
 		'TR_USERNAME' => tr('Username'),
 		'TR_ACTION' => tr('Actions'),
 		'TR_CREATION_DATE' => tr('Creation date'),
-		'TR_MESSAGE_CHANGE_STATUS' => tr('Are you sure you want to change the status of %s?', true, '%s'),
+		'TR_MESSAGE_CHANGE_STATUS' => tr('Are you sure you want to change the status of %s?', '%s'),
 		'TR_STAT' => tr('Stats'),
 		'VL_MONTH' => date('m'),
 		'VL_YEAR' => date('Y'),

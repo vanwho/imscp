@@ -401,8 +401,8 @@ function client_generatePage($tpl, $databaseId)
 
 		$tpl->assign(
 			array(
-				'USER_NAME' => (isset($_POST['user_name'])) ? tohtml($_POST['user_name'], true) : '',
-				'USER_HOST' => (isset($_POST['user_host'])) ? tohtml($_POST['user_host'], true) : '',
+				'USER_NAME' => (isset($_POST['user_name'])) ? tohtml($_POST['user_name']) : '',
+				'USER_HOST' => (isset($_POST['user_host'])) ? tohtml($_POST['user_host']) : '',
 				'USE_DMN_ID' => (isset($_POST['use_dmn_id']) && $_POST['use_dmn_id'] === 'on') ? $htmlChecked : '',
 				'START_ID_POS_SELECTED' => (isset($_POST['id_pos']) && $_POST['id_pos'] !== 'end') ? $htmlChecked : '',
 				'END_ID_POS_SELECTED' => (isset($_POST['id_pos']) && $_POST['id_pos'] === 'end') ? $$htmlChecked : ''
@@ -448,8 +448,8 @@ $databaseId = intval($_REQUEST['id']);
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/sql_user_add.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/sql_user_add.phtml',
 		'page_message' => 'layout',
 		'mysql_prefix_no' => 'page',
 		'mysql_prefix_yes' => 'page',
@@ -469,7 +469,7 @@ $tpl->assign(
 		'TR_ADD_SQL_USER' => tr('Add SQL user'),
 		'TR_USER_NAME' => tr('SQL user name'),
 		'TR_USER_HOST' => tr('SQL user host'),
-		'TR_USER_HOST_TIP' => tr("This is the host from which this SQL user must be allowed to connect to the SQL server. Enter the % character to allow this SQL user to connect from any host."),
+		'TR_USER_HOST_TIP' => tr("This is the host from which this SQL user must be allowed to connect to the SQL server. Enter the %% character to allow this SQL user to connect from any host."),
 		'TR_USE_DMN_ID' => tr('SQL user prefix/suffix'),
 		'TR_START_ID_POS' => tr('In front'),
 		'TR_END_ID_POS' => tr('Behind'),

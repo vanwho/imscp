@@ -147,8 +147,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/sql_manage.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/sql_manage.phtml',
 		'page_message' => 'layout',
 		'sql_databases_users_list' => 'page',
 		'sql_databases_list' => 'sql_databases_users_list',
@@ -169,8 +169,8 @@ $tpl->assign(
 		'TR_DATABASE_USERS' => tr('Database users'),
 		'TR_ADD_USER' => tr('Add SQL user'),
 		'TR_LOGIN_PMA' => tr('Login into phpMyAdmin'),
-		'TR_DATABASE_MESSAGE_DELETE' => tr("This database will be permanently deleted. This process cannot be recovered. All users linked to this database will also be deleted if not linked to another database. Are you sure you want to delete the '%s' database?", true, '%s'),
-		'TR_USER_MESSAGE_DELETE' => tr("Are you sure you want delete the '%s' SQL user?", true, '%s'),
+		'TR_DATABASE_MESSAGE_DELETE' => tr("This database will be permanently deleted. This process cannot be recovered. All users linked to this database will also be deleted if not linked to another database. Are you sure you want to delete the '%s' database?", '%s'),
+		'TR_USER_MESSAGE_DELETE' => tr("Are you sure you want to delete the '%s' SQL user?", '%s'),
 		'PMA_TARGET' => $cfg->PMA_TARGET
 	)
 );

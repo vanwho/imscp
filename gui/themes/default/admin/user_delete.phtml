@@ -1,0 +1,107 @@
+
+<script>
+	$(document).ready(function () {
+		$("#delete").on('change', function() {
+			if($(this).is(':checked')) {
+				$("#submit").show();
+			} else {
+				$("#submit").hide();
+			}
+		}).trigger("change");
+	});
+</script>
+
+<form name="admin_delete_customer_frm" method="post" action="user_delete.php">
+	<table class="firstColFixed">
+		<thead>
+		<tr>
+			<th colspan="2"><strong><?php tr_e('Account summary') ?></strong></th>
+		</tr>
+		</thead>
+		<tbody>
+		<!-- BDP: mail_list -->
+		<tr>
+			<td colspan="2"><strong><i><?php tr_e('Mail users') ?></i></strong>
+			</td>
+		</tr>
+		<!-- BDP: mail_item -->
+		<tr>
+			<td>{MAIL_ADDR}</td>
+			<td>{MAIL_TYPE}</td>
+		</tr>
+		<!-- EDP: mail_item -->
+		<!-- EDP: mail_list -->
+		<!-- BDP: ftp_list -->
+		<tr>
+			<td colspan="2"><strong><i><?php tr_e('Ftp users') ?></i></strong></td>
+		</tr>
+		<!-- BDP: ftp_item -->
+		<tr>
+			<td>{FTP_USER}</td>
+			<td>{FTP_HOME}</td>
+		</tr>
+		<!-- EDP: ftp_item -->
+		<!-- EDP: ftp_list -->
+		<!-- BDP: dmn_list -->
+		<tr>
+			<td colspan="2"><strong><i><?php tr_e('Domain') ?></i></strong></td>
+		</tr>
+		<!-- BDP: dmn_item -->
+		<tr>
+			<td colspan="2">{DOMAIN_NAME}</td>
+		</tr>
+		<!-- EDP: dmn_item -->
+		<!-- EDP: dmn_list -->
+		<!-- BDP: als_list -->
+		<tr>
+			<td colspan="2"><strong><i><?php tr_e('Domain aliases') ?></i></strong>
+			</td>
+		</tr>
+		<!-- BDP: als_item -->
+		<tr>
+			<td>{ALS_NAME}</td>
+			<td>{ALS_MNT}</td>
+		</tr>
+		<!-- EDP: als_item -->
+		<!-- EDP: als_list -->
+		<!-- BDP: sub_list -->
+		<tr>
+			<td colspan="2"><strong><i><?php tr_e('Subdomains') ?></i></strong></td>
+		</tr>
+		<!-- BDP: sub_item -->
+		<tr>
+			<td>{SUB_NAME}</td>
+			<td>{SUB_MNT}</td>
+		</tr>
+		<!-- EDP: sub_item -->
+		<!-- EDP: sub_list -->
+		<!-- BDP: db_list -->
+		<tr>
+			<td colspan="2"><strong><i><?php tr_e('Sql Databases and users') ?></i></strong></td>
+		</tr>
+		<!-- BDP: db_item -->
+		<tr>
+			<td>{DB_NAME}</td>
+			<td>{DB_USERS}</td>
+		</tr>
+		<!-- EDP: db_item -->
+		<!-- EDP: db_list -->
+		<tr>
+			<td colspan="2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p><?php tr_e('Are you sure you want to remove this customer account?') ?></p>
+				<input type="checkbox" value="1" name="delete" id="delete"/>
+				<label for="delete"><?php tr_e('Yes') ?></label>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+
+	<div class="buttons">
+		<input type="hidden" name="user_id" value="{USER_ID}"/>
+		<input type="submit" id="submit" value="<?php tr_e('Delete') ?>"/>
+		<a class="link_as_button" href="manage_users.php"><?php tr_e('Cancel') ?></a>
+	</div>
+</form>

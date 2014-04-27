@@ -1,0 +1,111 @@
+
+<table class="firstColFixed">
+	<thead>
+	<tr>
+		<th colspan="2"><?php tr_e('Domain details') ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><?php tr_e('Domain name') ?></td>
+		<td>{VL_DOMAIN_NAME}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Domain IP address') ?></td>
+		<td>{VL_DOMAIN_IP}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Domain status') ?>}</td>
+		<td>{VL_STATUS}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('PHP feature') ?></td>
+		<td>{VL_PHP_SUPP}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('PHP Editor feature') ?>}</td>
+		<td>{VL_PHP_EDITOR_SUPP}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('CGI feature') ?></td>
+		<td>{VL_CGI_SUPP}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('DNS feature') ?></td>
+		<td>{VL_DNS_SUPP}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('External mail server feature') ?></td>
+		<td>{VL_EXT_MAIL_SUPP}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Software installer feature') ?></td>
+		<td>{VL_SOFTWARE_SUPP}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Backup feature') ?></td>
+		<td>{VL_BACKUP_SUP}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Traffic') ?></td>
+		<td>
+			<div class="graph"><span style="width:{VL_TRAFFIC_PERCENT}%">&nbsp;</span></div>
+			{VL_TRAFFIC_USED} / {VL_TRAFFIC_LIMIT}
+		</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Disk space') ?></td>
+		<td>
+			<div class="graph"><span style="width:{VL_DISK_PERCENT}%">&nbsp;</span></div>
+			{VL_DISK_USED} / {VL_DISK_LIMIT}
+		</td>
+	</tr>
+	</tbody>
+</table>
+
+<table class="firstColFixed">
+	<thead>
+	<tr>
+		<th><?php tr_e('Feature') ?></th>
+		<th>{TR_USED}</th>
+		<th>{TR_LIMIT}</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><?php tr_e('Subdomains') ?></td>
+		<td>{VL_SUBDOM_ACCOUNTS_USED}</td>
+		<td>{VL_SUBDOM_ACCOUNTS_LIMIT}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Domain aliases') ?></td>
+		<td>{VL_DOMALIAS_ACCOUNTS_USED}</td>
+		<td>{VL_DOMALIAS_ACCOUNTS_LIMIT}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Mail users') ?></td>
+		<td>{VL_MAIL_ACCOUNTS_USED}</td>
+		<td>{VL_MAIL_ACCOUNTS_LIMIT}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Mail quotas') ?></td>
+		<td>{VL_MAIL_QUOTA_USED}</td>
+		<td>{VL_MAIL_QUOTA_LIMIT}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('FTP users') ?></td>
+		<td>{VL_FTP_ACCOUNTS_USED}</td>
+		<td>{VL_FTP_ACCOUNTS_LIMIT}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Databases') ?></td>
+		<td>{VL_SQL_DB_ACCOUNTS_USED}</td>
+		<td>{VL_SQL_DB_ACCOUNTS_LIMIT}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('SQL users') ?></td>
+		<td>{VL_SQL_USER_ACCOUNTS_USED}</td>
+		<td>{VL_SQL_USER_ACCOUNTS_LIMIT}</td>
+	</tr>
+	</tbody>
+</table>

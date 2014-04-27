@@ -345,8 +345,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/custom_menus.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/custom_menus.phtml',
 		'page_message' => 'layout',
 		'hosting_plans' => 'page',
 		'menus_list_block' => 'page',
@@ -376,7 +376,7 @@ $tpl->assign(
 		'TR_TH_LEVEL' => tr('Level'),
 		'TR_TH_ORDER' => tr('Order'),
 		'TR_CANCEL' => tr('Cancel'),
-		'TR_MESSAGE_DELETE' => json_encode(tr('Are you sure you want to delete the %s menu?', true, '%s')),
+		'TR_MESSAGE_DELETE' => tr("Are you sure you want to delete the '%s' menu?", '%s'),
 		'DATATABLE_TRANSLATIONS' => getDataTablesPluginTranslations(),
 		'ERR_FIELDS_STACK' => iMSCP_Registry::isRegistered('errorFieldsStack')
 			? json_encode(iMSCP_Registry::get('errorFieldsStack')) : '[]'

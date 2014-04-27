@@ -87,8 +87,6 @@ if (isset($_POST['uaction'])) {
 	} elseif ($_POST['uaction'] == 'changeLanguage') {
 		if (i18n_changeDefaultLanguage()) {
 			set_page_message(tr('Default language successfully updated.'), 'success');
-			// Force change on next load
-			redirectTo('multilanguage.php');
 		} else {
 			set_page_message(tr('Unknown language name.'), 'error');
 		}
@@ -96,13 +94,15 @@ if (isset($_POST['uaction'])) {
 		i18n_buildLanguageIndex();
 		set_page_message(tr('Languages index was successfully re-built.'), 'success');
 	}
+
+	redirectTo('multilanguage.php');
 }
 
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/multilanguage.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/multilanguage.phtml',
 		'page_message' => 'layout',
 		'languages_block' => 'page',
 		'language_block' => 'languages_block')

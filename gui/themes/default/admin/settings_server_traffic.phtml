@@ -1,0 +1,23 @@
+
+<form action="settings_server_traffic.php" method="post" name="serverTrafficFrm">
+	<table class="firstColFixed">
+		<thead>
+		<tr>
+			<th colspan="2"><?php tr_e('Server traffic limit') ?></th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td><label for="max_traffic"><?php tr_e('Monthly traffic') ?></label></td>
+			<td><input name="max_traffic" type="text" id="max_traffic" value="{MAX_TRAFFIC}"/> <?php tr_e('MiB') ?></td>
+		</tr>
+		<tr>
+			<td><label for="traffic_warning"><?php tr_e('Traffic warning') ?></label></td>
+			<td><input name="traffic_warning" type="text" id="traffic_warning" value="{TRAFFIC_WARNING}"/> <?php tr_e('MiB') ?></td>
+		</tr>
+		</tbody>
+	</table>
+	<div class="buttons">
+		<input name="submit" type="submit" value="<?php tr_e('Update') ?>"/>
+	</div>
+</form>

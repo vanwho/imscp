@@ -50,8 +50,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/protected_areas.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/protected_areas.phtml',
 		'page_message' => 'layout',
 		'dir_item' => 'page',
 		'action_link' => 'page',
@@ -127,7 +127,7 @@ $tpl->assign(
 		'TR_EDIT' => tr('Edit'),
 		'TR_GROUP' => tr('Group'),
 		'TR_DELETE' => tr('Delete'),
-		'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', true, '%s'),
+		'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', '%s'),
 		'TR_STATUS' => tr('Status'),
 		'TR_ADD_AREA' => tr('Add new protected area')));
 

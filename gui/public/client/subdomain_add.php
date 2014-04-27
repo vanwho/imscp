@@ -364,8 +364,8 @@ if ($mainDmnProps['domain_subd_limit'] != 0 && $subdomainsCount >= $mainDmnProps
 	$tpl = new iMSCP_pTemplate();
 	$tpl->define_dynamic(
 		array(
-			'layout' => 'shared/layouts/ui.tpl',
-			'page' => 'client/subdomain_add.tpl',
+			'layout' => 'shared/layouts/ui.phtml',
+			'page' => 'client/subdomain_add.phtml',
 			'page_message' => 'layout',
 			'parent_domain' => 'page',
 			'shared_mount_point_domain' => 'page'

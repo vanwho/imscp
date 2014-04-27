@@ -52,8 +52,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/manage_users.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/manage_users.phtml',
 		'page_message' => 'layout',
 		'admin_message' => 'page',
 		'admin_list' => 'page',
@@ -89,10 +89,8 @@ $tpl->assign(
 
 if (isset($_POST['details']) && !empty($_POST['details'])) {
 	$_SESSION['details'] = $_POST['details'];
-} else {
-	if (!isset($_SESSION['details'])) {
-		$_SESSION['details'] = "hide";
-	}
+} elseif (!isset($_SESSION['details'])) {
+	$_SESSION['details'] = "hide";
 }
 
 if (isset($_SESSION['user_added'])) {

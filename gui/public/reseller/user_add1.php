@@ -222,8 +222,8 @@ if (isset($_POST['uaction']) && $_POST['uaction'] == 'user_add_next') {
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'reseller/user_add1.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'reseller/user_add1.phtml',
 		'page_message' => 'layout',
 		'add_customer_block' => 'page',
 		'hosting_plan_entries_block' => 'add_customer_block',

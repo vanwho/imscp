@@ -675,8 +675,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/domains_manage.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/domains_manage.phtml',
 		'page_message' => 'layout',
 		'domain_list' => 'page',
 		'domain_item' => 'domain_list',
@@ -723,7 +723,7 @@ $tpl->assign(
 		'TR_STATUS' => tr('Status'),
 		'TR_CERT' => tr('SSL certificates'),
 		'TR_ACTIONS' => tr('Actions'),
-		'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', true, '%s'),
+		'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', '%s'),
 
 		'TR_DNS' => tr('Custom DNS records'),
 		'TR_DNS_NAME' => tr('Name'),

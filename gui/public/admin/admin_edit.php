@@ -118,11 +118,11 @@ function admin_updateUserData($userId)
 		$stmt = exec_query($query, $userId);
 
 		if ($stmt->fields['admin_type'] == 'admin') {
-			$admin_type = tr('Administrator', true);
+			$admin_type = tr('Administrator');
 		} elseif ($stmt->fields['admin_type'] == 'reseller') {
-			$admin_type = tr('Reseller', true);
+			$admin_type = tr('Reseller');
 		} else {
-			$admin_type = tr('Customer', true);
+			$admin_type = tr('Customer');
 		}
 
 		send_add_user_auto_msg(
@@ -200,8 +200,8 @@ if(!empty($_POST) && admin_isValidData()) {
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/admin_edit.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/admin_edit.phtml',
 		'page_message' => 'layout',
 		'hosting_plans' => 'page'
 	)
@@ -234,34 +234,34 @@ $tpl->assign(
 		'TR_PAGE_TITLE' => tr('Admin / Users / Overview / Edit Admin'),
 		'TR_EMPTY_OR_WORNG_DATA' => tr('Empty data or wrong field.'),
 		'TR_PASSWORD_NOT_MATCH' => tr("Passwords do not match."),
-		'TR_CORE_DATA' => tr('Core data'),
-		'TR_USERNAME' => tr('Username'),
+		//'TR_CORE_DATA' => tr('Core data'),
+		//'TR_USERNAME' => tr('Username'),
 		'TR_PASSWORD' => tr('Password'),
-		'TR_GENERATE' => tr('Generate'),
-		'TR_SHOW' => tr('Show'),
+		//'TR_GENERATE' => tr('Generate'),
+		//'TR_SHOW' => tr('Show'),
 		'TR_PASSWORD_GENERATION_NEEDED' => tr('You must first generate a password'),
 		'TR_NEW_PASSWORD_IS' => tr('New password is'),
-		'TR_RESET' => tr('Reset'),
-		'TR_PASSWORD_REPEAT' => tr('Password confirmation'),
-		'TR_EMAIL' => tr('Email'),
-		'TR_ADDITIONAL_DATA' => tr('Additional data'),
-		'TR_FIRST_NAME' => tr('First name'),
-		'TR_LAST_NAME' => tr('Last name'),
-		'TR_COMPANY' => tr('Company'),
-		'TR_ZIP_POSTAL_CODE' => tr('Zip/Postal code'),
-		'TR_CITY' => tr('City'),
-		'TR_STATE_PROVINCE' => tr('State/Province'),
-		'TR_COUNTRY' => tr('Country'),
-		'TR_STREET_1' => tr('Street 1'),
-		'TR_STREET_2' => tr('Street 2'),
-		'TR_PHONE' => tr('Phone'),
-		'TR_FAX' => tr('Fax'),
-		'TR_GENDER' => tr('Gender'),
-		'TR_MALE' => tr('Male'),
-		'TR_FEMALE' => tr('Female'),
-		'TR_UNKNOWN' => tr('Unknown'),
-		'TR_UPDATE' => tr('Update'),
-		'TR_SEND_DATA' => tr('Send new login data'),
+		//'TR_RESET' => tr('Reset'),
+		//'TR_PASSWORD_REPEAT' => tr('Password confirmation'),
+		//'TR_EMAIL' => tr('Email'),
+		//'TR_ADDITIONAL_DATA' => tr('Additional data'),
+		//'TR_FIRST_NAME' => tr('First name'),
+		//'TR_LAST_NAME' => tr('Last name'),
+		//'TR_COMPANY' => tr('Company'),
+		//'TR_ZIP_POSTAL_CODE' => tr('Zip/Postal code'),
+		//'TR_CITY' => tr('City'),
+		//'TR_STATE_PROVINCE' => tr('State/Province'),
+		//'TR_COUNTRY' => tr('Country'),
+		//'TR_STREET_1' => tr('Street 1'),
+		//'TR_STREET_2' => tr('Street 2'),
+		//'TR_PHONE' => tr('Phone'),
+		//'TR_FAX' => tr('Fax'),
+		//'TR_GENDER' => tr('Gender'),
+		//'TR_MALE' => tr('Male'),
+		//'TR_FEMALE' => tr('Female'),
+		//'TR_UNKNOWN' => tr('Unknown'),
+		//'TR_UPDATE' => tr('Update'),
+		//'TR_SEND_DATA' => tr('Send new login data'),
 		'FIRST_NAME' => isset($_POST['fname']) ? tohtml($_POST['fname']) : tohtml($stmt->fields['fname']),
 		'LAST_NAME' => isset($_POST['lname']) ? tohtml($_POST['lname']) : tohtml($stmt->fields['lname']),
 		'FIRM' => isset($_POST['firm']) ? tohtml($_POST['firm']) : tohtml($stmt->fields['firm']),

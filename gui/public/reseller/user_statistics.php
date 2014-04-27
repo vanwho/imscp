@@ -72,33 +72,33 @@ function _reseller_generateDomainStatisticsEntry($tpl, $domainId)
 			'MONTH' => date('m'),
 			'YEAR' => date('y'),
 			'TRAFF_MSG' => ($trafficLimitBytes)
-				? tr('%1$s / %2$s', bytesHuman($trafficUsageBytes), bytesHuman($trafficLimitBytes))
+				? tr('%s / %s', bytesHuman($trafficUsageBytes), bytesHuman($trafficLimitBytes))
 				: tr('%s / unlimited', bytesHuman($trafficUsageBytes)),
 			'DISK_PERCENT' => $diskPercent,
 			'DISK_MSG' => ($diskspaceLimitBytes)
-				? tr('%1$s / %2$s', bytesHuman($diskspaceUsageBytes), bytesHuman($diskspaceLimitBytes))
+				? tr('%s / %s', bytesHuman($diskspaceUsageBytes), bytesHuman($diskspaceLimitBytes))
 				: tr('%s / unlimited', bytesHuman($diskspaceUsageBytes)),
 			'WEB' => bytesHuman($web),
 			'FTP' => bytesHuman($ftp),
 			'SMTP' => bytesHuman($smtp),
 			'POP3' => bytesHuman($pop3),
 			'SUB_MSG' => ($usub_max)
-				? (($usub_max > 0) ? tr('%1$d / %2$d', $usub_current, $usub_max)
+				? (($usub_max > 0) ? tr('%d / %d', $usub_current, $usub_max)
 					: tr('disabled')) : tr('%d / unlimited', $usub_current),
 			'ALS_MSG' => ($uals_max)
-				? (($uals_max > 0) ? tr('%1$d / %2$d', $uals_current, $uals_max) : tr('disabled'))
+				? (($uals_max > 0) ? tr('%d / %d', $uals_current, $uals_max) : tr('disabled'))
 				: tr('%d / unlimited', $uals_current),
 			'MAIL_MSG' => ($umail_max)
-				? (($umail_max > 0) ? tr('%1$d / %2$d', $umail_current, $umail_max) : tr('disabled'))
+				? (($umail_max > 0) ? tr('%d / %d', $umail_current, $umail_max) : tr('disabled'))
 				: tr('%d / unlimited', $umail_current),
 			'FTP_MSG' => ($uftp_max)
-				? (($uftp_max > 0) ? tr('%1$d / %2$d', $uftp_current, $uftp_max) : tr('disabled'))
+				? (($uftp_max > 0) ? tr('%d / %d', $uftp_current, $uftp_max) : tr('disabled'))
 				: tr('%d / unlimited', $uftp_current),
 			'SQL_DB_MSG' => ($usql_db_max)
-				? (($usql_db_max > 0) ? tr('%1$d / %2$d', $usql_db_current, $usql_db_max) : tr('disabled'))
+				? (($usql_db_max > 0) ? tr('%d / %d', $usql_db_current, $usql_db_max) : tr('disabled'))
 				: tr('%d / unlimited', $usql_db_current),
 			'SQL_USER_MSG' => ($usql_user_max)
-				? (($usql_user_max > 0) ? tr('%1$d / %2$d', $usql_user_current, $usql_user_max) : tr('disabled'))
+				? (($usql_user_max > 0) ? tr('%d / %d', $usql_user_current, $usql_user_max) : tr('disabled'))
 				: tr('%d / unlimited', $usql_user_current)));
 }
 
@@ -141,8 +141,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'reseller/reseller_user_statistics.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'reseller/reseller_user_statistics.phtml',
 		'page_message' => 'layout',
 		'domain_statistics_entries_block' => 'page',
 		'domain_statistics_entry_block' => 'domain_statistics_entries_block'

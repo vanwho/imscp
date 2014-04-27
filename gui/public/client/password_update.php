@@ -107,8 +107,8 @@ $tpl = new iMSCP_pTemplate();
 
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'shared/partials/forms/password_update.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'shared/partials/forms/password_update.phtml',
 		'page_message' => 'layout'
 	)
 );

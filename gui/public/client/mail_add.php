@@ -402,8 +402,8 @@ if (!empty($_POST)) {
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/mail_add.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/mail_add.phtml',
 		'page_message' => 'layout',
 		'mail_account' => 'page',
 		'domain_name_item' => 'mail_account'

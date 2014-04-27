@@ -138,7 +138,7 @@ function client_generateView($tpl)
 			'TR_STATUS' => tr('Status'),
 			'TR_ACTION' => tr('Action'),
 			'TR_DEACTIVATE_MESSAGE' => tr(
-				"Are you sure you want to deactivate the external mail server(s) for the '%s' domain?", true, '%s'
+				'Are you sure you want to deactivate the external mail server(s) for the %s domain?', '%s'
 			),
 			'TR_DEACTIVATE_SELECTED_ITEMS' => tr('Deactivate selected items'),
 			'TR_CANCEL' => tr('Cancel')
@@ -166,8 +166,8 @@ if (customerHasFeature('external_mail')) {
 	$tpl = new iMSCP_pTemplate();
 	$tpl->define_dynamic(
 		array(
-			'layout' => 'shared/layouts/ui.tpl',
-			'page' => 'client/mail_external.tpl',
+			'layout' => 'shared/layouts/ui.phtml',
+			'page' => 'client/mail_external.phtml',
 			'page_message' => 'layout',
 			'item' => 'page',
 			'activate_link' => 'item',

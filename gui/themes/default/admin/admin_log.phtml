@@ -1,0 +1,49 @@
+
+<!-- BDP: logs -->
+<form name="admin_lod" method="post" action="admin_log.php">
+	<!-- BDP: clear_log -->
+	<label for="uaction_clear"><?php tr_e('Delete from log:'); ?></label>
+	<select name="uaction_clear" id="uaction_clear">
+		<option value="0" selected="selected"><?php tr_e('everything'); ?></option>
+		<option value="2"><?php tr_e('older than 2 weeks'); ?></option>
+		<option value="4"><?php tr_e('older than 1 month'); ?></option>
+		<option value="12"><?php tr_e('older than 3 months'); ?></option>
+		<option value="26"><?php tr_e('older than 6 months'); ?></option>
+		<option value="52"><?php tr_e('older than 12 months'); ?></option>
+	</select>
+	<!-- EDP: clear_log -->
+	<input name="submit" type="submit" value="<?php tr_e('Clear logs'); ?>"/>
+	<input type="hidden" name="uaction" value="clear_log"/>
+</form>
+<table class="firstColFixed">
+	<thead>
+	<tr>
+		<th><?php tr_e('Date'); ?></th>
+		<th><?php tr_e('Message'); ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<!-- BDP: log_row -->
+	<tr>
+		<td>{DATE}</td>
+		<td>{MESSAGE}</td>
+	</tr>
+	<!-- EDP: log_row -->
+	</tbody>
+</table>
+
+<div class="paginator">
+	<!-- BDP: scroll_prev -->
+	<a class="icon i_prev" href="admin_log.php?psi={PREV_PSI}" title="<?php tr_e('Previous'); ?>"><?php tr_e('Previous'); ?></a>
+	<!-- EDP: scroll_prev -->
+	<!-- BDP: scroll_prev_gray -->
+	<span class="icon i_prev_gray"></span>
+	<!-- EDP: scroll_prev_gray -->
+	<!-- BDP: scroll_next_gray -->
+	<span class="icon i_next_gray"></span>
+	<!-- EDP: scroll_next_gray -->
+	<!-- BDP: scroll_next -->
+	<a class="icon i_next" href="admin_log.php?psi={NEXT_PSI}" title="<?php tr_e('Next'); ?>"><?php tr_e('Next'); ?></a>
+	<!-- EDP: scroll_next -->
+</div>
+<!-- EDP: logs -->

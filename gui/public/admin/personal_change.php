@@ -48,8 +48,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/personal_change.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/personal_change.phtml',
 		'page_message' => 'layout'));
 
 $tpl->assign(

@@ -48,8 +48,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/settings_lostpassword.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/settings_lostpassword.phtml',
 		'page_message' => 'layout',
 		'logged_from' => 'page',
 		'custom_buttons' => 'page'));
@@ -97,9 +97,9 @@ $tpl->assign(
 		'TR_LOSTPW_EMAIL' => tr('Lost password email'),
 		'TR_MESSAGE_TEMPLATE_INFO' => tr('Message template info'),
 		'TR_MESSAGE_TEMPLATE' => tr('Message template'),
-		'SUBJECT_VALUE1' => clean_input($data_1['subject'], true),
+		'SUBJECT_VALUE1' => tohtml($data_1['subject']),
 		'MESSAGE_VALUE1' => tohtml($data_1['message']),
-		'SUBJECT_VALUE2' => clean_input($data_2['subject'], true),
+		'SUBJECT_VALUE2' => tohtml($data_2['subject']),
 		'MESSAGE_VALUE2' => tohtml($data_2['message']),
 		'SENDER_EMAIL_VALUE' => tohtml($data_1['sender_email']),
 		'SENDER_NAME_VALUE' => tohtml($data_1['sender_name']),

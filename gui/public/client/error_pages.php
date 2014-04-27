@@ -50,8 +50,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/error_pages.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/error_pages.phtml',
 		'page_message' => 'layout'
 	)
 );

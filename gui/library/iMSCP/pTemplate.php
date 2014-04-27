@@ -173,7 +173,7 @@ class iMSCP_pTemplate
 	public function __construct()
 	{
 		$this->eventManager = iMSCP_Events_Aggregator::getInstance();
-		$this->eventManager->addEvents('pTemplate', $this->events);
+		//$this->eventManager->addEvents('pTemplate', $this->events);
 
 		$this->tpl_start_rexpr = '/';
 		$this->tpl_start_rexpr .= $this->tpl_start_tag;
@@ -538,11 +538,14 @@ class iMSCP_pTemplate
 				array('context' => $this, 'templatePath' => self::$_root_dir . '/'. $fname)
 			);
 
-			$fileContent = file_get_contents(self::$_root_dir . '/' . $fname);
+			error_reporting(E_ALL);
+			ini_set('display_errors', 1);
 
-			$this->eventManager->dispatch(
-				iMSCP_Events::onAfterLoadTemplateFile, array('context' => $this, 'templateContent' => $fileContent)
-			);
+			ob_start();
+			include self::$_root_dir . '/' . $fname ;
+			$fileContent = ob_get_clean();
+
+			//$fileContent = file_get_contents(self::$_root_dir . '/' . $fname);
 
 			$fileContent = preg_replace_callback($this->tpl_include, array($this, 'get_file'), $fileContent);
 			$parentTplDir = $prevParentTplDir;
@@ -568,7 +571,7 @@ class iMSCP_pTemplate
 		}
 
 		while (
-			stripos($this->dtpl_name[$tname], 'tpl') === false &&
+			stripos($this->dtpl_name[$tname], 'phtml') === false &&
 			strpos($this->dtpl_name[$tname], '_no_file_') === false
 		) {
 			$tname = $this->dtpl_name[$tname];
@@ -589,7 +592,7 @@ class iMSCP_pTemplate
 		$CHILD = false;
 		$parent = '';
 
-		if (stripos(@$this->dtpl_name[$tname], 'tpl') === false &&
+		if (stripos(@$this->dtpl_name[$tname], 'phtml') === false &&
 			strpos(@$this->dtpl_name[$tname], '_no_file_') === false
 		) {
 			$CHILD = true;
@@ -606,8 +609,11 @@ class iMSCP_pTemplate
 			$tname = $swap;
 		}
 
-		if (!@$this->dtpl_data[$tname]) {
-			@$this->dtpl_data[$tname] = $this->get_file(@$this->dtpl_name[$tname]);
+		error_reporting(E_ALL);
+		ini_set('display_errors', 1);
+
+		if (!$this->dtpl_data[$tname]) {
+			$this->dtpl_data[$tname] = $this->get_file(@$this->dtpl_name[$tname]);
 		}
 
 		if (!preg_match('/d\_/', @$this->dtpl_options[$tname])) {
@@ -656,7 +662,7 @@ class iMSCP_pTemplate
 			$ADD_FLAG = true;
 		}
 
-		if (@$this->tpl_name[$tname] == '_no_file_' || stripos(@$this->tpl_name[$tname], '.tpl') !== false) {
+		if (@$this->tpl_name[$tname] == '_no_file_' || stripos(@$this->tpl_name[$tname], '.phtml') !== false) {
 			// static NO FILE - static FILE
 
 			if (@$this->tpl_data[$tname] == '') {
@@ -670,8 +676,9 @@ class iMSCP_pTemplate
 			}
 
 			$this->last_parsed = $this->namespace[$pname];
-		} elseif ($this->dtpl_name[$tname] == '_no_file_' || stripos(@$this->dtpl_name[$tname], 'tpl') !== false ||
-				  $this->find_origin($tname)
+		} elseif (
+			$this->dtpl_name[$tname] == '_no_file_' || stripos(@$this->dtpl_name[$tname], 'phtml') !== false ||
+			$this->find_origin($tname)
 		) {
 			// dynamic NO FILE - dynamic FILE
 			if (!$this->parse_dynamic($pname, $tname, $ADD_FLAG)) {

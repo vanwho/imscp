@@ -131,7 +131,7 @@ function _admin_generateDomainStatisticsEntry($tpl, $domainId)
 				? tr('%d of %s', $usql_db_current, translate_limit_value($usql_db_max))
 				: translate_limit_value($usql_db_max),
 			'SQL_USER_MSG' => ($usql_user_max)
-				? tr('%1$d of %2$d', $usql_user_current, translate_limit_value($usql_user_max))
+				? tr('%d of %d', $usql_user_current, translate_limit_value($usql_user_max))
 				: translate_limit_value($usql_user_max)
 		)
 	);
@@ -163,8 +163,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/reseller_user_statistics.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/reseller_user_statistics.phtml',
 		'page_message' => 'layout',
 		'domain_statistics_entries_block' => 'page',
 		'domain_statistics_entry_block' => 'domain_statistics_entries_block'));

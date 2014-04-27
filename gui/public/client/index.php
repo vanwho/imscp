@@ -122,10 +122,10 @@ function client_generateTrafficUsageBar($tpl, $usage, $maxUsage, $barMax)
 	list($percent, $bars) = calc_bars($usage, $maxUsage, $barMax);
 
 	if ($maxUsage != 0) {
-		$traffic_usage_data = tr('%1$d%% [%2$s of %3$s]', $percent, bytesHuman($usage),
+		$traffic_usage_data = tr('%d%% [%s of %s]', $percent, bytesHuman($usage),
 								 bytesHuman($maxUsage));
 	} else {
-		$traffic_usage_data = tr('%1$d%% [%2$s of unlimited]', $percent, bytesHuman($usage));
+		$traffic_usage_data = tr('%d%% [%s of unlimited]', $percent, bytesHuman($usage));
 	}
 
 	$tpl->assign(
@@ -156,10 +156,10 @@ function client_generateDiskUsageBar($tpl, $usage, $maxUsage, $barMax)
 
 	if ($maxUsage != 0) {
 		$traffic_usage_data = tr(
-			'%1$s%% [%2$s of %3$s]', $percent, bytesHuman($usage), bytesHuman($maxUsage));
+			'%s%% [%s of %s]', $percent, bytesHuman($usage), bytesHuman($maxUsage));
 	} else {
 		$traffic_usage_data = tr(
-			'%1$s%% [%2$s of unlimited]', $percent, bytesHuman($usage));
+			'%s%% [%s of unlimited]', $percent, bytesHuman($usage));
 	}
 
 	$tpl->assign(
@@ -349,8 +349,8 @@ check_login('user', $cfg->PREVENT_EXTERNAL_LOGIN_CLIENT);
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		 'layout' => 'shared/layouts/ui.tpl',
-		 'page' => 'client/index.tpl',
+		 'layout' => 'shared/layouts/ui.phtml',
+		 'page' => 'client/index.phtml',
 		 'page_message' => 'layout',
 		 'alternative_domain_url' => 'page',
 		 'backup_domain_feature' => 'page',

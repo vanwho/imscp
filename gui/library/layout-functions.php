@@ -310,9 +310,7 @@ function layout_init($event)
 		$themesAssetsVersion = $cfg->THEME_ASSETS_VERSION;
 	}
 
-	$encoding = tr('encoding');
-
-	ini_set('default_charset', ($encoding != 'encoding') ? $encoding : 'UTF-8');
+	ini_set('default_charset', 'UTF-8');
 
 	if (isset($_SESSION['user_theme_color'])) {
 		$color = $_SESSION['user_theme_color'];
@@ -330,7 +328,7 @@ function layout_init($event)
 
 	$tpl->assign(
 		array(
-			'THEME_CHARSET' => ($encoding != 'encoding') ? $encoding : 'UTF-8',
+			'THEME_CHARSET' => 'UTF-8',
 			'THEME_ASSETS_PATH' => '/themes/' . $cfg->USER_INITIAL_THEME . '/assets',
 			'THEME_ASSETS_VERSION' => $themesAssetsVersion,
 			'THEME_COLOR' => $color
@@ -553,7 +551,7 @@ function layout_deleteUserLogo($logoFilePath = null, $onlyFile = false)
 		if (file_exists($logoFilePath) && @unlink($logoFilePath)) {
 			return true;
 		} else {
-			write_log(tr("System is unable to remove '%s' user logo.", $logoFilePath), E_USER_WARNING);
+			write_log(sprintf('System is unable to remove the %s user logo', $logoFilePath), E_USER_WARNING);
 			return false;
 		}
 	}

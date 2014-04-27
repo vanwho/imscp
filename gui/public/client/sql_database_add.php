@@ -72,7 +72,7 @@ function client_generatePage($tpl)
 	if (isset($_POST['uaction']) && $_POST['uaction'] == 'add_db') {
 		$tpl->assign(
 			array(
-				'DB_NAME' => clean_input($_POST['db_name'], true),
+				'DB_NAME' => clean_input($_POST['db_name']),
 				'USE_DMN_ID' => (isset($_POST['use_dmn_id']) && $_POST['use_dmn_id'] == 'on') ? $cfg->HTML_CHECKED : '',
 				'START_ID_POS_SELECTED' => (isset($_POST['id_pos']) && $_POST['id_pos'] != 'end') ? $cfg->HTML_SELECTED : '',
 				'END_ID_POS_SELECTED' => (isset($_POST['id_pos']) && $_POST['id_pos'] == 'end') ? $cfg->HTML_SELECTED : ''
@@ -221,8 +221,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/sql_database_add.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/sql_database_add.phtml',
 		'page_message' => 'layout',
 		'mysql_prefix_no' => 'page',
 		'mysql_prefix_yes' => 'page',

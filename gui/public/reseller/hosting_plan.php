@@ -92,7 +92,7 @@ function client_generatePage($tpl)
 				'TR_EDIT' => $trEdit,
 				'TR_ACTION' => tr('Actions'),
 				'TR_DELETE' => tr('Delete'),
-				'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', true, '%s')
+				'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', '%s')
 			)
 		);
 
@@ -134,8 +134,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'reseller/hosting_plan.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'reseller/hosting_plan.phtml',
 		'page_message' => 'layout',
 		'hosting_plans_js' => 'page',
 		'hosting_plans' => 'page',

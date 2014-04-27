@@ -70,7 +70,7 @@ if (isset($_GET['id']) AND is_numeric($_GET['id'])) {
 		fclose ($fp);
 		print $buffer;
 	} else {
-		set_page_message(tr('File does not exist. %1$s.tar.gz', $rs->fields['software_archive']), 'error');
+		set_page_message(tr('File does not exist. %s.tar.gz', $rs->fields['software_archive']), 'error');
 		redirectTo('software_manage.php');
 	}
 } else {

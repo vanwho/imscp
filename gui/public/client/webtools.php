@@ -85,8 +85,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/webtools.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/webtools.phtml',
 		'page_message' => 'layout',
 		'backup_feature' => 'page',
 		'mail_feature' => 'page',

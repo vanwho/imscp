@@ -88,8 +88,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/layout.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/layout.phtml',
 		'page_message' => 'layout',
 		'layout_colors_block' => 'page',
 		'layout_color_block' => 'layout_colors_block'

@@ -227,8 +227,8 @@ if (isset($_POST['uaction']) && $_POST['uaction'] == 'clear_log') {
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/admin_log.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/admin_log.phtml',
 		'page_message' => 'layout',
 		'logs' => 'page',
 		'clear_log' => 'logs',
@@ -244,19 +244,19 @@ $tpl->assign(
 	array(
 		'TR_PAGE_TITLE' => tr('Admin / General / Admin Log'),
 		'ISP_LOGO' => layout_getUserLogo(),
-		'TR_ADMIN_LOG' => tr('Admin Log'),
-		'TR_CLEAR_LOG' => tr('Clear log'),
-		'TR_DATE' => tr('Date'),
-		'TR_MESSAGE' => tr('Message'),
-		'TR_NEXT' => tr('Next'),
-		'TR_PREVIOUS' => tr('Previous'),
-		'TR_CLEAR_LOG_MESSAGE' => tr('Delete from log:'),
-		'TR_CLEAR_LOG_EVERYTHING' => tr('everything'),
-		'TR_CLEAR_LOG_LAST2' => tr('older than 2 weeks'),
-		'TR_CLEAR_LOG_LAST4' => tr('older than 1 month'),
-		'TR_CLEAR_LOG_LAST12' => tr('older than 3 months'),
-		'TR_CLEAR_LOG_LAST26' => tr('older than 6 months'),
-		'TR_CLEAR_LOG_LAST52' => tr('older than 12 months')
+		//'TR_ADMIN_LOG' => tr('Admin Log'),
+		//'TR_CLEAR_LOG' => tr('Clear log'),
+		//'TR_DATE' => tr('Date'),
+		//'TR_MESSAGE' => tr('Message'),
+		//'TR_NEXT' => tr('Next'),
+		//'TR_PREVIOUS' => tr('Previous'),
+		//'TR_CLEAR_LOG_MESSAGE' => tr('Delete from log:'),
+		//'TR_CLEAR_LOG_EVERYTHING' => tr('everything'),
+		//'TR_CLEAR_LOG_LAST2' => tr('older than 2 weeks'),
+		//'TR_CLEAR_LOG_LAST4' => tr('older than 1 month'),
+		//'TR_CLEAR_LOG_LAST12' => tr('older than 3 months'),
+		//'TR_CLEAR_LOG_LAST26' => tr('older than 6 months'),
+		//'TR_CLEAR_LOG_LAST52' => tr('older than 12 months')
 	)
 );
 

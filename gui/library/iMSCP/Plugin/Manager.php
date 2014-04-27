@@ -651,12 +651,8 @@ class iMSCP_Plugin_Manager
 					$this->setPluginStatus($pluginName, $pluginStatus);
 					return self::ACTION_STOPPED;
 				} catch (iMSCP_Plugin_Exception $e) {
-					$this->setPluginError(
-						$pluginName, sprintf('Plugin uninstallation has failed: %s', $e->getMessage())
-					);
-					write_log(
-						sprintf('Plugin Manager: %s plugin uninstallation has failed', $pluginName), E_USER_ERROR
-					);
+					$this->setPluginError($pluginName, sprintf('Plugin uninstallation has failed: %s', $e->getMessage()));
+					write_log(sprintf('Plugin Manager: %s plugin uninstallation has failed', $pluginName), E_USER_ERROR);
 				}
 			}
 		}

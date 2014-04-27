@@ -92,14 +92,13 @@ switch ($userdata['URGENCY']) {
 }
 
 $userdata['SUBJECT'] = isset($_POST['subj']) ? clean_input($_POST['subj'], true) : '';
-$userdata['USER_MESSAGE'] = isset($_POST['user_message']) ?
-	clean_input($_POST['user_message'], true) : '';
+$userdata['USER_MESSAGE'] = isset($_POST['user_message']) ? clean_input($_POST['user_message'], true) : '';
 
 $tpl = new iMSCP_pTemplate();
-$tpl->define_dynamic('layout', 'shared/layouts/ui.tpl');
+$tpl->define_dynamic('layout', 'shared/layouts/ui.phtml');
 $tpl->define_dynamic(
 	array(
-		 'page' => 'client/ticket_create.tpl',
+		 'page' => 'client/ticket_create.phtml',
 		 'page_message' => 'layout'));
 
 $tpl->assign(

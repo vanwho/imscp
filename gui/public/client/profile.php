@@ -71,8 +71,8 @@ check_login('user');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/profile.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/profile.phtml',
 		'page_message' => 'layout'));
 
 $tpl->assign(

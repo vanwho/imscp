@@ -133,8 +133,8 @@ $tpl = new iMSCP_pTemplate();
 
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/ip_usage.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/ip_usage.phtml',
 		'ip_usage_statistics' => 'page',
 		'ip_row' => 'ip_usage_statistics',
 		'domain_row' => 'ip_row'

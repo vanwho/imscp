@@ -246,8 +246,8 @@ if (!(!empty($_POST) && reseller_sendCircular())) {
 	$tpl = new iMSCP_pTemplate();
 	$tpl->define_dynamic(
 		array(
-			'layout' => 'shared/layouts/ui.tpl',
-			'page' => 'reseller/circular.tpl',
+			'layout' => 'shared/layouts/ui.phtml',
+			'page' => 'reseller/circular.phtml',
 			'page_message' => 'layout'
 		)
 	);

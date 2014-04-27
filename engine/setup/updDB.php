@@ -32,7 +32,8 @@
  */
 
 // GUI root directory absolute path
-$guiRootDir = '{GUI_ROOT_DIR}';
+#$guiRootDir = '{GUI_ROOT_DIR}';
+$guiRootDir = '/var/www/imscp/gui';
 
 if(strpos($guiRootDir, 'GUI_ROOT_DIR') !== false) {
 	fwrite(STDERR, '[ERROR] gui root directory is not defined at ' . __FILE__ . ' line ' . __LINE__ . "\n");
@@ -46,6 +47,7 @@ set_include_path('.' . PATH_SEPARATOR . $guiRootDir . '/library');
 require_once 'imscp-lib.php';
 
 try {
+	// Apply database update if any
 	$databaseUpdate = iMSCP_Update_Database::getInstance();
 
 	if(!$databaseUpdate->applyUpdates()) {
@@ -54,11 +56,11 @@ try {
 	}
 
 	// Check if the file system is supporting the immutable flag. In case the immutable flag is not supported
-	// We must disable the Web folder protection
+	// the Web folder protection must be disabled
 	if(isImmutableFlagAvailable()) {
 		$webFolderProtection = 1;
 	} else {
-		execute_query("UPDATE `domain` SET `web_folder_protection` = 'no'");
+		execute_query("UPDATE domain SET web_folder_protection = 'no'");
 		$webFolderProtection = 0;
 	}
 
@@ -66,10 +68,13 @@ try {
 	$dbConfig = iMSCP_Registry::get('dbConfig');
 	$dbConfig->set('WEB_FOLDER_PROTECTION', $webFolderProtection);
 
+	// Rebuilt languages index
+	$cfg['GUI_ROOT_DIR'] = $guiRootDir;
+	i18n_buildLanguageIndex();
 } catch(Exception $e) {
 	fwrite(STDERR, "[ERROR] " . $e->getMessage() . "\n\nStackTrace:\n" . $e->getTraceAsString() . "\n");
 	exit(1);
 }
 
-fwrite(STDOUT, "[INFO] i-MSCP database has been successfully updated\n");
+fwrite(STDOUT, "[INFO] PHP update script successfully run\n");
 exit;

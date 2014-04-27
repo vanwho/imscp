@@ -419,8 +419,8 @@ function generateTicketList($tpl, $userId, $start, $count, $userLevel, $status)
 function closeTicket($ticketId)
 {
 	if (!changeTicketStatus($ticketId, 0)) {
-		set_page_message(tr("Unable to close the ticket with Id '%s'.", $ticketId), 'error');
-		write_log(sprintf("Unable to close the ticket with Id '%s'.", $ticketId), E_USER_ERROR);
+		set_page_message(tr("Unable to close the ticket with ID %s.", $ticketId), 'error');
+		write_log(sprintf("Unable to close the ticket with ID %s.", $ticketId), E_USER_ERROR);
 		return false;
 	}
 
@@ -440,8 +440,8 @@ function closeTicket($ticketId)
 function reopenTicket($ticketId)
 {
 	if (!changeTicketStatus($ticketId, 3)) {
-		set_page_message(tr("Unable to reopen ticket with Id '%s'.", $ticketId), 'error');
-		write_log(sprintf("Unable to reopen ticket with Id '%s'.", $ticketId), E_USER_ERROR);
+		set_page_message(tr("Unable to reopen ticket with ID %s.", $ticketId), 'error');
+		write_log(sprintf("Unable to reopen ticket with ID %s.", $ticketId), E_USER_ERROR);
 		return false;
 	}
 

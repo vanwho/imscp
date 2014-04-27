@@ -47,8 +47,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'reseller/software_upload.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'reseller/software_upload.phtml',
 		'page_message' => 'layout',
 		'list_software' => 'page',
 		'no_software_list' => 'page',
@@ -181,7 +181,7 @@ if (isset($_POST['upload']) && $_SESSION['software_upload_token'] == $_POST['sen
 				exec_query($query, $sw_id);
 				$sw_wget = "";
 				set_page_message(
-					tr('Could not upload the file. Max. upload filesize (%1$d MB) has been reached.',
+					tr('Could not upload the file. Max. upload filesize (%d MB) has been reached.',
 						ini_get('upload_max_filesize')
 					),
 					'error'
@@ -303,12 +303,12 @@ $tpl->assign(
 		'TR_SOFTWARE_HOME' => tr('Link to authors homepage'),
 		'TR_SOFTWARE_DESC' => tr('Description'),
 		'SOFTWARE_UPLOAD_TOKEN' => generate_software_upload_token(),
-		'TR_SOFTWARE_FILE' => tr('Choose file (Max: %1$d MiB)', ini_get('upload_max_filesize')),
+		'TR_SOFTWARE_FILE' => tr('Choose file (Max: %d MiB)', ini_get('upload_max_filesize')),
 		'TR_SOFTWARE_URL' => tr('or remote file (Max: %s)', bytesHuman($cfg->APS_MAX_REMOTE_FILESIZE)),
 		'TR_UPLOAD_SOFTWARE_BUTTON' => tr('Upload now'),
 		'TR_UPLOAD_SOFTWARE_PAGE_TITLE' => tr('i-MSCP - Sofware Management'),
-		'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete this package?', true),
-		'TR_MESSAGE_INSTALL' => tr('Are you sure to install this package from the webdepot?', true)
+		'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete this package?'),
+		'TR_MESSAGE_INSTALL' => tr('Are you sure to install this package from the webdepot?')
 	)
 );
 

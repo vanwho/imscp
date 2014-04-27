@@ -181,10 +181,10 @@ function admin_generateServerTrafficInfo($tpl)
 
 	if ($trafficLimitBytes) {
 		$trafficMessage = tr(
-			'%1$s%% [%2$s of %3$s]', $trafficUsagePercent, bytesHuman($trafficUsageBytes), bytesHuman($trafficLimitBytes)
+			'%s%% [%s of %s]', $trafficUsagePercent, bytesHuman($trafficUsageBytes), bytesHuman($trafficLimitBytes)
 		);
 	} else {
-		$trafficMessage = tr('%1$s%% [%2$s of unlimited]', $trafficUsagePercent, bytesHuman($trafficUsageBytes));
+		$trafficMessage = tr('%s%% [%s of unlimited]', $trafficUsagePercent, bytesHuman($trafficUsageBytes));
 	}
 
 	// Warning message about traffic
@@ -222,8 +222,8 @@ check_login('admin', $cfg->PREVENT_EXTERNAL_LOGIN_ADMIN);
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/index.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/index.phtml',
 		'page_message' => 'layout',
 		'traffic_warning_message' => 'page'
 	)

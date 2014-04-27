@@ -432,22 +432,22 @@ class iMSCP_Initializer
 	 */
 	protected function _initializeOutputBuffering()
 	{
-		if (isset($this->_config->COMPRESS_OUTPUT) && $this->_config->COMPRESS_OUTPUT) {
-			// Create a new filter that will be applyed on the buffer output
-			/** @var $filter iMSCP_Filter_Compress_Gzip */
-			$filter = iMSCP_Registry::set(
-				'bufferFilter',
-				new iMSCP_Filter_Compress_Gzip(iMSCP_Filter_Compress_Gzip::FILTER_BUFFER)
-			);
-
-			// Show compression information in HTML comment ?
-			if (isset($this->_config->SHOW_COMPRESSION_SIZE) && !$this->_config->SHOW_COMPRESSION_SIZE) {
-				$filter->compressionInformation = false;
-			}
-
-			// Start the buffer and attach the filter to him
-			ob_start(array($filter, iMSCP_Filter_Compress_Gzip::CALLBACK_NAME));
-		}
+		#if (isset($this->_config->COMPRESS_OUTPUT) && $this->_config->COMPRESS_OUTPUT) {
+		#	// Create a new filter that will be applyed on the buffer output
+		#	/** @var $filter iMSCP_Filter_Compress_Gzip */
+		#	$filter = iMSCP_Registry::set(
+		#		'bufferFilter',
+		#		new iMSCP_Filter_Compress_Gzip(iMSCP_Filter_Compress_Gzip::FILTER_BUFFER)
+		#	);
+#
+#			// Show compression information in HTML comment ?
+#			if (isset($this->_config->SHOW_COMPRESSION_SIZE) && !$this->_config->SHOW_COMPRESSION_SIZE) {
+#				$filter->compressionInformation = false;
+#			}
+#
+#			// Start the buffer and attach the filter to him
+#			ob_start(array($filter, iMSCP_Filter_Compress_Gzip::CALLBACK_NAME));
+#		}
 	}
 
 	/**

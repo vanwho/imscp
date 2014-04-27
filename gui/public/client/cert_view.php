@@ -207,8 +207,8 @@ check_login('user');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/cert_view.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/cert_view.phtml',
 		'page_message' => 'layout',
 		'cert_enable' => 'page'
 	)

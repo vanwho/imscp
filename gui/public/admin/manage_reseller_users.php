@@ -383,15 +383,15 @@ function calculate_reseller_dvals(&$to, $toMax, &$from, $fromMax, $uMax, &$error
 			$errorsStack = '';
 		}
 
-		$errorsStack .= tr('<b>%1$s</b> has unlimited rights for a <b>%2$s</b> Service.<br />', $uName, $obj);
-		$errorsStack .= tr('You cannot move <b>%1$s</b> in a destination reseller,<br />which has limits for the <b>%2$s</b> service.', $uName, $obj);
+		$errorsStack .= tr('<b>%s</b> has unlimited rights for a <b>%s</b> Service.<br />', $uName, $obj);
+		$errorsStack .= tr('You cannot move <b>%s</b> in a destination reseller,<br />which has limits for the <b>%s</b> service.', $uName, $obj);
 		return;
 	} else if ($toMax > 0 && $fromMax == 0 && $uMax > 0) {
 		if ($to + $uMax > $toMax) {
 			if ($errorsStack == '_off_') {
 				$errorsStack = '';
 			}
-			$errorsStack .= tr('<b>%1$s</b> is exceeding limits for a <b>%2$s</b><br />service in destination reseller.<br />', $uName, $obj);
+			$errorsStack .= tr('<b>%s</b> is exceeding limits for a <b>%s</b><br />service in destination reseller.<br />', $uName, $obj);
 
 			$errorsStack .= tr('Moving aborted.');
 		} else {
@@ -412,7 +412,7 @@ function calculate_reseller_dvals(&$to, $toMax, &$from, $fromMax, $uMax, &$error
 				$errorsStack = '';
 			}
 
-			$errorsStack .= tr('<b>%1$s</b> is exceeding limits for a <b>%2$s</b><br />service in destination reseller.<br />', $uName, $obj);
+			$errorsStack .= tr('<b>%s</b> is exceeding limits for a <b>%s</b><br />service in destination reseller.<br />', $uName, $obj);
 			$errorsStack .= tr('Moving aborted.');
 		} else {
 			$from -= $uMax;
@@ -480,8 +480,8 @@ if (isset($_POST['uaction']) && $_POST['uaction'] == 'move_user' && check_user_d
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/manage_reseller_users.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/manage_reseller_users.phtml',
 		'page_message' => 'layout',
 		'reseller_list' => 'page',
 		'reseller_item' => 'page',

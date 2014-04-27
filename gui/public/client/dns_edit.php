@@ -746,8 +746,8 @@ if(!empty($_POST)) {
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/dns_edit.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/dns_edit.phtml',
 		'page_message' => 'layout',
 		'logged_from' => 'page'
 	)

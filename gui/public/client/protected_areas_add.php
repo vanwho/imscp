@@ -364,8 +364,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/protect_it.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/protect_it.phtml',
 		'page_message' => 'layout',
 		'group_item' => 'page',
 		'user_item' => 'page',

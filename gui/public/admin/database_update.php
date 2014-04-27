@@ -109,8 +109,8 @@ if (isset($_POST['uaction']) && $_POST['uaction'] == 'update') {
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/database_update.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/database_update.phtml',
 		'page_message' => 'layout',
 		'database_updates' => 'page',
 		'database_update' => 'database_updates'));

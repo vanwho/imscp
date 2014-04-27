@@ -50,10 +50,10 @@ check_login('user');
 $cfg = iMSCP_Registry::get('config');
 
 $tpl = new iMSCP_pTemplate();
-$tpl->define_dynamic('layout', 'shared/layouts/ui.tpl');
+$tpl->define_dynamic('layout', 'shared/layouts/ui.phtml');
 $tpl->define_dynamic(
 	array(
-		 'page' => 'client/language.tpl',
+		 'page' => 'client/language.phtml',
 		 'page_message' => 'layout',
 		 'def_language' => 'page'));
 

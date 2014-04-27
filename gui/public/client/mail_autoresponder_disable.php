@@ -97,7 +97,7 @@ function client_deactivateAutoresponder($mailAccountId)
 		send_request();
 		write_log(
 			sprintf(
-				"%s: deactivated auto-responder for the '%s' mail account",
+				"%s: deactivated auto-responder for the %s mail account",
 				$_SESSION['user_logged'],
 				$stmt->fields['mail_addr']
 			),

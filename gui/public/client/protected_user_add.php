@@ -126,8 +126,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/puser_uadd.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/puser_uadd.phtml',
 		'page_message' => 'layout',
 		'usr_msg' => 'page',
 		'grp_msg' => 'page',

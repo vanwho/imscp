@@ -112,7 +112,7 @@ function updateFtpAccount($userid, $mainDomainName)
 
 				// Check for directory existence
 				if (!$vfs->exists($homeDir)) {
-					set_page_message(tr("Home directory '%s' doesn't exist", $homeDir), 'error');
+					set_page_message(tr("Home directory %s doesn't exist", $homeDir), 'error');
 					$ret = false;
 				}
 			}
@@ -174,8 +174,8 @@ if (isset($_GET['id'])) {
 	$tpl = new iMSCP_pTemplate();
 	$tpl->define_dynamic(
 		array(
-			'layout' => 'shared/layouts/ui.tpl',
-			'page' => 'client/ftp_edit.tpl',
+			'layout' => 'shared/layouts/ui.phtml',
+			'page' => 'client/ftp_edit.phtml',
 			'page_message' => 'layout'
 		)
 	);

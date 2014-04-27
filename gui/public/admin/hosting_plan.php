@@ -79,7 +79,7 @@ function admin_generatePage($tpl)
 				'TR_ACTIONS' => tr('Actions'),
 				'TR_EDIT' => tr('Edit'),
 				'TR_DELETE' => tr('Delete'),
-				'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete the %s hosting plan?', true, '%s')
+				'TR_MESSAGE_DELETE' => tr("Are you sure you want to delete the '%s' hosting plan?", '%s')
 			)
 		);
 
@@ -118,8 +118,8 @@ if ($cfg->HOSTING_PLANS_LEVEL == 'admin') {
 	$tpl = new iMSCP_pTemplate();
 	$tpl->define_dynamic(
 		array(
-			'layout' => 'shared/layouts/ui.tpl',
-			'page' => 'admin/hosting_plan.tpl',
+			'layout' => 'shared/layouts/ui.phtml',
+			'page' => 'admin/hosting_plan.phtml',
 			'page_message' => 'layout',
 			'hosting_plans' => 'page',
 			'hosting_plan' => 'hosting_plans'

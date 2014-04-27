@@ -164,7 +164,10 @@ class iMSCP_Authentication
 							array(cryptPasswordWithSalt($password), $identity->admin_id)
 						);
 						write_log(
-							"Info: Password for user <b>'$identity->admin_name'</b> has been re-encrypted using the best available algorithm",
+							sprintf(
+								'Info: Password for user %s has been re-encrypted using the best available algorithm',
+								'<b>' . $identity->admin_name . '</b>'
+							),
 							E_USER_NOTICE
 						);
 					}

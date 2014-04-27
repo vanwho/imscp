@@ -92,8 +92,8 @@ if (isset($_GET['ticket_id'])) {
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'reseller/ticket_view.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'reseller/ticket_view.phtml',
 		'page_message' => 'layout',
 		'tickets_list' => 'page',
 		'tickets_item' => 'tickets_list'));

@@ -48,8 +48,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/settings_maintenance_mode.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/settings_maintenance_mode.phtml',
 		'page_message' => 'layout'));
 
 if (isset($_POST['uaction']) and $_POST['uaction'] == 'apply') {

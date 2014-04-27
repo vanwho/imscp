@@ -48,8 +48,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'reseller/settings_lostpassword.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'reseller/settings_lostpassword.phtml',
 		'page_message' => 'layout',
 		'custom_buttons' => 'page'));
 

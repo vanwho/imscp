@@ -311,8 +311,8 @@ if ($mainDmnProps['domain_alias_limit'] != 0 && $domainAliasesCount >= $mainDmnP
 	$tpl = new iMSCP_pTemplate();
 	$tpl->define_dynamic(
 		array(
-			'layout' => 'shared/layouts/ui.tpl',
-			'page' => 'client/alias_add.tpl',
+			'layout' => 'shared/layouts/ui.phtml',
+			'page' => 'client/alias_add.phtml',
 			'page_message' => 'layout',
 			'shared_mount_point_domain' => 'page'
 		)

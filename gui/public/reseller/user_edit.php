@@ -216,7 +216,7 @@ function reseller_updateUserData($adminId)
 	write_log("{$_SESSION['user_logged']} updated data for $dmnUsername.", E_USER_NOTICE);
 
 	if (isset($_POST['send_data']) && $password != '') {
-		send_add_user_auto_msg($resellerId, $dmnUsername, $password, $userEmail, $firstName, $lastName, tr('Customer', true));
+		send_add_user_auto_msg($resellerId, $dmnUsername, $password, $userEmail, $firstName, $lastName, tr('Customer'));
 	}
 
 	redirectTo('users.php');
@@ -242,8 +242,8 @@ if (isset($_REQUEST['edit_id'])) {
 	$tpl = new iMSCP_pTemplate();
 	$tpl->define_dynamic(
 		array(
-			'layout' => 'shared/layouts/ui.tpl',
-			'page' => 'reseller/user_edit.tpl',
+			'layout' => 'shared/layouts/ui.phtml',
+			'page' => 'reseller/user_edit.phtml',
 			'page_message' => 'layout',
 			'ip_entry' => 'page'
 		)

@@ -77,8 +77,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/software_install.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/software_install.phtml',
 		'page_message' => 'layout',
 		'software_item' => 'page',
 		'show_domain_list' => 'page',
@@ -98,7 +98,7 @@ $tpl->define_dynamic(
 if (!empty($_POST)) {
 	$id = intval($_GET['id']);
 	$domain_path = '';
-	$other_dir = clean_input($_POST['other_dir'], true);
+	$other_dir = clean_input($_POST['other_dir']);
 
 	$query = "
 		SELECT
@@ -111,12 +111,12 @@ if (!empty($_POST)) {
 	";
 	$stmt = exec_query($query, $_GET['id']);
 
-	$install_username = clean_input($_POST['install_username'], true);
-	$install_password = clean_input($_POST['install_password'], true);
-	$install_email = clean_input($_POST['install_email'], true);
+	$install_username = clean_input($_POST['install_username']);
+	$install_password = clean_input($_POST['install_password']);
+	$install_email = clean_input($_POST['install_email']);
 
 	if (isset($_POST['createdir']) && $_POST['createdir'] == '1') {
-		$createdir = clean_input($_POST['createdir'], true);
+		$createdir = clean_input($_POST['createdir']);
 		set_page_message(tr('The directory %s was created.', $other_dir), 'success');
 	} else {
 		$createdir = '0';
@@ -178,8 +178,8 @@ if (!empty($_POST)) {
 	$sql_pass = '';
 
 	if ($stmt->fields['software_db'] == '1') {
-		$selected_db = clean_input($_POST['selected_db'], true);
-		$sql_user = clean_input($_POST['sql_user'], true);
+		$selected_db = clean_input($_POST['selected_db']);
+		$sql_user = clean_input($_POST['sql_user']);
 		$rsdatabase = exec_query('SELECT sqlu_pass FROM sql_user WHERE sqlu_name = ?', $sql_user);
 
 		$db_connection_ok = check_db_connection($selected_db, $sql_user, $rsdatabase->fields['sqlu_pass']);

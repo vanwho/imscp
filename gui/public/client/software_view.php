@@ -76,8 +76,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/software_view.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/software_view.phtml',
 		'page_message' => 'layout',
 		'software_message' => 'page',
 		'software_install' => 'page',

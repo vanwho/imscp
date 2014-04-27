@@ -62,7 +62,7 @@
  *
  * <b>Usage example:</b>
  * <code>
- * iMSCP_Exception_Handler::getInstance()->attach(new iMSCP_Exception_Writer_Browser('themes/default/exception.tpl'));
+ * iMSCP_Exception_Handler::getInstance()->attach(new iMSCP_Exception_Writer_Browser('themes/default/exception.phtml'));
  * </code>
  *
  * <b>What is done here ?</b>

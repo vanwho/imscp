@@ -129,7 +129,7 @@ function client_updateSqlUserPassword($sqlUserId, $sqlUserName, $sqlUserHost, $o
 
 		set_page_message(tr('SQL user password successfully updated.'), 'success');
 		write_log(
-			sprintf("%s updated password for the '%s' SQL user.", $_SESSION['user_logged'], tohtml($sqlUserName)),
+			sprintf("%s updated password for the %s SQL user.", $_SESSION['user_logged'], tohtml($sqlUserName)),
 			E_USER_NOTICE
 		);
 	} catch (iMSCP_Exception_Database $e) {
@@ -174,8 +174,8 @@ if (isset($_REQUEST['id'])) {
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/sql_change_password.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/sql_change_password.phtml',
 		'page_message' => 'layout'
 	)
 );

@@ -264,8 +264,8 @@ function admin_generateCustomerAcountDeletionValidationPage($userId)
 	$tpl = new iMSCP_pTemplate();
 	$tpl->define_dynamic(
 		array(
-			'layout' => 'shared/layouts/ui.tpl',
-			'page' => 'admin/user_delete.tpl',
+			'layout' => 'shared/layouts/ui.phtml',
+			'page' => 'admin/user_delete.phtml',
 			'page_message' => 'layout',
 			'mail_list' => 'page',
 			'mail_item' => 'mail_list',
@@ -295,7 +295,6 @@ function admin_generateCustomerAcountDeletionValidationPage($userId)
 			'TR_DATABASES' => tr('SQL databases'),
 			'TR_REALLY_WANT_TO_DELETE_CUSTOMER_ACCOUNT' => tr(
 				"Do you really want to delete the entire %s customer account? This operation cannot be undone.",
-				true,
 				"<strong>$adminName</strong>"
 			),
 			'USER_ID' => $userId,

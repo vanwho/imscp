@@ -130,8 +130,8 @@ customerHasFeature('protected_areas') or showBadRequestErrorPage();
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/puser_edit.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/puser_edit.phtml',
 		'page_message' => 'layout',
 		'usr_msg' => 'page',
 		'grp_msg' => 'page',

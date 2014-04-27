@@ -39,8 +39,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/software_manage.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/software_manage.phtml',
 		'page_message' => 'layout',
 		'list_software' => 'page',
 		'no_software_list' => 'page',
@@ -183,10 +183,7 @@ if (isset($_POST['upload']) && $_SESSION['software_upload_token'] == $_POST['sen
 				$sw_wget = '';
 
 				set_page_message(
-					tr(
-						'Unable to upload file. Max. upload filesize (%1$d MB) reached?',
-						ini_get('upload_max_filesize')
-					),
+					tr('Unable to upload file. Max. upload filesize (%d MB) reached?', ini_get('upload_max_filesize')),
 					'error'
 				);
 
@@ -289,7 +286,7 @@ $tpl->assign(
 		'TR_SOFTWAREDEPOT_COUNT' => tr('Total Web software repositories'),
 		'TR_SOFTWAREDEPOT_NUM' => $swdepot_cnt,
 		'TR_UPLOAD_SOFTWARE' => tr('Software depot upload'),
-		'TR_SOFTWARE_FILE' => tr('Choose file (Max: %1$d MiB)', ini_get('upload_max_filesize')),
+		'TR_SOFTWARE_FILE' => tr('Choose file (Max: %d MiB)', ini_get('upload_max_filesize')),
 		'TR_SOFTWARE_URL' => tr('or remote file (Max: %s)', bytesHuman($cfg->APS_MAX_REMOTE_FILESIZE)),
 		'TR_UPLOAD_SOFTWARE_BUTTON' => tr('Upload now'),
 		'TR_AWAITING_ACTIVATION' => tr('Awaiting activation'),
@@ -312,10 +309,10 @@ $tpl->assign(
 		'TR_RESELLER_COUNT_WAITING' => tr('Awaiting activation'),
 		'TR_RESELLER_COUNT_ACTIVATED' => tr('Activated software'),
 		'TR_RESELLER_SOFTWARE_IN_USE' => tr('Total installations'),
-		'TR_MESSAGE_ACTIVATE' => tr('Are you sure you want to activate this package?', true),
-		'TR_MESSAGE_IMPORT' => tr('Are you sure you want to import this package into the local software repository?', true),
-		'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete this package?', true),
-		'TR_MESSAGE_INSTALL' => tr('Are you sure you want to install this package from the Web software repository?', true),
+		'TR_MESSAGE_ACTIVATE' => tr('Are you sure you want to activate this package?'),
+		'TR_MESSAGE_IMPORT' => tr('Are you sure you want to import this package into the local software repository?'),
+		'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete this package?'),
+		'TR_MESSAGE_INSTALL' => tr('Are you sure you want to install this package from the Web software repository?'),
 		'TR_ADMIN_SOFTWARE_PAGE_TITLE' => tr('i-MSCP / Software Installer / Management'),
 		'TR_SOFTWARE_UPDLOAD' => tr('Software upload')
 	)

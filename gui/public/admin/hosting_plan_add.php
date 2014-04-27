@@ -61,26 +61,28 @@ function _admin_generatePhpBlock($tpl, $phpini)
 	$tplVars['TR_SETTINGS'] = tr('Settings');
 	$tplVars['TR_DIRECTIVES_VALUES'] = tr('Directive values');
 	$tplVars['TR_FIELDS_OK'] = tr('All fields seem to be valid.');
-	$tplVars['TR_VALUE_ERROR'] = tr('Value for the PHP <strong>%%s</strong> directive must be between %%d and %%d.', true);
+	$tplVars['TR_VALUE_ERROR'] = tr(
+		'Value for the PHP <strong>%s</strong> directive must be between %s and %s.', '%s', '%d', '%d'
+	);
 	$tplVars['TR_CLOSE'] = tr('Close');
-	$tplVars['TR_PHP_POST_MAX_SIZE_DIRECTIVE'] = tr('PHP %s directive', true, '<b>post_max_size</b>');
-	$tplVars['TR_PHP_UPLOAD_MAX_FILEZISE_DIRECTIVE'] = tr('PHP %s directive', true, '<b>upload_max_filezize</b>');
-	$tplVars['TR_PHP_MAX_EXECUTION_TIME_DIRECTIVE'] = tr('PHP %s directive', true, '<b>max_execution_time</b>');
-	$tplVars['TR_PHP_MAX_INPUT_TIME_DIRECTIVE'] = tr('PHP %s directive', true, '<b>max_input_time</b>');
-	$tplVars['TR_PHP_MEMORY_LIMIT_DIRECTIVE'] = tr('PHP %s directive', true, '<b>memory_limit</b>');
+	$tplVars['TR_PHP_POST_MAX_SIZE_DIRECTIVE'] = tr('PHP %s directive', '<strong>post_max_size</b>');
+	$tplVars['TR_PHP_UPLOAD_MAX_FILEZISE_DIRECTIVE'] = tr('PHP %s directive', '<strong>upload_max_filezize</strong>');
+	$tplVars['TR_PHP_MAX_EXECUTION_TIME_DIRECTIVE'] = tr('PHP %s directive', '<strong>max_execution_time</strong>');
+	$tplVars['TR_PHP_MAX_INPUT_TIME_DIRECTIVE'] = tr('PHP %s directive', '<strong>max_input_time</strong>');
+	$tplVars['TR_PHP_MEMORY_LIMIT_DIRECTIVE'] = tr('PHP %s directive', '<strong>memory_limit</strong>');
 	$tplVars['TR_MIB'] = tr('MiB');
 	$tplVars['TR_SEC'] = tr('Sec.');
-	$tplVars['TR_CAN_EDIT_ALLOW_URL_FOPEN'] = tr('Can edit the PHP %s directive', true, '<b>allow_url_fopen</b>');
+	$tplVars['TR_CAN_EDIT_ALLOW_URL_FOPEN'] = tr('Can edit the PHP %s directive', '<strong>allow_url_fopen</strong>');
 	$tplVars['ALLOW_URL_FOPEN_YES'] = ($phpini->getClPermVal('phpiniAllowUrlFopen') == 'yes') ? $checked : '';
 	$tplVars['ALLOW_URL_FOPEN_NO'] = ($phpini->getClPermVal('phpiniAllowUrlFopen') == 'no') ? $checked : '';
-	$tplVars['TR_CAN_EDIT_DISPLAY_ERRORS'] = tr('Can edit the PHP %s directive', true, '<b>display_errors</b>');
+	$tplVars['TR_CAN_EDIT_DISPLAY_ERRORS'] = tr('Can edit the PHP %s directive', '<strong>display_errors</strong>');
 	$tplVars['DISPLAY_ERRORS_YES'] = ($phpini->getClPermVal('phpiniDisplayErrors') == 'yes') ? $checked : '';
 	$tplVars['DISPLAY_ERRORS_NO'] = ($phpini->getClPermVal('phpiniDisplayErrors') == 'no') ? $checked : '';
 
 	if (PHP_SAPI == 'apache2handler') {
 		$tplVars['PHP_EDITOR_DISABLE_FUNCTIONS_BLOCK'] = '';
 	} else {
-		$tplVars['TR_CAN_EDIT_DISABLE_FUNCTIONS'] = tr('Can edit the PHP %s directive', true, '<b>disable_functions</b>');
+		$tplVars['TR_CAN_EDIT_DISABLE_FUNCTIONS'] = tr('Can edit the PHP %s directive', '<strong>disable_functions</strong>');
 		$tplVars['DISABLE_FUNCTIONS_YES'] = ($phpini->getClPermVal('phpiniDisableFunctions') == 'yes') ? $checked : '';
 		$tplVars['DISABLE_FUNCTIONS_NO'] = ($phpini->getClPermVal('phpiniDisableFunctions') == 'no') ? $checked : '';
 		$tplVars['TR_ONLY_EXEC'] = tr('Only exec');
@@ -482,8 +484,8 @@ if (isset($cfg->HOSTING_PLANS_LEVEL) && $cfg->HOSTING_PLANS_LEVEL == 'admin') {
 	$tpl = new iMSCP_pTemplate();
 	$tpl->define_dynamic(
 		array(
-			'layout' => 'shared/layouts/ui.tpl',
-			'page' => 'shared/partials/forms/hosting_plan_add.tpl',
+			'layout' => 'shared/layouts/ui.phtml',
+			'page' => 'shared/partials/forms/hosting_plan_add.phtml',
 			'page_message' => 'layout',
 			'php_editor_disable_functions_block' => 'page',
 			'custom_dns_records_feature' => 'page',

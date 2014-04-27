@@ -35,86 +35,211 @@
 require_once 'php-gettext/gettext.inc';
 
 /**
- * Translates a given message into the selected language, if exists
+ * Translates the given message into the selected language, if exists and apply the tohtml() method to it
  *
  * @author Laurent Declercq (nuxwin) <l.declercq@nuxwin.com>
- * @author Raphael Geissert (2007)
  * @param string $msgid string to translate
- * @param mixed $substitution,... If second parameter is bool (true), prevent the returned string from being replaced
- *                                with html entities. If not considere the parameter(s) as simple substitution value(s)
+ * @internal param mixed $substitution Substitution value(s)
  * @return string Translated or original message
  */
-function tr($msgid, $substitution = false)
+function tr($msgid)
 {
-	$msgstr = T_($msgid);
+	$msgid = T_($msgid);
 
-	// Detect whether $substitution is really a substitution or just a value to
-	// be replaced in $msgstr
-	if (!is_bool($substitution)) {
-		$substitution = false;
-	}
+	$argv = func_get_args();
 
-	// Detect comments and strip them if $msgid == $msgstr
-	// e.g. tr('_: This is just a comment\nReal message to translate here')
-	if (substr($msgid, 0, 3) == '_: ' && $msgid == $msgstr && count($l = explode("\n", $msgid)) > 1) {
-		unset($l[0]);
-		$msgstr = implode("\n", $l);
-	}
-
-	// Replace values
-	if (func_num_args() > 1) {
-		$argv = func_get_args();
+	if(func_num_args() > 1) {
 		unset($argv[0]);
 
-		if (is_bool($argv[1])) {
+		if(!empty($argv) && is_bool($argv[1])) { // Ensure backward compatibility with plugins
 			unset($argv[1]);
 		}
 
-		$msgstr = vsprintf($msgstr, $argv);
+		return vsprintf($msgid, $argv);
 	}
 
-	if (!$substitution) {
-		$msgstr = replace_html(tohtml($msgstr));
+	return replace_html(tohtml($msgid));
+}
+
+function tr_e($msgid)
+{
+	$msgid = T_($msgid);
+
+	$argv = func_get_args();
+
+	if(func_num_args() > 1) {
+		unset($argv[0]);
+
+		if(!empty($argv) && is_bool($argv[1])) { // Ensure backward compatibility with plugins
+			unset($argv[1]);
+		}
+
+		return vsprintf($msgid, $argv);
 	}
 
-	return $msgstr;
+	echo replace_html(tohtml($msgid));
 }
 
 /**
- * Replaces special encoded strings back to their original signs
+ * Get language name
  *
- * @author Benedikt Heintel <benedikt.heintel@ispcp.net>
- * @param string $string String to replace chars
- * @return String with replaced chars
+ * @param string $lang language
+ * @return string
  */
-function replace_html($string)
+function i18n_languageName($lang)
 {
-	$pattern = array(
-		'#&lt;[ ]*b[ ]*&gt;#i', '#&lt;[ ]*/[ ]*b[ ]*&gt;#i',
-		'#&lt;[ ]*strong[ ]*&gt;#i', '#&lt;[ ]*/[ ]*strong[ ]*&gt;#i',
-		'#&lt;[ ]*em[ ]*&gt;#i', '#&lt;[ ]*/[ ]*em[ ]*&gt;#i',
-		'#&lt;[ ]*i[ ]*&gt;#i', '#&lt;[ ]*/[ ]*i[ ]*&gt;#i',
-		'#&lt;[ ]*small[ ]*&gt;#i', '#&lt;[ ]*/[ ]*small[ ]*&gt;#i',
-		'#&lt;[ ]*br[ ]*(/|)[ ]*&gt;#i');
+	switch ($lang) {
+		case 'af':
+			return 'Afrikaans - Afrikaans';
+		case 'ar':
+			return 'Arabic - &#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577; &nbsp;';
+		case 'az':
+			return 'Azerbaijani - Azərbaycan dili';
+		case 'be':
+			return 'Belarusian - Беларуская';
+		case 'bg_BG':
+			return 'Bulgarian - български език';
+		case 'bn':
+			return 'Bengali - বাংলা';
+		case 'br':
+			return 'Breton - Brezhoneg';
+		case 'bs':
+			return 'Bosnian - Bosanski jezik';
+		case 'ca_ES':
+			return 'Catalan - Català';
+		case 'cs_CZ':
+			return 'Czech - Čeština';
+		case 'cy':
+			return 'Welsh - Cymraeg';
+		case 'da_DK':
+			return 'Danish - Dansk';
+		case 'de_DE':
+			return 'German - Deutsch';
+		case 'el':
+			return 'Greek - Ελληνικά';
+		case 'en':
+			return 'English';
+		case 'en_GB':
+			return 'English (United Kingdom)';
+		case 'es_AR':
+			return 'Spanish (Argentina) - Español (Argentina)';
+		case 'es_ES':
+			return 'Spanish - Español';
+		case 'et':
+			return 'Estonian - Eesti keel';
+		case 'eu_ES':
+			return 'Basque - Euskara';
+		case 'fa_IR':
+			return 'Persian - &#1601;&#1575;&#1585;&#1587;&#1740; &nbsp;';
+		case 'fi_FI':
+			return 'Finnish - Suomen kieli';
+		case 'fr_FR':
+			return 'French - Français';
+		case 'gl_ES':
+			return 'Galician - Galego';
+		case 'he':
+			return 'Hebrew - ‫עברית';
+		case 'hi':
+			return 'Hindi - हिन्दी ; हिंदी';
+		case 'hr':
+			return 'Croatian - Hrvatski';
+		case 'hu_HU':
+			return 'Hungarian - Magyar';
+		case 'hy':
+			return 'Armenian - Հայերէն';
+		case 'ia':
+			return 'Interlingua - Interlingua';
+		case 'id':
+			return 'Indonesian - Bahasa Indonesia';
+		case 'it_IT':
+			return 'Italian - Italiano';
+		case 'ja_JP':
+			return 'Japanese - 日本語 (にほんご)';
+		case 'ko':
+			return 'Korean - 한국어 (韓國語)';
+		case 'ka':
+			return 'Georgian - ქართული';
+		case 'kk':
+			return 'Kazakh - Қазақ тілі';
+		case 'kn':
+			return 'Kannada - ಕನ್ನಡ';
+		case 'ky':
+			return 'Kirghiz - кыргыз тили';
+		case 'lt_LT':
+			return 'Lithuanian - Lietuvių kalba';
+		case 'lv':
+			return 'Latvian - Latviešu valoda';
+		case 'mk':
+			return 'Macedonian - македонски јазик';
+		case 'ml':
+			return 'Malayalam - മലയാളം';
+		case 'mn':
+			return 'Mongolian - Монгол';
+		case 'ms':
+			return 'Malay - بهاس ملايو';
+		case 'nb_NO':
+			return 'Norwegian - Norsk bokmål';
+		case 'nl_NL':
+			return 'Dutch - Nederlands';
+		case 'pa':
+			return 'Panjabi - ਪੰਜਾਬੀ';
+		case 'pl_PL':
+			return 'Polish - Polski';
+		case 'pt_BR':
+			return 'Brazilian Portuguese - Brazilian Português';
+		case 'pt_PT':
+			return 'Portuguese - Português';
+		case 'ro_RO':
+			return 'Romanian - Română';
+		case 'ru_RU':
+			return 'Russian - русский язык';
+		case 'si':
+			return 'Sinhalese - සිංහල';
+		case 'sk_SK':
+			return 'Slovak - Slovenčina';
+		case 'sl':
+			return 'Slovene - Slovenščina';
+		case 'sq':
+			return 'Albanian - Shqip';
+		case 'sr':
+			return 'Serbian - српски језик';
+		case 'sv_SE':
+			return 'Swedish - Svenska';
+		case 'ta':
+			return 'Tamil - தமிழ்';
+		case 'te':
+			return 'Telugu - తెలుగు';
+		case 'th_TH':
+			return 'Thai - ไทย';
+		case 'tk':
+			return 'Turkmen - Türkmen';
+		case 'tr_TR':
+			return 'Turkish - Türkçe';
+		case 'tt':
+			return 'Tatar - татарча';
+		case 'ug':
+			return 'Uighur - Uyƣurqə';
+		case 'uk_UA':
+			return 'Ukrainian - українська мова';
+		case 'ur':
+			return 'Urdu - ‫اردو';
+		case 'uz':
+			return 'Uzbek - أۇزبېك';
+		case 'vi':
+			return 'Viêt Namese - Tiếng Việt';
+		case 'zh_HK':
+				return 'Chinese (Hong Kong) - 中國（香港）';
+		case 'zh_TW':
+			return 'Chinese (Taiwan) - 中国（台湾）';
+		case 'zh_CN':
+			return 'Chinese (China) - 中文（中国）';
+	}
 
-	$replacement = array(
-		'<b>', '</b>', '<strong>', '</strong>', '<em>', '</em>', '<i>', '</i>', '<small>', '</small>', '<br />'
-	);
-
-	$string = preg_replace($pattern, $replacement, $string);
-
-	return $string;
-}
-
-// Dirty hack to make gettext add this entry to the .pot file
-if (false) {
-	tr('_: Localised language');
+	return "Unknown - $lang";
 }
 
 /**
  * Build languages index from machine object files.
- *
- * Note: Only the files that are readable will be processed.
  *
  * @author Laurent Declercq <l.declercq@nuxwin.com>
  * @return void
@@ -124,46 +249,35 @@ function i18n_buildLanguageIndex()
 	/** @var $cfg iMSCP_Config_Handler_File */
 	$cfg = iMSCP_Registry::get('config');
 
-	$iterator = new RecursiveIteratorIterator(
-		new RecursiveDirectoryIterator($cfg->GUI_ROOT_DIR . '/i18n/locales/', FilesystemIterator::SKIP_DOTS)
+	$languageDir = new RecursiveIteratorIterator(
+		new RecursiveDirectoryIterator($cfg['GUI_ROOT_DIR'] . '/i18n/locales/', FilesystemIterator::SKIP_DOTS)
 	);
 
 	$availableLanguages = array();
 
-	/** @var $item SplFileInfo */
-	foreach ($iterator as $item) {
-		if (strlen($basename = $item->getBasename()) > 8) {
+	/** @var $languageFile SplFileInfo */
+	foreach ($languageDir as $languageFile) {
+		if (strlen($basename = $languageFile->getBasename()) > 8) {
 			continue;
 		}
 
-		if ($item->isReadable()) {
-			$parser = new iMSCP_I18n_Parser_Mo($item->getPathname());
+		if ($languageFile->isReadable()) {
+			$parser = new iMSCP_I18n_Parser_Mo($languageFile->getPathname());
 			$translationTable = $parser->getTranslationTable();
 
 			if(!empty($translationTable)) {
 				$poRevisionDate = DateTime::createFromFormat('Y-m-d H:i O', $parser->getPotCreationDate());
 
+				$locale = $parser->getLanguage();
+
 				$availableLanguages[$basename] = array(
-					'locale' => $parser->getLanguage(),
+					'locale' => $locale,
 					'revision' => $poRevisionDate->format('Y-m-d H:i'),
 					'translatedStrings' => $parser->getNumberOfTranslatedStrings(),
 					'lastTranslator' => $parser->getLastTranslator()
 				);
 
-				// Getting localized language name
-				if(!isset($translationTable['_: Localised language'])) {
-					$availableLanguages[$basename]['language'] = tr('Unknown');
-				} else {
-					$availableLanguages[$basename]['language'] = $translationTable['_: Localised language'];
-				}
-			} else {
-				set_page_message(
-					tr(
-						'The %s translation file has been ignored: Translation table is empty.',
-						"<strong>$basename</strong>"
-					),
-					'warning'
-				);
+				$availableLanguages[$basename]['language'] =  i18n_languageName($locale);
 			}
 		}
 	}
@@ -272,7 +386,7 @@ function i18n_importMachineObjectFile()
 	$beforeMove = function () {
 		/** @var $cfg iMSCP_Config_Handler_File */
 		$cfg = iMSCP_Registry::get('config');
-		$localesDirectory = $cfg->GUI_ROOT_DIR . '/i18n/locales';
+		$localesDirectory = $cfg['GUI_ROOT_DIR'] . '/i18n/locales';
 
 		$filePath = $_FILES['languageFile']['tmp_name'];
 
@@ -287,28 +401,21 @@ function i18n_importMachineObjectFile()
 			$locale = $parser->getLanguage();
 			$revision = $parser->getPoRevisionDate();
 			$lastTranslator = $parser->getLastTranslator();
-			$translationTable = $parser->getTranslationTable();
 		} catch (iMSCP_Exception $e) {
 			set_page_message(tr('Only gettext Machine Object files (MO files) are accepted.'), 'error');
 			return false;
 		}
 
-		if (isset($translationTable['_: Localised language'])) {
-			$language = $translationTable['_: Localised language'];
-		} else {
-			$language = '';
-		}
-
-		if (empty($encoding) || empty($locale) || empty($revision) || empty($lastTranslator) || empty($language)) {
+		if (empty($encoding) || empty($locale) || empty($revision) || empty($lastTranslator)) {
 			set_page_message(
-				tr("%s is not a valid i-MSCP language file.", tohtml($_FILES['languageFile']['name'])), 'error'
+				tr("%s is not a valid i-MSCP language file.", $_FILES['languageFile']['name']), 'error'
 			);
 			return false;
 		}
 
 		if (!is_dir("$localesDirectory/$locale")) {
 			if (!@mkdir("$localesDirectory/$locale", 0700)) {
-				set_page_message(tr("Unable to create '%s' directory for language file.", tohtml($locale)), 'error');
+				set_page_message(tr("Unable to create the %s directory for language file.", $locale), 'error');
 				return false;
 			}
 		}
@@ -366,7 +473,7 @@ function i18n_changeDefaultLanguage()
 
 		// Ensures language change on next load for current user in case he has not yet his gui properties explicitly
 		// set (eg. for the first admin user when i-MSCP was just installed
-		$stmt = exec_query('SELECT `lang`  FROM `user_gui_props` WHERE `user_id` = ?', $_SESSION['user_id']);
+		$stmt = exec_query('SELECT lang  FROM user_gui_props WHERE user_id = ?', $_SESSION['user_id']);
 
 		if ($stmt->fields['lang'] == null) {
 			unset($_SESSION['user_def_lang']);

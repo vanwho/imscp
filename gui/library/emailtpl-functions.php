@@ -125,7 +125,7 @@ function get_welcome_email($userId, $userType = 'user')
 	$data = get_email_tpl_data($userId, 'add-user-auto-msg');
 
 	if ($data['subject'] == '') {
-		$data['subject'] = tr('Welcome {USERNAME} to i-MSCP', true);
+		$data['subject'] = tr('Welcome {USERNAME} to i-MSCP');
 	}
 
 	// No custom template for welcome mail - return the default
@@ -150,7 +150,7 @@ Statistics: http://{USERNAME}/{WEBSTATS_RPATH}
 (Same username and password than above)
 
 Thank you for using our services.
-', true);
+');
 
 		} else {
 			$data['message'] = tr('
@@ -169,7 +169,7 @@ Remember to change your password often and the first time you login.
 You can login right now at {BASE_SERVER_VHOST_PREFIX}{BASE_SERVER_VHOST}
 
 Thank you for using our services.
-', true);
+');
 		}
 	}
 
@@ -202,7 +202,7 @@ function get_lostpassword_activation_email($adminId)
 	$data = get_email_tpl_data($adminId, 'lostpw-msg-1');
 
 	if (!$data['subject']) {
-		$data['subject'] = tr('Please activate your new i-MSCP password', true);
+		$data['subject'] = tr('Please activate your new i-MSCP password');
 	}
 
 	if (!$data['message']) {
@@ -219,7 +219,7 @@ Thank you for using i-MSCP services.
 ___________________________
 The i-MSCP Team
 
-', true);
+');
 	}
 
 	return $data;
@@ -251,7 +251,7 @@ function get_lostpassword_password_email($userId)
 	$data = get_email_tpl_data($userId, 'lostpw-msg-2');
 
 	if (!$data['subject']) {
-		$data['subject'] = tr('Your new i-MSCP login', true);
+		$data['subject'] = tr('Your new i-MSCP login');
 	}
 
 	if (!$data['message']) {
@@ -269,7 +269,7 @@ Thank you for using i-MSCP services.
 ___________________________
 The i-MSCP Team
 
-', true);
+');
 	}
 
 	return $data;
@@ -301,7 +301,7 @@ function get_order_email($userId)
 	$data = get_email_tpl_data($userId, 'after-order-msg');
 
 	if (!$data['subject']) {
-		$data['subject'] = tr('Confirmation for domain order {DOMAIN}', true);
+		$data['subject'] = tr('Confirmation for domain order {DOMAIN}');
 	}
 
 	if (!$data['message']) {
@@ -325,7 +325,7 @@ Thank you for using i-MSCP services.
 ___________________________
 The i-MSCP Team
 
-", true);
+");
 	}
 
 	return $data;
@@ -344,7 +344,7 @@ function get_alias_order_email($userId)
 	$data = get_email_tpl_data($userId, 'alias-order-msg');
 
 	if (!$data['subject']) {
-		$data['subject'] = tr('New alias order for {CUSTOMER}', true);
+		$data['subject'] = tr('New alias order for {CUSTOMER}');
 	}
 
 	if (!$data['message']) {
@@ -363,7 +363,7 @@ Thank you for using i-MSCP services.
 ___________________________
 The i-MSCP Team
 
-', true);
+');
 	}
 
 	return $data;

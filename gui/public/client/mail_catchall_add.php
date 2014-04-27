@@ -488,8 +488,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/mail_catchall_add.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/mail_catchall_add.phtml',
 		'page_message' => 'layout',
 		'mail_list' => 'page',
 		'mail_item' => 'mail_list'

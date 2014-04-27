@@ -428,8 +428,8 @@ if ($resellerProps['max_als_cnt'] != 0 && $resellerProps['current_als_cnt'] >= $
 	$tpl = new iMSCP_pTemplate();
 	$tpl->define_dynamic(
 		array(
-			'layout' => 'shared/layouts/ui.tpl',
-			'page' => 'reseller/alias_add.tpl',
+			'layout' => 'shared/layouts/ui.phtml',
+			'page' => 'reseller/alias_add.phtml',
 			'page_message' => 'layout',
 			'customer_option' => 'page',
 			'shared_mount_point_domain' => 'page'

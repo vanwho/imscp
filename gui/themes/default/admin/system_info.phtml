@@ -1,0 +1,123 @@
+
+<table class="firstColFixed">
+	<thead>
+	<tr>
+		<th colspan="2"><?php tr_e('System info') ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td>{<?php tr_e('Kernel') ?></td>
+		<td>{KERNEL}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Uptime') ?></td>
+		<td>{UPTIME}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Load') ?></td>
+		<td>{LOAD}</td>
+	</tr>
+	</tbody>
+</table>
+
+<h2 class="system_cpu"><span><?php tr_e('CPU info') ?></span></h2>
+
+<table class="firstColFixed">
+	<thead>
+	<tr>
+		<th colspan="2"><?php tr_e('CPU') ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><?php tr_e('Model') ?></td>
+		<td>{CPU_MODEL}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Cores') ?></td>
+		<td>{CPU_CORES}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Clock speed') ?></td>
+		<td>{CPU_CLOCK_SPEED}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Cache') ?></td>
+		<td>{CPU_CACHE}</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Bogomips') ?></td>
+		<td>{CPU_BOGOMIPS}</td>
+	</tr>
+	</tbody>
+</table>
+
+<h2 class="tools"><span><?php tr_e('Memory info') ?></span></h2>
+
+<table class="firstColFixed">
+	<thead>
+	<tr>
+		<th><?php tr_e('Memory') ?></th>
+		<th><?php tr_e('Total') ?></th>
+		<th><?php tr_e('In use') ?></th>
+		<th><?php tr_e('Free') ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td>&nbsp;</td>
+		<td>{RAM_TOTAL}</td>
+		<td>{RAM_USED}</td>
+		<td>{RAM_FREE}</td>
+	</tr>
+	</tbody>
+</table>
+
+<table class="firstColFixed">
+	<thead>
+	<tr>
+		<th>{TR_SWAP}</th>
+		<th>{TR_TOTAL}</th>
+		<th>{TR_USED}</th>
+		<th>{TR_FREE}</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td>&nbsp;</td>
+		<td>{SWAP_TOTAL}</td>
+		<td>{SWAP_USED}</td>
+		<td>{SWAP_FREE}</td>
+	</tr>
+	</tbody>
+</table>
+
+<h2 class="tools"><span><?php tr_e('File system info') ?></span></h2>
+
+<table class="firstColFixed">
+	<thead>
+	<tr>
+		<th><?php tr_e('Mount point') ?></th>
+		<th><?php tr_e('Type') ?></th>
+		<th><?php tr_e('Partition') ?></th>
+		<th><?php tr_e('Percent') ?></th>
+		<th><?php tr_e('Free') ?></th>
+		<th><?php tr_e('Used') ?></th>
+		<th><?php tr_e('Size') ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<!-- BDP: device_block -->
+	<tr>
+		<td>{MOUNT}</td>
+		<td>{TYPE}</td>
+		<td>{PARTITION}</td>
+		<td>{PERCENT}%</td>
+		<td>{FREE}</td>
+		<td>{USED}</td>
+		<td>{SIZE}</td>
+	</tr>
+	<!-- EDP: device_block -->
+	</tbody>
+</table>

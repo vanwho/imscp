@@ -84,10 +84,10 @@ if (isset($_GET['ticket_id']) && !empty($_GET['ticket_id'])) {
 }
 
 $tpl = new iMSCP_pTemplate();
-$tpl->define_dynamic('layout', 'shared/layouts/ui.tpl');
+$tpl->define_dynamic('layout', 'shared/layouts/ui.phtml');
 $tpl->define_dynamic(
 	array(
-		 'page' => 'client/ticket_view.tpl',
+		 'page' => 'client/ticket_view.phtml',
 		 'page_message' => 'layout',
 		 'tickets_list' => 'page',
 		 'tickets_item' => 'tickets_list'));

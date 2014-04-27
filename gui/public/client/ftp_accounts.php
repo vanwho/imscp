@@ -92,8 +92,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/ftp_accounts.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/ftp_accounts.phtml',
 		'page_message' => 'layout',
 		'ftp_message' => 'page',
 		'ftp_accounts' => 'page',
@@ -113,7 +113,7 @@ $tpl->assign(
 		'TR_LOGINAS' => tr('Login As'),
 		'TR_EDIT' => tr('Edit'),
 		'TR_DELETE' => tr('Delete'),
-		'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete the %s FTP user?', true, '%s'),
+		'TR_MESSAGE_DELETE' => tr("Are you sure you want to delete the '%s' FTP user?", '%s'),
 		'FILEMANAGER_TARGET' => $cfg->FILEMANAGER_TARGET
 	)
 );

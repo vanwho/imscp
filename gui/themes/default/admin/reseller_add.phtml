@@ -1,0 +1,471 @@
+
+<script>
+	$(document).ready(function () {
+		var errFieldsStack = {ERR_FIELDS_STACK};
+		$.each(errFieldsStack, function () { $('#' + this).css('border-color', '#ca1d11'); });
+
+		$.ajaxSetup({
+			url: $(location).attr('pathname'),
+			type: 'GET',
+			datatype: 'text',
+			beforeSend: function (xhr){xhr.setRequestHeader('Accept','text/plain');},
+			success: function (r) { $('#password, #password_confirmation').val(r); },
+			error: iMSCPajxError
+		});
+
+		$('#generate_password').click(function () { $.ajax(); });
+
+		$('#reset_password').click(function () { $('#password, #password_confirmation').val(''); });
+
+		// Create dialog box for some messages (password and notices)
+		$('#dialog_box').dialog({
+			modal: true,
+			autoOpen: false,
+			hide: 'blind',
+			show: 'blind',
+			buttons: { Ok: function () { $(this).dialog('close'); }}
+		});
+
+		// Show generated password in specific dialog box
+		$('#show_password').click(function () {
+			var password = $('#password').val();
+
+			if (password == '') {
+				password = '<br/>{TR_PASSWORD_GENERATION_NEEDED}';
+			} else {
+				password = '<br/>{TR_NEW_PASSWORD_IS}: <strong>' + $('#password').val() + '</strong>';
+			}
+
+			$('#dialog_box').dialog("option", "title", '{TR_PASSWORD}').html(password);
+			$('#dialog_box').dialog('open');
+		});
+
+		$('#php_editor_dialog').dialog({
+			hide: 'blind',
+			show: 'slide',
+			focus: false,
+			autoOpen: false,
+			width: 650,
+			modal: true,
+			buttons:{ '{TR_CLOSE}': function(){ $(this).dialog('close'); } }
+		});
+
+		$(window).scroll(function() {
+			$("#php_editor_dialog").dialog("option", "position", { my: "center", at: "center", of: window });
+		});
+
+		$('form').submit(function () { $('#php_editor_dialog').parent().appendTo($('#dialogContainer')); });
+
+		$('#php_editor_dialog_open').button({ icons:{ primary:'ui-icon-gear'} }).click(function (e) {
+			$('#php_editor_dialog').dialog('open');
+			return false;
+		});
+
+		if ($('#php_ini_system_no').is(':checked')) { $('#php_editor_dialog_open').hide(); }
+
+		$('input[name="php_ini_system"]').change(function () { $('#php_editor_dialog_open').fadeToggle(); });
+
+		var errorMessages = $('.php_editor_error');
+
+		function _updateErrorMesssages(k, t) {
+			if (t != undefined) {
+				if (!$('#err_' + k).length) {
+					$("#msg_default").remove();
+					errorMessages.append('<span style="display:block" id="err_' + k + '">' + t + '</span>').
+						removeClass('success').addClass('error');
+				}
+			} else if ($('#err_' + k).length) {
+				$('#err_' + k).remove();
+			}
+
+			if ($.trim(errorMessages.text()) == '') {
+				errorMessages.empty().append('<span id="msg_default">{TR_FIELDS_OK}</span>').
+					removeClass('error').addClass('success');
+			}
+		}
+
+		$.each(['php_ini_max_post_max_size', 'php_ini_max_upload_max_filesize', 'php_ini_max_max_execution_time' ,
+			'php_ini_max_max_input_time', 'php_ini_max_memory_limit'], function () {
+			var k = this;
+			$('#' + k).keyup(function () {
+				var r = /^(0|[1-9]\d*)$/; // Regexp to check value syntax
+				var nv = $(this).val(); // Get new value to be checked
+
+				if (!r.test(nv) || parseInt(nv) < 0 || parseInt(nv) >= 10000) {
+					$(this).addClass('ui-state-error');
+					_updateErrorMesssages(k, sprintf('{TR_VALUE_ERROR}', k.substr(12), 0, 10000));
+				} else {
+					$(this).removeClass('ui-state-error');
+					_updateErrorMesssages(k);
+				}
+			}).trigger('keyup');
+		});
+
+		$('#reseller_ips_table').dataTable(
+			{
+				"oLanguage": {DATATABLE_TRANSLATIONS},
+				"bStateSave": true
+			}
+		);
+	});
+</script>
+
+<div id="dialog_box"></div>
+
+<form name="createFrm" method="post" action="reseller_add.php">
+<table class="firstColFixed">
+	<thead>
+	<tr>
+		<th colspan="2"><?php tr_e('Account data') ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><label for="admin_name"><?php tr_e('Username') ?></label></td>
+		<td><input type="text" name="admin_name" id="admin_name" value="{RESELLER_NAME}"/></td>
+	</tr>
+	<tr>
+		<td><label for="password"><?php tr_e('Password') ?></label></td>
+		<td>
+			<input type="password" name="password" id="password" value="{PASSWORD}" autocomplete="off"/>
+			<button type="button" id="generate_password"><?php tr_e('Generate') ?></button>
+			<button type="button" id="show_password"><?php tr_e('Show') ?></button>
+			<button type="button" id="reset_password"><?php tr_e('Reset') ?></button>
+		</td>
+	</tr>
+	<tr>
+		<td><label for="password_confirmation"><?php tr_e('Password confirmation') ?></label></td>
+		<td>
+			<input type="password" name="password_confirmation" id="password_confirmation"
+				   value="{PASSWORD_CONFIRMATION}" autocomplete="off"/>
+		</td>
+	</tr>
+	<tr>
+		<td><label for="email"><?php tr_e('Email') ?></label></td>
+		<td><input type="text" name="email" id="email" value="{EMAIL}"/></td>
+	</tr>
+	</tbody>
+</table>
+
+<!-- BDP: ips_block -->
+<table id="reseller_ips_table" class="firstColFixed datatable">
+	<thead>
+	<tr>
+		<th><?php tr_e('IP address') ?></th>
+		<th>{TR_ASSIGN}</th>
+	</tr>
+	</thead>
+	<tbody>
+	<!-- BDP: ip_block -->
+	<tr>
+		<td>{IP_NUMBER}</td>
+		<td><input type="checkbox" id="ip_{IP_ID}" name="reseller_ips[]" value="{IP_ID}" {IP_ASSIGNED} /></td>
+	</tr>
+	<!-- EDP: ip_block -->
+	</tbody>
+</table>
+<!-- EDP: ips_block -->
+
+<table class="firstColFixed">
+	<thead>
+	<tr>
+		<th colspan="2"><?php tr_e('Account limits') ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><label for="max_dmn_cnt"><?php tr_e('Max domains') ?></label></td>
+		<td><input type="text" name="max_dmn_cnt" id="max_dmn_cnt" value="{MAX_DMN_CNT}"/></td>
+	</tr>
+	<tr>
+		<td><label for="max_sub_cnt"><?php tr_e('Max subdomains') ?></label></td>
+		<td><input type="text" name="max_sub_cnt" id="max_sub_cnt" value="{MAX_SUB_CNT}"/></td>
+	</tr>
+	<tr>
+		<td><label for="max_als_cnt"><?php tr_e('Max domain aliases') ?></label></td>
+		<td><input type="text" name="max_als_cnt" id="max_als_cnt" value="{MAX_ALS_CNT}"/></td>
+	</tr>
+	<tr>
+		<td><label for="max_mail_cnt"><?php tr_e('Max mail users') ?></label></td>
+		<td><input type="text" name="max_mail_cnt" id="max_mail_cnt" value="{MAX_MAIL_CNT}"/></td>
+	</tr>
+	<tr>
+		<td><label for="max_ftp_cnt"><?php tr_e('Max Ftp users') ?></label></td>
+		<td><input type="text" name="max_ftp_cnt" id="max_ftp_cnt" value="{MAX_FTP_CNT}"/></td>
+	</tr>
+	<tr>
+		<td><label for="max_sql_db_cnt"><?php tr_e('Max SQL databases') ?></label></td>
+		<td><input type="text" name="max_sql_db_cnt" id="max_sql_db_cnt" value="{MAX_SQL_DB_CNT}"/></td>
+	</tr>
+	<tr>
+		<td><label for="max_sql_user_cnt"><?php tr_e('Max SQL users') ?></label></td>
+		<td><input type="text" name="max_sql_user_cnt" id="max_sql_user_cnt" value="{MAX_SQL_USER_CNT}"/></td>
+	</tr>
+	<tr>
+		<td><label for="max_traff_amnt"><?php tr_e('Max traffic per month') ?></label></td>
+		<td><input type="text" name="max_traff_amnt" id="max_traff_amnt" value="{MAX_TRAFF_AMNT}"/></td>
+	</tr>
+	<tr>
+		<td><label for="max_disk_amnt"><?php tr_e('Max diskspace') ?></label></td>
+		<td><input type="text" name="max_disk_amnt" id="max_disk_amnt" value="{MAX_DISK_AMNT}"/></td>
+	</tr>
+	</tbody>
+</table>
+
+<table class="firstColFixed">
+	<thead>
+	<tr>
+		<th colspan="2"><?php tr_e('Features') ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><label><?php tr_e('PHP Editor') ?></label></td>
+		<td colspan="3" id="dialogContainer" style="height: 30px;">
+			<div class="radio">
+				<input type="radio" name="php_ini_system" id="php_ini_system_yes" value="yes" {PHP_INI_SYSTEM_YES} />
+				<label for="php_ini_system_yes"><?php tr_e('Yes') ?></label>
+				<input type="radio" name="php_ini_system" id="php_ini_system_no" value="no" {PHP_INI_SYSTEM_NO} />
+				<label for="php_ini_system_no"><?php tr_e('No') ?></label>
+				<button type="button" id="php_editor_dialog_open"><?php tr_e('Settings') ?></button>
+			</div>
+			<div style="margin:0" id="php_editor_dialog" title="<?php tr_e('PHP Editor settings') ?>">
+				<div class="php_editor_error success">
+					<span id="msg_default"><?php tr_e('All parameter values are valid') ?></span>
+				</div>
+				<table class="firstColFixed">
+					<thead>
+					<tr>
+						<th colspan="2">{TR_PERMISSIONS}</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr>
+						<td>
+							{TR_PHP_INI_AL_ALLOW_URL_FOPEN}
+							<span class="tips icon i_help" title="{TR_PHP_INI_PERMISSION_HELP}"></span>
+						</td>
+						<td>
+							<div class="radio">
+								<input type="radio" name="php_ini_al_allow_url_fopen"
+									   id="php_ini_al_allow_url_fopen_yes"
+									   value="yes" {PHP_INI_AL_ALLOW_URL_FOPEN_YES}/>
+								<label for="php_ini_al_allow_url_fopen_yes">{TR_YES}</label>
+								<input type="radio" name="php_ini_al_allow_url_fopen" id="php_ini_al_allow_url_fopen_no"
+									   value="no" {PHP_INI_AL_ALLOW_URL_FOPEN_NO}/>
+								<label for="php_ini_al_allow_url_fopen_no">{TR_NO}</label>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							{TR_PHP_INI_AL_DISPLAY_ERRORS}
+							<span class="tips icon i_help" title="{TR_PHP_INI_PERMISSION_HELP}"></span>
+						</td>
+						<td>
+							<div class="radio">
+								<input type="radio" name="php_ini_al_display_errors" id="php_ini_al_display_errors_yes"
+									   value="yes" {PHP_INI_AL_DISPLAY_ERRORS_YES}/>
+								<label for="php_ini_al_display_errors_yes">{TR_YES}</label>
+								<input type="radio" name="php_ini_al_display_errors" id="php_ini_al_display_errors_no"
+									   value="no" {PHP_INI_AL_DISPLAY_ERRORS_NO}/>
+								<label for="php_ini_al_display_errors_no">{TR_NO}</label>
+							</div>
+						</td>
+					</tr>
+					<!-- BDP: php_editor_disable_functions_block -->
+					<tr>
+						<td>
+							{TR_PHP_INI_AL_DISABLE_FUNCTIONS}
+							<span class="tips icon i_help" title="{TR_PHP_INI_PERMISSION_HELP}"></span>
+						</td>
+						<td>
+							<div class="radio">
+								<input type="radio" name="php_ini_al_disable_functions"
+									   id="php_ini_al_disable_functions_yes"
+									   value="yes" {PHP_INI_AL_DISABLE_FUNCTIONS_YES}/>
+								<label for="php_ini_al_disable_functions_yes"><?php tr_e('Yes') ?></label>
+								<input type="radio" name="php_ini_al_disable_functions"
+									   id="php_ini_al_disable_functions_no"
+									   value="no" {PHP_INI_AL_DISABLE_FUNCTIONS_NO}/>
+								<label for="php_ini_al_disable_functions_no"><?php tr_e('No') ?></label>
+							</div>
+						</td>
+					</tr>
+					<!-- EDP: php_editor_disable_functions_block -->
+					</tbody>
+				</table>
+				<table class="firstColFixed">
+					<thead>
+					<tr>
+						<th colspan="2"><?php tr_e('Directive values') ?></th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr>
+						<td><label for="php_ini_max_post_max_size">{TR_PHP_INI_MAX_POST_MAX_SIZE}</label></td>
+						<td>
+							<input name="php_ini_max_post_max_size" id="php_ini_max_post_max_size" type="text"
+								   value="{PHP_INI_MAX_POST_MAX_SIZE}"/> <span>{TR_MIB}</span>
+						</td>
+					</tr>
+					<tr>
+						<td><label for="php_ini_max_upload_max_filesize">{TR_PHP_INI_MAX_UPLOAD_MAX_FILESIZE}</label>
+						</td>
+						<td>
+							<input name="php_ini_max_upload_max_filesize" id="php_ini_max_upload_max_filesize"
+								   type="text" value="{PHP_INI_MAX_UPLOAD_MAX_FILESIZE}"/> <span>{TR_MIB}</span>
+						</td>
+					</tr>
+					<tr>
+						<td><label for="php_ini_max_max_execution_time">{TR_PHP_INI_MAX_MAX_EXECUTION_TIME}</label></td>
+						<td>
+							<input name="php_ini_max_max_execution_time" id="php_ini_max_max_execution_time" type="text"
+								   value="{PHP_INI_MAX_MAX_EXECUTION_TIME}"/> <span>{TR_SEC}</span>
+						</td>
+					</tr>
+					<tr>
+						<td><label for="php_ini_max_max_input_time">{TR_PHP_INI_MAX_MAX_INPUT_TIME}</label></td>
+						<td>
+							<input name="php_ini_max_max_input_time" id="php_ini_max_max_input_time" type="text"
+								   value="{PHP_INI_MAX_MAX_INPUT_TIME}"/> <span>{TR_SEC}</span>
+						</td>
+					</tr>
+					<tr>
+						<td><label for="php_ini_max_memory_limit">{TR_PHP_INI_MAX_MEMORY_LIMIT}</label></td>
+						<td>
+							<input name="php_ini_max_memory_limit" id="php_ini_max_memory_limit" type="text"
+								   value="{PHP_INI_MAX_MEMORY_LIMIT}"/> <span><?php tr_e('MiB') ?></span>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Software installer') ?></td>
+		<td>
+			<div class="radio">
+				<input type="radio" name="software_allowed" id="software_allowed_yes"
+					   value="yes" {SOFTWARES_INSTALLER_YES} />
+				<label for="software_allowed_yes"><?php tr_e('Yes') ?></label>
+				<input type="radio" name="software_allowed" id="software_allowed_no"
+					   value="no" {SOFTWARES_INSTALLER_NO} />
+				<label for="software_allowed_no"><?php tr_e('No') ?></label>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Software repository') ?></td>
+		<td>
+			<div class="radio">
+				<input type="radio" name="softwaredepot_allowed" id="softwaredepot_allowed_yes"
+					   value="yes" {SOFTWARES_REPOSITORY_YES} />
+				<label for="softwaredepot_allowed_yes"><?php tr_e('Yes') ?></label>
+				<input type="radio" name="softwaredepot_allowed" id="softwaredepot_allowed_no"
+					   value="no" {SOFTWARES_REPOSITORY_NO} />
+				<label for="softwaredepot_allowed_no"><?php tr_e('No') ?></label>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Web Software repository') ?></td>
+		<td>
+			<div class="radio">
+				<input type="radio" name="websoftwaredepot_allowed" id="websoftwaredepot_allowed_yes"
+					   value="yes" {WEB_SOFTWARES_REPOSITORY_YES} />
+				<label for="websoftwaredepot_allowed_yes"><?php tr_e('Yes') ?></label>
+				<input type="radio" name="websoftwaredepot_allowed" id="websoftwaredepot_allowed_no"
+					   value="no" {WEB_SOFTWARES_REPOSITORY_NO} />
+				<label for="websoftwaredepot_allowed_no"><?php tr_e('No') ?></label>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td><?php tr_e('Support ticket system') ?></td>
+		<td>
+			<div class="radio">
+				<input type="radio" name="support_system" id="support_system_yes" value="yes" {SUPPORT_SYSTEM_YES} />
+				<label for="support_system_yes"><?php tr_e('Yes') ?></label>
+				<input type="radio" name="support_system" id="support_system_no" value="no" {SUPPORT_SYSTEM_NO}/>
+				<label for="support_system_no"><?php tr_e('No') ?></label>
+			</div>
+		</td>
+	</tr>
+	</tbody>
+</table>
+
+<table class="firstColFixed">
+	<thead>
+	<tr>
+		<th colspan="2"><?php tr_e('Personal data') ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td><label for="customer_id"><?php tr_e('Customer ID') ?></label></td>
+		<td><input type="text" name="customer_id" id="customer_id" value="{CUSTOMER_ID}"/></td>
+	</tr>
+	<tr>
+		<td><label for="fname"><?php tr_e('Firstname') ?></label></td>
+		<td><input type="text" name="fname" id="fname" value="{FNAME}"/></td>
+	</tr>
+	<tr>
+		<td><label for="lname"><?php tr_e('Lastname') ?></label></td>
+		<td><input type="text" name="lname" id="lname" value="{LNAME}"/></td>
+	</tr>
+	<tr>
+		<td><label for="gender"><?php tr_e('Gender') ?></label></td>
+		<td>
+			<select id="gender" name="gender">
+				<option value="M" {MALE}><?php tr_e('Male') ?></option>
+				<option value="F" {FEMALE}><?php tr_e('Female') ?></option>
+				<option value="U" {UNKNOWN}><?php tr_e('Unknown') ?></option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td><label for="firm"><?php tr_e('Firm') ?></label></td>
+		<td><input type="text" name="firm" id="firm" value="{FIRM}"/></td>
+	</tr>
+	<tr>
+		<td><label for="street1"><?php tr_e('Street 1') ?></label></td>
+		<td><input type="text" name="street1" id="street1" value="{STREET1}"/></td>
+	</tr>
+	<tr>
+		<td><label for="street2"><?php tr_e('Street 2') ?></label></td>
+		<td><input type="text" name="street2" id="street2" value="{STREET2}"/></td>
+	</tr>
+	<tr>
+		<td><label for="zip"><?php tr_e('Zip') ?></label></td>
+		<td><input type="text" name="zip" id="zip" value="{ZIP}"/></td>
+	</tr>
+	<tr>
+		<td><label for="city"><?php tr_e('City') ?></label></td>
+		<td><input type="text" name="city" id="city" value="{CITY}"/></td>
+	</tr>
+	<tr>
+		<td><label for="state"><?php tr_e('State') ?></label></td>
+		<td><input type="text" name="state" id="state" value="{STATE}"/></td>
+	</tr>
+	<tr>
+		<td><label for="country"><?php tr_e('Country') ?></label></td>
+		<td><input type="text" name="country" id="country" value="{COUNTRY}"/></td>
+	</tr>
+	<tr>
+		<td><label for="phone"><?php tr_e('Phone') ?></label></td>
+		<td><input type="text" name="phone" id="phone" value="{PHONE}"/></td>
+	</tr>
+	<tr>
+		<td><label for="fax"><?php tr_e('Fax') ?></label></td>
+		<td><input type="text" name="fax" id="fax" value="{FAX}"/></td>
+	</tr>
+	</tbody>
+</table>
+
+<div class="buttons">
+	<button name="submit" type="submit"><?php tr_e('Create') ?></button>
+	<a class="link_as_button" href="manage_users.php"><?php tr_e('Cancel') ?></a>
+</div>
+</form>

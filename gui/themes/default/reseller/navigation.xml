@@ -209,7 +209,6 @@
             <target>{SUPPORT_SYSTEM_TARGET}</target>
             <class>support</class>
             <privilege_callback name="resellerHasFeature" param="support"/>
-            <privilege_callback name="resellerHasCustomers"/>
             <pages>
                 <tickets_open>
                     <label>Open tickets</label>

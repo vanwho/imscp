@@ -361,8 +361,8 @@ $tpl = new iMSCP_pTemplate();
 
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'reseller/alias.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'reseller/alias.phtml',
 		'page_message' => 'layout',
 		'alias_js' => 'page',
 		'alias_list' => 'page',
@@ -387,7 +387,7 @@ $tpl->assign(
 		'TR_OWNER' => tr('Owner'),
 		'TR_ACTION' => tr('Actions'),
 		'TR_ADD_DOMAIN_ALIAS' => tr('Add domain alias'),
-		'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', true, '%s'),
+		'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', '%s'),
 		'TR_PREVIOUS' => tr('Previous'),
 		'TR_NEXT' => tr('Next')
 	)

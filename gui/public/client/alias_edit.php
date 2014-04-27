@@ -221,8 +221,8 @@ if (!empty($_POST) && client_editDomainAlias()) {
 	$tpl = new iMSCP_pTemplate();
 	$tpl->define_dynamic(
 		array(
-			'layout' => 'shared/layouts/ui.tpl',
-			'page' => 'client/alias_edit.tpl',
+			'layout' => 'shared/layouts/ui.phtml',
+			'page' => 'client/alias_edit.phtml',
 			'page_message' => 'layout'
 		)
 	);

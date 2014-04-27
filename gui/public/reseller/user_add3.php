@@ -297,7 +297,7 @@ function reseller_addCustomer($resellerId)
 		}
 
 		// let's send mail to user
-		send_add_user_auto_msg($resellerId, $dmnUsername, $password, $userEmail, $firstName, $lastName, tr('Customer', true));
+		send_add_user_auto_msg($resellerId, $dmnUsername, $password, $userEmail, $firstName, $lastName, tr('Customer'));
 
 		$query = 'INSERT INTO `user_gui_props` (`user_id`, `lang`, `layout`) VALUES (?, ?, ?)';
 		exec_query($query, array($recordId, $cfg->USER_INITIAL_LANG, $cfg->USER_INITIAL_THEME));
@@ -361,8 +361,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'reseller/user_add3.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'reseller/user_add3.phtml',
 		'page_message' => 'layout',
 		'ip_entry' => 'page',
 		'alias_feature' => 'page'

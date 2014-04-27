@@ -490,9 +490,7 @@ function gen_user_list($tpl)
 					'USR_CREATED_BY' => tohtml($createdByName),
 					'USR_OPTIONS' => '',
 					'URL_EDIT_USR' => 'admin_edit.php?edit_id=' . $data['domain_admin_id'],
-					'TR_MESSAGE_CHANGE_STATUS' => tr('Are you sure you want to change the status of %s domain account?', '%s'),
-					'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', '%s'
-					)
+					'TR_MESSAGE_CHANGE_STATUS' => tr('Are you sure you want to change the status of the %s domain account?', '%s')
 				)
 			);
 
@@ -516,14 +514,13 @@ function get_admin_manage_users($tpl)
 {
 	$tpl->assign(
 		array(
-			'TR_MANAGE_USERS' => tr('Manage users'),
 			'TR_ADMINISTRATORS' => tr('Administrators'),
 			'TR_RESELLERS' => tr('Resellers'),
 			'TR_CUSTOMERS' => tr('Customers'),
 			'TR_SEARCH' => tr('Search'),
 			'TR_CREATED_ON' => tr('Creation date'),
 			'TR_EXPIRES_ON' => tr('Expire date'),
-			'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', true, '%s'),
+			'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', '%s'),
 			'TR_EDIT' => tr('Edit')
 		)
 	);

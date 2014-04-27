@@ -168,8 +168,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'reseller/domain_statistics.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'reseller/domain_statistics.phtml',
 		'page_message' => 'layout',
 		'month_list' => 'page',
 		'year_list' => 'page',

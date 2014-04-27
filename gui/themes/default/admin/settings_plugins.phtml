@@ -1,0 +1,190 @@
+
+<script>
+	$(document).ready(function () {
+		$('.datatable').dataTable(
+			{
+				"oLanguage": <?php echo getDataTablesPluginTranslations() ?>,
+				"iDisplayLength": 5,
+				"bStateSave": true
+			}
+		);
+
+		$("#dialog_box").dialog(
+			{
+				modal: true,
+				autoOpen: false,
+				hide: "blind",
+				show: "blind",
+				width: 650
+			}
+		);
+
+		$(".i_change_password").click(function (e) {
+			e.preventDefault();
+			var href = $(this).attr("href");
+			var $dialogBox = $("#dialog_box");
+
+			$dialogBox.dialog("option", "buttons", {
+				"<?php tr_e('Protect') ?>": function () { window.location.href = href; },
+				"<?php tr_e('Cancel') ?>": function () { $(this).dialog("close"); }
+			});
+
+			$dialogBox.dialog("open");
+		});
+
+		$('#bulkActionsTop, #bulkActionsBottom').change(function () {
+			$('select[name="bulkActions"] option[value=' + $(this).val() + ']').attr("selected", "selected");
+		});
+
+		$("thead :checkbox, tfoot :checkbox").change(
+			function ($e) { $("table :checkbox").prop('checked', $(this).is(':checked')); }
+		);
+
+		$('button[name=update_plugin_list]').click(function () { document.location = "?update_plugin_list=all"; });
+
+		$(".plugin_error").click(function (e) {
+			var errDialog = $('<div>' + '<pre>' + $.trim($(this).html()) + '</pre>' + '</div>');
+			var pluginName = $(this).attr('id');
+
+			errDialog.dialog(
+				{
+					modal: true,
+					title: pluginName + " - {TR_ERROR_DETAILS}",
+					show: "clip",
+					hide: "clip",
+					minHeight: 200,
+					minWidth: 500,
+					buttons: [
+						{ text: "{TR_FORCE_RETRY}", click: function () {
+							window.location = "?retry=" + pluginName
+						} },
+						{ text: "<?php tr_e('Close') ?>", click: function () {
+							$(this).dialog("close").dialog("destroy")
+						} }
+					]
+				}
+			);
+
+			return false;
+		});
+	});
+</script>
+<!-- BDP: plugins_block -->
+
+<p class="hint" style="font-variant: small-caps;font-size: small;">{TR_PLUGIN_HINT}</p>
+
+<br/>
+
+<div id="dialog_box" title="{TR_PLUGIN_CONFIRMATION_TITLE}">
+	<p>{TR_PROTECT_CONFIRMATION}</p>
+</div>
+
+<form name="plugin_frm" action="settings_plugins.php" method="post">
+	<table class="datatable">
+		<thead>
+		<tr style="border: none;">
+			<th style="width:21px;"><label><input type="checkbox"/></label></th>
+			<th style="width:150px"><?php tr_e('Plugin') ?></th>
+			<th><?php tr_e('Description') ?></th>
+			<th><?php tr_e('Status') ?></th>
+			<th><?php tr_e('Actions') ?></th>
+		</tr>
+		</thead>
+		<tfoot>
+		<tr>
+			<td><label><input type="checkbox"/></label></td>
+			<td><?php tr_e('Plugin') ?></td>
+			<td><?php tr_e('Description') ?></td>
+			<td><?php tr_e('Status') ?></td>
+			<td><?php tr_e('Actions') ?></td>
+		</tr>
+		</tfoot>
+		<tbody>
+		<!-- BDP: plugin_block -->
+		<tr>
+			<td><label><input type='checkbox' name='checked[]' value="{PLUGIN_NAME}"/></label></td>
+			<td><p><strong>{PLUGIN_NAME}</strong></p></td>
+			<td>
+				<p>{PLUGIN_DESCRIPTION}</p>
+				<span class="bold italic">
+					<small>{TR_VERSION} {PLUGIN_VERSION} | <a href="mailto:{PLUGIN_MAILTO}"><?php tr_e('By') ?> {PLUGIN_AUTHOR}</a>
+						| <a href="{PLUGIN_SITE}" target="_blank"><?php tr_e('Visit plugin site') ?></a></small>
+				</span>
+			</td>
+			<td>
+				{PLUGIN_STATUS}
+				<!-- BDP: plugin_status_details_block -->
+				<span id="{PLUGIN_NAME}" style="vertical-align: middle;" class="plugin_error icon i_help"
+					  title="{TR_CLICK_FOR_MORE_DETAILS}">
+					{PLUGIN_STATUS_DETAILS}
+				</span>
+				<!-- EDP: plugin_status_details_block -->
+			</td>
+			<td>
+				<!-- BDP: plugin_activate_link -->
+				<a style="vertical-align: middle;" class="icon i_open"
+				   href="settings_plugins.php?{ACTIVATE_ACTION}={PLUGIN_NAME}" title="{TR_ACTIVATE_TOOLTIP}"></a>
+				<a style="vertical-align: middle;" class="icon i_close"
+				   href="settings_plugins.php?{UNINSTALL_ACTION}={PLUGIN_NAME}" title="{TR_UNINSTALL_TOOLTIP}"></a>
+				<!-- EDP: plugin_activate_link -->
+
+				<!-- BDP: plugin_deactivate_link -->
+				<a style="vertical-align: middle;" class="icon i_close"
+				   href="settings_plugins.php?disable={PLUGIN_NAME}" title="{TR_DEACTIVATE_TOOLTIP}"></a>
+				<a style="vertical-align: middle;" class="icon i_lock"
+				   href="settings_plugins.php?protect={PLUGIN_NAME}" title="{TR_PROTECT_TOOLTIP}"></a>
+				<!-- EDP: plugin_deactivate_link -->
+
+				<!-- BDP: plugin_protected_link -->
+				<span style="vertical-align: middle;" class="icon i_unlock" title="{TR_UNPROTECT_TOOLTIP}">&nbsp;</span>
+				<!-- EDP: plugin_protected_link -->
+			</td>
+		</tr>
+		<!-- EDP: plugin_block -->
+		</tbody>
+	</table>
+	<div style="float:left;">
+		<select name="bulk_actions" id="bulk_actions">
+			<option value="dummy" disabled="disabled"  selected="selected"><?php tr_e('Bulk actions') ?></option>
+			<option value="install"><?php tr_e('Install') ?></option>
+			<option value="enable"><?php tr_e('Activate') ?></option>
+			<option value="disable"><?php tr_e('Deactivate') ?></option>
+			<option value="uninstall"><?php tr_e('Uninstall') ?></option>
+			<option value="protect"><?php tr_e('Protect') ?></option>
+			<option value="delete"><?php tr_e('Delete') ?></option>
+
+		</select>
+		<label for="bulk_actions"><input type="submit" name="Submit" value="{TR_APPLY}"/></label>
+	</div>
+</form>
+<!-- EDP: plugins_block -->
+
+<div class="buttons">
+	<button type="button" name="update_plugin_list"><?php tr_e('Update plugins') ?></button>
+</div>
+
+<br/>
+
+<h2 class="plugin"><span><?php tr_e('PLugin upload') ?></span></h2>
+
+<form name="plugin_upload_frm" action="settings_plugins.php" method="post" enctype="multipart/form-data">
+	<table class="firstColFixed">
+		<thead>
+		<tr>
+			<th colspan="2"><?php tr_e('Upload') ?></th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td>
+				<?php tr_e('Plugin archive') ?>
+				<span class="tips icon i_help" title="{TR_PLUGIN_ARCHIVE_TOOLTIP}"></span>
+			</td>
+			<td>
+				<input type="file" name="plugin_archive"/>
+				<input type="submit" value="<?php tr_e('Upload') ?>"/>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+</form>

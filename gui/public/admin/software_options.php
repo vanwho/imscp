@@ -39,8 +39,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/software_options.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/software_options.phtml',
 		'page_message' => 'layout'));
 
 $tpl->assign(

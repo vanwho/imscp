@@ -222,8 +222,8 @@ if (!empty($_POST) && reseller_editDomainAlias()) {
 	$tpl = new iMSCP_pTemplate();
 	$tpl->define_dynamic(
 		array(
-			'layout' => 'shared/layouts/ui.tpl',
-			'page' => 'reseller/alias_edit.tpl',
+			'layout' => 'shared/layouts/ui.phtml',
+			'page' => 'reseller/alias_edit.phtml',
 			'page_message' => 'layout'
 		)
 	);

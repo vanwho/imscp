@@ -39,8 +39,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/software_delete.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/software_delete.phtml',
 		'page_message', 'page'));
 
 /**
@@ -96,7 +96,7 @@ if (isset($_GET['id']) || isset($_POST['id'])) {
 			`admin_id` = ?
 	";
 	$rs_res = exec_query($query_res, $rs->fields['reseller_id']);
-	$tpl->assign('DELETE_SOFTWARE_RESELLER', tr('%1$s (%2$s)', $rs_res->fields['admin_name'], $rs_res->fields['email']));
+	$tpl->assign('DELETE_SOFTWARE_RESELLER', tr('%s (%s)', $rs_res->fields['admin_name'], $rs_res->fields['email']));
 	if($rs->fields['software_depot'] == "yes") {
 		$del_path = $cfg->GUI_APS_DEPOT_DIR ."/". $rs->fields['software_archive']."-".$rs->fields['software_id'].".tar.gz";
 		@unlink($del_path);

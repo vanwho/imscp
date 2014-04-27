@@ -142,8 +142,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/server_statistic_day.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/server_statistic_day.phtml',
 		'page_message' => 'layout',
 		'day_server_statistics_block' => 'page',
 		'hour_list' => 'day_server_statistics_block'

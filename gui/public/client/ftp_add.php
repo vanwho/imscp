@@ -257,7 +257,7 @@ function ftp_addAccount($mainDmnName)
 				$vfs = new iMSCP_VirtualFileSystem($mainDmnName);
 
 				if (!$vfs->exists($homeDir)) {
-					set_page_message(tr("Home directory '%s' doesn't exist", $homeDir), 'error');
+					set_page_message(tr("Home directory %s doesn't exist", $homeDir), 'error');
 					$ret = false;
 				}
 			}
@@ -437,8 +437,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'client/ftp_add.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'client/ftp_add.phtml',
 		'page_message' => 'layout',
 		'domain_list' => 'page',
 		'domain_types' => 'page'

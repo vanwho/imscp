@@ -529,8 +529,8 @@ if (
 	$tpl = iMSCP_Registry::set('templateEngine', new iMSCP_pTemplate());
 	$tpl->define_dynamic(
 		array(
-			'layout' => 'shared/layouts/ui.tpl',
-			'page' => 'client/mail_external_edit.tpl',
+			'layout' => 'shared/layouts/ui.phtml',
+			'page' => 'client/mail_external_edit.phtml',
 			'page_message' => 'layout',
 			'item_entries' => 'page',
 			'type_options' => 'item_entries',

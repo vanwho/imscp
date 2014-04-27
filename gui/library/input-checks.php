@@ -61,7 +61,7 @@ function check_input($value = '')
 			if (preg_match($variable, $value) > 0) {
 				$message = 'Possible hacking attempt. Script terminated.';
 				write_log($message, E_USER_ERROR);
-				throw new iMSCP_Exception(tr($message));
+				throw new iMSCP_Exception($message);
 			}
 		}
 	}
@@ -157,6 +157,31 @@ function tojs($text)
 		));
 
 	return $result;
+}
+
+/**
+ * Replaces special encoded strings back to their original signs
+ *
+ * @param string $string String to replace chars
+ * @return String with replaced chars
+ */
+function replace_html($string)
+{
+	$pattern = array(
+		'#&lt;[ ]*b[ ]*&gt;#i', '#&lt;[ ]*/[ ]*b[ ]*&gt;#i',
+		'#&lt;[ ]*strong[ ]*&gt;#i', '#&lt;[ ]*/[ ]*strong[ ]*&gt;#i',
+		'#&lt;[ ]*em[ ]*&gt;#i', '#&lt;[ ]*/[ ]*em[ ]*&gt;#i',
+		'#&lt;[ ]*i[ ]*&gt;#i', '#&lt;[ ]*/[ ]*i[ ]*&gt;#i',
+		'#&lt;[ ]*small[ ]*&gt;#i', '#&lt;[ ]*/[ ]*small[ ]*&gt;#i',
+		'#&lt;[ ]*br[ ]*(/|)[ ]*&gt;#i');
+
+	$replacement = array(
+		'<b>', '</b>', '<strong>', '</strong>', '<em>', '</em>', '<i>', '</i>', '<small>', '</small>', '<br />'
+	);
+
+	$string = preg_replace($pattern, $replacement, $string);
+
+	return $string;
 }
 
 /**
@@ -343,7 +368,7 @@ function isValidDomainName($domainName)
 					return false;
 				} elseif (preg_match('/([^a-z0-9\-])/', $label, $m)) {
 					$dmnNameValidationErrMsg = tr(
-						"Domain name label '%s' contain an invalid character: %s", $label, $m[1]
+						"Domain name label %s contain an invalid character: %s", $label, $m[1]
 					);
 					return false;
 				} elseif (preg_match('/^[\-]|[\-]$/', $label)) {

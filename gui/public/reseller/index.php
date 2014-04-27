@@ -119,9 +119,9 @@ function reseller_generateTrafficUsageBar($tpl, $trafficUsageBytes, $trafficLimi
 
 	// Is limited traffic usage for reseller ?
 	if ($trafficLimitBytes) {
-		$trafficUsageData = tr('%1$s%% [%2$s of %3$s]', $trafficUsagePercent, bytesHuman($trafficUsageBytes), bytesHuman($trafficLimitBytes));
+		$trafficUsageData = tr('%s%% [%s of %s]', $trafficUsagePercent, bytesHuman($trafficUsageBytes), bytesHuman($trafficLimitBytes));
 	} else {
-		$trafficUsageData = tr('%1$s%% [%2$s of unlimited]', $trafficUsagePercent, bytesHuman($trafficUsageBytes), bytesHuman($trafficLimitBytes));
+		$trafficUsageData = tr('%s%% [%s of unlimited]', $trafficUsagePercent, bytesHuman($trafficUsageBytes), bytesHuman($trafficLimitBytes));
 	}
 
 	$tpl->assign(
@@ -146,9 +146,14 @@ function reseller_generateDiskUsageBar($tpl, $diskspaceUsageBytes, $diskspaceLim
 
 	// is Limited disk usage for reseller ?
 	if ($diskspaceLimitBytes) {
-		$diskUsageData = tr('%1$s%% [%2$s of %3$s]', $diskspaceUsagePercent, bytesHuman($diskspaceUsageBytes), bytesHuman($diskspaceLimitBytes));
+		$diskUsageData = tr(
+			'%s%% [%s of %s]',
+			$diskspaceUsagePercent,
+			bytesHuman($diskspaceUsageBytes),
+			bytesHuman($diskspaceLimitBytes)
+		);
 	} else {
-		$diskUsageData = tr('%1$s%% [%2$s of unlimited]', $diskspaceUsagePercent, bytesHuman($diskspaceUsageBytes));
+		$diskUsageData = tr('%s%% [%s of unlimited]', $diskspaceUsagePercent, bytesHuman($diskspaceUsageBytes));
 	}
 
 	$tpl->assign(
@@ -214,32 +219,32 @@ function reseller_generatePageData($tpl, $resellerId, $resellerName)
 			 'DISK' => tr('Disk'),
 			 'RESELLER_NAME' => tohtml($resellerName),
 			 'DMN_MSG' => ($resellerProperties['max_dmn_cnt'])
-				 ? tr('%1$d / %2$d of %3$d', $udmnCurrent, $resellerProperties['current_dmn_cnt'], $resellerProperties['max_dmn_cnt'])
-				 : tr('%1$d / %2$d of unlimited', $udmnCurrent, $resellerProperties['current_dmn_cnt']),
+				 ? tr('%d / %d of %d', $udmnCurrent, $resellerProperties['current_dmn_cnt'], $resellerProperties['max_dmn_cnt'])
+				 : tr('%d / %d of unlimited', $udmnCurrent, $resellerProperties['current_dmn_cnt']),
 			 'SUB_MSG' => ($resellerProperties['max_sub_cnt'] > 0)
-				 ? tr('%1$d / %2$d of %3$d</b>', $usubCurrent, $resellerProperties['current_sub_cnt'], $resellerProperties['max_sub_cnt'])
+				 ? tr('%d / %d of %d', $usubCurrent, $resellerProperties['current_sub_cnt'], $resellerProperties['max_sub_cnt'])
 				 : (($resellerProperties['max_sub_cnt'] == '-1') ? tr('disabled')
-					 : tr('%1$d / %2$d of unlimited', $usubCurrent, $resellerProperties['current_sub_cnt'])),
+					 : tr('%d / %d of unlimited', $usubCurrent, $resellerProperties['current_sub_cnt'])),
 			 'ALS_MSG' => ($resellerProperties['max_als_cnt'] > 0)
-				 ? tr('%1$d / %2$d of %3$d', $ualsCurrent, $resellerProperties['current_als_cnt'], $resellerProperties['max_als_cnt'])
+				 ? tr('%d / %d of %d', $ualsCurrent, $resellerProperties['current_als_cnt'], $resellerProperties['max_als_cnt'])
 				 : (($resellerProperties['max_als_cnt'] == '-1') ? tr('disabled')
-					 : tr('%1$d / %2$d of unlimited', $ualsCurrent, $resellerProperties['current_als_cnt'])),
+					 : tr('%d / %d of unlimited', $ualsCurrent, $resellerProperties['current_als_cnt'])),
 			 'MAIL_MSG' => ($resellerProperties['max_mail_cnt'] > 0)
-				 ? tr('%1$d / %2$d of %3$d', $umailCurrent, $resellerProperties['current_mail_cnt'], $resellerProperties['max_mail_cnt'])
+				 ? tr('%d / %d of %d', $umailCurrent, $resellerProperties['current_mail_cnt'], $resellerProperties['max_mail_cnt'])
 				 : (($resellerProperties['max_mail_cnt'] == '-1') ? tr('disabled')
-					 : tr('%1$d / %2$d of unlimited', $umailCurrent, $resellerProperties['current_mail_cnt'])),
+					 : tr('%d / %d of unlimited', $umailCurrent, $resellerProperties['current_mail_cnt'])),
 			 'FTP_MSG' => ($resellerProperties['max_ftp_cnt'] > 0)
-				 ? tr('%1$d / %2$d of %3$d', $uftpCurrent, $resellerProperties['current_ftp_cnt'], $resellerProperties['max_ftp_cnt'])
+				 ? tr('%d / %d of %d', $uftpCurrent, $resellerProperties['current_ftp_cnt'], $resellerProperties['max_ftp_cnt'])
 				 : (($resellerProperties['max_ftp_cnt'] == '-1') ? tr('disabled')
-					 : tr('%1$d / %2$d of unlimited', $uftpCurrent, $resellerProperties['current_ftp_cnt'])),
+					 : tr('%d / %d of unlimited', $uftpCurrent, $resellerProperties['current_ftp_cnt'])),
 			 'SQL_DB_MSG' => ($resellerProperties['max_sql_db_cnt'] > 0)
-				 ? tr('%1$d / %2$d of %3$d', $usqlDbCurrent, $resellerProperties['current_sql_db_cnt'], $resellerProperties['max_sql_db_cnt'])
+				 ? tr('%d / %d of %d', $usqlDbCurrent, $resellerProperties['current_sql_db_cnt'], $resellerProperties['max_sql_db_cnt'])
 				 : (($resellerProperties['max_sql_db_cnt'] == '-1') ? tr('disabled')
-					 : tr('%1$d / %2$d of unlimited', $usqlDbCurrent, $resellerProperties['current_sql_db_cnt'])),
+					 : tr('%d / %d of unlimited', $usqlDbCurrent, $resellerProperties['current_sql_db_cnt'])),
 			 'SQL_USER_MSG' => ($resellerProperties['max_sql_db_cnt'] > 0)
-				 ? tr('%1$d / %2$d of %3$d', $usqlUserCurrent, $resellerProperties['current_sql_user_cnt'], $resellerProperties['max_sql_user_cnt'])
+				 ? tr('%d / %d of %d', $usqlUserCurrent, $resellerProperties['current_sql_user_cnt'], $resellerProperties['max_sql_user_cnt'])
 				 : (($resellerProperties['max_sql_user_cnt'] == '-1') ? tr('disabled')
-					 : tr('%1$d / %2$d of unlimited', $usqlUserCurrent, $resellerProperties['current_sql_user_cnt'])),
+					 : tr('%d / %d of unlimited', $usqlUserCurrent, $resellerProperties['current_sql_user_cnt'])),
 			 'TR_SUPPORT' => tr('Support system'),
 			 'SUPPORT_STATUS' => ($resellerProperties['support_system'] == 'yes')
 				 ? '<span style="color:green;">' . tr('Enabled') . '</span>'
@@ -271,8 +276,8 @@ check_login('reseller', $cfg->PREVENT_EXTERNAL_LOGIN_RESELLER);
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'reseller/index.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'reseller/index.phtml',
 		'page_message' => 'layout',
 		'traffic_warning_message' => 'page',
 		'disk_warning_message' => 'page'));

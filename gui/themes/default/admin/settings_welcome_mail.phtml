@@ -1,0 +1,67 @@
+
+<!-- BDP: tickets_list -->
+<form name="admin_email_setup" method="post" action="settings_welcome_mail.php">
+	<table class="firstColFixed">
+		<thead>
+		<tr>
+			<th colspan="2">{TR_MESSAGE_TEMPLATE_INFO}</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td><strong><?php tr_e('Username') ?></strong></td>
+			<td>{USERNAME}</td>
+		</tr>
+		<tr>
+			<td><strong><?php tr_e('Password') ?></strong></td>
+			<td>{PASSWORD}</td>
+		</tr>
+		<tr>
+			<td><strong><?php tr_e('Real name') ?></strong></td>
+			<td>{NAME}</td>
+		</tr>
+		<tr>
+			<td><strong><?php tr_e('Account type') ?></strong></td>
+			<td>{USERTYPE}</td>
+		</tr>
+		<tr>
+			<td><strong><?php tr_e('Panel URL') ?></strong></td>
+			<td>{BASE_SERVER_VHOST}</td>
+		</tr>
+		<tr>
+			<td><strong><?php tr_e('Panel URL prefix (http|https)') ?></strong></td>
+			<td>{BASE_SERVER_VHOST_PREFIX}</td>
+		</tr>
+		</tbody>
+	</table>
+	<table>
+		<thead>
+		<tr>
+			<th colspan="2">{TR_MESSAGE_TEMPLATE}</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td><label for="auto_subject"><strong><?php tr_e('Subject') ?></strong></label></td>
+			<td><input type="text" name="auto_subject" id="auto_subject" class="inputTitle" value="{SUBJECT_VALUE}"/>
+			</td>
+		</tr>
+		<tr>
+			<td><label for="auto_message"><strong><?php tr_e('Body') ?></strong></label></td>
+			<td><textarea name="auto_message" id="auto_message">{MESSAGE_VALUE}</textarea></td>
+		</tr>
+		<tr>
+			<td><strong><?php tr_e('Sender email') ?></strong></td>
+			<td>{SENDER_EMAIL_VALUE}</td>
+		</tr>
+		<tr>
+			<td><strong><?php tr_e('Sender name') ?></strong></td>
+			<td>{SENDER_NAME_VALUE}</td>
+		</tr>
+		</tbody>
+	</table>
+	<div class="buttons">
+		<input name="Submit" type="submit" value="<?php tr_e('Update') ?>"/>
+		<input type="hidden" name="uaction" value="email_setup"/>
+	</div>
+</form>

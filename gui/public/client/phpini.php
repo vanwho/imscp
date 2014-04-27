@@ -121,8 +121,8 @@ if (!empty($_POST)) { // Post request
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		 'layout' => 'shared/layouts/ui.tpl',
-		 'page' => 'client/phpini.tpl',
+		 'layout' => 'shared/layouts/ui.phtml',
+		 'page' => 'client/phpini.phtml',
 		 'page_message' => 'layout',
 		 'php_editor_first_block' =>  'page',
 		 'allow_url_fopen_block' => 'php_editor_first_block',

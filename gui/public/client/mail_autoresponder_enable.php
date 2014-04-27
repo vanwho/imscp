@@ -112,7 +112,7 @@ function client_ActivateAutoresponder($mailAccountId, $autoresponderMessage)
 
 			write_log(
 				sprintf(
-					"%s: activated auto-responder for the '%s' mail account",
+					"%s: activated auto-responder for the %s mail account",
 					$_SESSION['user_logged'],
 					$stmt->fields['mail_addr']
 				),
@@ -162,8 +162,8 @@ if (customerHasFeature('mail') && (isset($_REQUEST['mail_account_id']) && is_num
 			$tpl = new iMSCP_pTemplate();
 			$tpl->define_dynamic(
 				array(
-					'layout' => 'shared/layouts/ui.tpl',
-					'page' => 'client/mail_autoresponder.tpl',
+					'layout' => 'shared/layouts/ui.phtml',
+					'page' => 'client/mail_autoresponder.phtml',
 					'page_message' => 'layout'
 				)
 			);

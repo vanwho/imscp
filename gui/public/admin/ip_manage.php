@@ -252,8 +252,8 @@ $tpl = new iMSCP_pTemplate();
 
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/ip_manage.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/ip_manage.phtml',
 		'page_message' => 'layout',
 		'ip_addresses_block' => 'page',
 		'ip_address_block' => 'ip_addresses_block',
@@ -275,8 +275,8 @@ $tpl->assign(
 		'TR_CONFIGURED_IPS' => tr('IP addresses under control of i-MSCP'),
 		'TR_ADD_NEW_IP' => tr('Add new IP address'),
 		'TR_IP_DATA' => tr('IP address data'),
-		'TR_MESSAGE_DELETE' => json_encode(tr('Are you sure you want to delete this IP: %s?', true, '%s')),
-		'TR_MESSAGE_DENY_DELETE' => json_encode(tr('You cannot remove the %s IP address.', true, '%s')),
+		'TR_MESSAGE_DELETE' => tr("Are you sure you want to delete the %s IP address?", '%s'),
+		'TR_MESSAGE_DENY_DELETE' => tr('You cannot remove the %s IP address.', '%s'),
 		'ERR_FIELDS_STACK' => (iMSCP_Registry::isRegistered('errFieldsStack'))
 			 ? json_encode(iMSCP_Registry::get('errFieldsStack')) : '[]',
 		'DATATABLE_TRANSLATIONS' => getDataTablesPluginTranslations(),

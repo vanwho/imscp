@@ -184,10 +184,10 @@ customerHasFeature('protected_areas') or showBadRequestErrorPage();
 $cfg = iMSCP_Registry::get('config');
 
 $tpl = new iMSCP_pTemplate();
-$tpl->define_dynamic('layout', 'shared/layouts/ui.tpl');
+$tpl->define_dynamic('layout', 'shared/layouts/ui.phtml');
 $tpl->define_dynamic(
 	array(
-		 'page' => 'client/puser_manage.tpl',
+		 'page' => 'client/puser_manage.phtml',
 		 'page_message' => 'layout',
 		 'users_message_block' => 'page',
 		 'users_block' => 'page',
@@ -215,7 +215,7 @@ $tpl->assign(
 		 'TR_PASSWORD' => tr('Password'),
 		 'TR_STATUS' => tr('Status'),
 		 'TR_PASSWORD_REPEAT' => tr('Repeat password'),
-		 'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', true, '%s'),
+		 'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', '%s'),
 		 'TR_HTACCESS_USER' => tr('Manage users and groups')));
 
 generateNavigation($tpl);

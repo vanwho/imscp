@@ -30,6 +30,12 @@ GUI:
 	- Deprecated: iMSCP_Events_Manager::getInstance() (will be removed in next minor version)
 	- Fixed: Directory chooser is broken (software installer)
 	- Fixed: Empty SQL user list if at least one database doesn't have any SQL user (software installer)
+	- Fixed: Support ticket feature must be enabled for resellers even if they have no customers
+
+i18N:
+	Fixed: Language index must be rebuilded on update
+	Fixed: Literal pecent sign must be followed by another percent sign in translation strings
+	Removed: _Localized Translation string field
 
 PLUGINS:
 	- Changed: Implementation of the register() method is no longer mandatory in action plugins
@@ -674,9 +680,9 @@ VENDOR:
 	- Updated: jQuery UI to v1.10.3
 
 Tickets:
-	Fixed #640: Bug - AliasSubdomain won't work when Alias is a redirect
-	Fixed #767: Update -jQuery 1.10.1 released
-	Fixed #769: Review - Language issue in imscp GUI
+	- Fixed #640: Bug - AliasSubdomain won't work when Alias is a redirect
+	- Fixed #767: Update -jQuery 1.10.1 released
+	- Fixed #769: Review - Language issue in imscp GUI
 
 ------------------------------------------------------------------------------------------------------------------------
 i-MSCP 1.1.0-rc2.1

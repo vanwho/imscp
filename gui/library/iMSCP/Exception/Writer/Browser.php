@@ -169,7 +169,7 @@ class iMSCP_Exception_Writer_Browser extends iMSCP_Exception_Writer
 		$tpl = new iMSCP_pTemplate();
 		$tpl->define_dynamic(
 			array(
-				'layout' => 'shared/layouts/simple.tpl',
+				'layout' => 'shared/layouts/simple.phtml',
 				'page' => $this->_templateFile,
 				'page_message' => 'layout',
 				'backlink_block' => 'page'

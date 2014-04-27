@@ -49,8 +49,8 @@ $config = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/rootkit_log.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/rootkit_log.phtml',
 		'page_message' => 'layout',
 		'antirootkits_log' => 'page'
 	)

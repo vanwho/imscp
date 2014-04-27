@@ -1,0 +1,75 @@
+
+<script>
+	$(document).ready(function () {
+		$('.datatable').dataTable(
+			{
+				"oLanguage": <?php echo getDataTablesPluginTranslations() ?>,
+				"bStateSave": true
+			}
+		);
+	});
+</script>
+
+<!-- BDP: reseller_statistics_entries_block -->
+<table class="datatable">
+	<thead>
+	<tr>
+		<th><?php tr_e('Name') ?></th>
+		<th><?php tr_e('Traffic') ?></th>
+		<th><?php tr_e('Diskspace') ?></th>
+		<th><?php tr_e('Domains') ?></th>
+		<th><?php tr_e('Subdomains') ?></th>
+		<th><?php tr_e('Domain aliases') ?></th>
+		<th><?php tr_e('Mail users') ?></th>
+		<th><?php tr_e('Ftp users') ?></th>
+		<th><?php tr_e('Sql databases') ?></th>
+		<th><?php tr_e('Sql users') ?></th>
+	</tr>
+	</thead>
+	<tfoot>
+	<tr>
+		<td><?php tr_e('Name') ?></td>
+		<td><?php tr_e('Traffic') ?></td>
+		<td><?php tr_e('Diskspace') ?></td>
+		<td><?php tr_e('Domains') ?></td>
+		<td><?php tr_e('Subdomains') ?></td>
+		<td><?php tr_e('Domain aliases') ?></td>
+		<td><?php tr_e('Mail users') ?></td>
+		<td><?php tr_e('Ftp users') ?></td>
+		<td><?php tr_e('Sql databases') ?></td>
+		<td><?php tr_e('Sql users') ?></td>
+	</tr>
+	</tfoot>
+	<tbody>
+	<!-- BDP: reseller_statistics_entry_block -->
+	<tr>
+		<td>
+			<a href="reseller_user_statistics.php?rid={RESELLER_ID}"
+			   title="{TR_RESELLER_TOOLTIP}" class="icon i_domain_icon">{RESELLER_NAME}</a>
+		</td>
+		<td>
+			<div class="graph">
+				<span style="width: {TRAFF_PERCENT}%"></span>
+				<strong>{TRAFF_PERCENT}%</strong>
+			</div>
+			{TRAFF_MSG}
+		</td>
+		<td>
+			<div class="graph">
+				<span style="width: {DISK_PERCENT}%"></span>
+				<strong>{DISK_PERCENT}%</strong>
+			</div>
+			{DISK_MSG}
+		</td>
+		<td>{DMN_MSG}</td>
+		<td>{SUB_MSG}</td>
+		<td>{ALS_MSG}</td>
+		<td>{MAIL_MSG}</td>
+		<td>{FTP_MSG}</td>
+		<td>{SQL_DB_MSG}</td>
+		<td>{SQL_USER_MSG}</td>
+	</tr>
+	<!-- EDP: reseller_statistics_entry_block -->
+	</tbody>
+</table>
+<!-- EDP: reseller_statistics_entries_block -->

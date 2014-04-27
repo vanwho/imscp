@@ -310,8 +310,8 @@ if (customerHasMailOrExtMailFeatures()) {
 	$tpl = new iMSCP_pTemplate();
 	$tpl->define_dynamic(
 		array(
-			'layout' => 'shared/layouts/ui.tpl',
-			'page' => 'client/mail_accounts.tpl',
+			'layout' => 'shared/layouts/ui.phtml',
+			'page' => 'client/mail_accounts.phtml',
 			'page_message' => 'layout',
 			'mail_feature' => 'page',
 			'mail_items' => 'mail_feature',
@@ -333,8 +333,8 @@ if (customerHasMailOrExtMailFeatures()) {
 			'TR_ACTIONS' => tr('Actions'),
 			'TR_AUTORESPOND' => tr('Auto responder'),
 			'TR_DELETE' => tr('Delete'),
-			'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', true, '%s'),
-			'TR_MESSAGE_DELETE_SELECTED_ITEMS' => tr('Are you sure you want to delete all selected items?', true),
+			'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete %s?', '%s'),
+			'TR_MESSAGE_DELETE_SELECTED_ITEMS' => tr('Are you sure you want to delete all selected items?'),
 			'TR_DELETE_SELECTED_ITEMS' => tr('Delete selected items'),
 			'TR_MESSAGE_DELETE_SELECTED_ITEMS_ERR' => tr('You must select a least one item to delete')
 		)

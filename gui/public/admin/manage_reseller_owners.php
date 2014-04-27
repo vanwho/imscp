@@ -47,8 +47,8 @@ $cfg = iMSCP_Registry::get('config');
 $tpl = new iMSCP_pTemplate();
 $tpl->define_dynamic(
 	array(
-		'layout' => 'shared/layouts/ui.tpl',
-		'page' => 'admin/manage_reseller_owners.tpl',
+		'layout' => 'shared/layouts/ui.phtml',
+		'page' => 'admin/manage_reseller_owners.phtml',
 		'page_message' => 'layout',
 		'hosting_plans' => 'page',
 		'reseller_list' => 'page',
