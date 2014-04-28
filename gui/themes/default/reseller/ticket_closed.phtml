@@ -13,12 +13,12 @@
 <table>
 	<thead>
 	<tr>
-		<th>{TR_TICKET_STATUS}</th>
-		<th>{TR_TICKET_FROM}</th>
-		<th>{TR_TICKET_SUBJECT}</th>
-		<th>{TR_TICKET_URGENCY}</th>
-		<th>{TR_TICKET_LAST_ANSWER_DATE}</th>
-		<th>{TR_TICKET_ACTION}</th>
+		<th><?php tr_e('Status') ?></th>
+		<th><?php tr_e('From') ?></th>
+		<th><?php tr_e('Subject') ?></th>
+		<th><?php tr_e('Priority') ?></th>
+		<th><?php tr_e('Last answer date') ?></th>
+		<th><?php tr_e('Actions') ?></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -55,7 +55,7 @@
 
 <div class="paginator">
 	<!-- BDP: scroll_prev -->
-	<a class="icon i_prev" href="ticket_system.php?psi={PREV_PSI}" title="{TR_PREVIOUS}">{TR_PREVIOUS}</a>
+	<a class="icon i_prev" href="ticket_system.php?psi={PREV_PSI}" title="<?php tr_e('Previous') ?>"><?php tr_e('Previous') ?></a>
 	<!-- EDP: scroll_prev -->
 	<!-- BDP: scroll_prev_gray -->
 	<span class="icon i_prev_gray"></span>
@@ -64,7 +64,7 @@
 	<span class="icon i_next_gray"></span>
 	<!-- EDP: scroll_next_gray -->
 	<!-- BDP: scroll_next -->
-	<a class="icon i_next" href="ticket_system.php?psi={NEXT_PSI}" title="{TR_NEXT}">{TR_NEXT}</a>
+	<a class="icon i_next" href="ticket_system.php?psi={NEXT_PSI}" title="<?php tr_e('Next') ?>"><?php tr_e('Next') ?></a>
 	<!-- EDP: scroll_next -->
 </div>
 <!-- EDP: tickets_list -->

@@ -11,10 +11,10 @@
 <table>
 	<thead>
 	<tr>
-		<th>{TR_NUMBER}</th>
-		<th>{TR_NAME}</th>
-		<th>{TR_STATUS}</th>
-		<th>{TR_ACTION}</th>
+		<th><?php tr_e('No') ?></th>
+		<th><?php tr_e('Name') ?></th>
+		<th><?php tr_e('Status') ?></th>
+		<th><?php tr_e('Actions') ?></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -24,10 +24,10 @@
 		<td>{NAME}</td>
 		<td>{STATUS}</td>
 		<td>
-			<a href="hosting_plan_edit.php?id={ID}" class="icon i_edit">{TR_EDIT}</a>
+			<a href="hosting_plan_edit.php?id={ID}" class="icon i_edit"><?php tr_e('Edit') ?></a>
 			<!-- BDP: hosting_plan_delete -->
 			<a href="hosting_plan_delete.php?id={ID}" onclick="return action_delete('{NAME}')"
-			   class="icon i_delete">{TR_DELETE}</a>
+			   class="icon i_delete"><?php tr_e('Delete') ?></a>
 			<!-- EDP: hosting_plan_delete -->
 		</td>
 	</tr>

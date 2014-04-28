@@ -14,31 +14,31 @@
 	</thead>
 	<tbody>
 	<tr>
-		<td>{TR_TICKET_URGENCY}</td>
+		<td><?php tr_e('Priority') ?></td>
 		<td>{TICKET_URGENCY_VAL}</td>
 	</tr>
 	<tr>
-		<td>{TR_TICKET_SUBJECT}</td>
+		<td><?php tr_e('Subject') ?></td>
 		<td>{TICKET_SUBJECT_VAL}</td>
 	</tr>
 	<!-- BDP: tickets_item -->
 	<tr>
-		<td>{TR_TICKET_FROM}</td>
+		<td><?php tr_e('Form') ?></td>
 		<td>{TICKET_FROM_VAL}</td>
 	</tr>
 	<tr>
-		<td><strong>{TR_TICKET_DATE}</td>
+		<td><strong><?php tr_e('Date') ?></td>
 		<td>{TICKET_DATE_VAL}</td>
 	</tr>
 	<tr>
-		<td><label for="message_body">{TR_TICKET_CONTENT}</label></td>
+		<td><label for="message_body"><?php tr_e('Body') ?></label></td>
 		<td><textarea name="message_body" id="message_body" readonly="readonly">{TICKET_CONTENT_VAL}</textarea></td>
 	</tr>
 	<!-- EDP: tickets_item -->
 	</tbody>
 </table>
 
-<h2 class="doc"><span>{TR_TICKET_NEW_REPLY}</span></h2>
+<h2 class="doc"><span><?php tr_e('New reply') ?></span></h2>
 
 <form name="ticketFrm" method="post" action="ticket_view.php?ticket_id={TICKET_ID_VAL}">
 

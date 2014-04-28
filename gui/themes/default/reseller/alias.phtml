@@ -51,14 +51,14 @@
 			<span class="icon i_domain_icon">{NAME}</span>
 			<!-- EDP: status_reload_false -->
 		</td>
-		<td>{MOUNT_POINT}</td>
-		<td>{FORWARD}</td>
-		<td>{OWNER}</td>
-		<td>{STATUS}</td>
+		<td><?php tr_e('Mount point') ?></td>
+		<td><?php tr_e('Forward') ?></td>
+		<td><?php tr_e('Owner') ?></td>
+		<td>{<?php tr_e('Status') ?></td>
 		<td>
-			<a href="{EDIT_LINK}" class="icon i_edit" title="{EDIT}">{EDIT}</a>
+			<a href="{EDIT_LINK}" class="icon i_edit" title="<?php tr_e('Edit') ?>"><?php tr_e('Edit') ?></a>
 			<a href="{DELETE_LINK}" onclick="return delete_account('{NAME}')" class="icon i_delete"
-			   title="{DELETE}">{DELETE}</a>
+			   title="<?php tr_e('Delete') ?>">{<?php tr_e('Delete') ?></a>
 		</td>
 	</tr>
 	<!-- EDP: alias_item -->

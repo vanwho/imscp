@@ -15,13 +15,13 @@
 	<table class="firstColFixed">
 		<thead>
 		<tr>
-			<th colspan="2">{TR_ACCOUNT_SUMMARY}</th>
+			<th colspan="2"><?php tr_e('Account summary') ?></th>
 		</tr>
 		</thead>
 		<tbody>
 		<!-- BDP: dmn_list -->
 		<tr>
-			<td colspan="2"><strong><i>{TR_DOMAINS}</i></strong></td>
+			<td colspan="2"><strong><i><?php tr_e('Domain') ?></i></strong></td>
 		</tr>
 		<!-- BDP: dmn_item -->
 		<tr>
@@ -31,7 +31,7 @@
 		<!-- EDP: dmn_list -->
 		<!-- BDP: als_list -->
 		<tr>
-			<td colspan="2"><strong><i>{TR_DOMAIN_ALIASES}</i></strong></td>
+			<td colspan="2"><strong><i><?php tr_e('Domain aliases') ?></i></strong></td>
 		</tr>
 		<!-- BDP: als_item -->
 		<tr>
@@ -42,7 +42,7 @@
 		<!-- EDP: als_list -->
 		<!-- BDP: sub_list -->
 		<tr>
-			<td colspan="2"><strong><i>{TR_SUBDOMAINS}</strong></i></td>
+			<td colspan="2"><strong><i><?php tr_e('Subdomains') ?></strong></i></td>
 		</tr>
 		<!-- BDP: sub_item -->
 		<tr>
@@ -53,7 +53,7 @@
 		<!-- EDP: sub_list -->
 		<!-- BDP: mail_list -->
 		<tr>
-			<td colspan="2"><strong><i>{TR_EMAILS}</i></strong></td>
+			<td colspan="2"><strong><i><?php tr_e('Mail users') ?></i></strong></td>
 		</tr>
 		<!-- BDP: mail_item -->
 		<tr>
@@ -64,7 +64,7 @@
 		<!-- EDP: mail_list -->
 		<!-- BDP: ftp_list -->
 		<tr>
-			<td colspan="2"><strong><i>{TR_FTP_ACCOUNTS}</strong></i></td>
+			<td colspan="2"><strong><i><?php tr_e('Ftp users') ?></strong></i></td>
 		</tr>
 		<!-- BDP: ftp_item -->
 		<tr>
@@ -75,7 +75,7 @@
 		<!-- EDP: ftp_list -->
 		<!-- BDP: db_list -->
 		<tr>
-			<td colspan="2"><strong><i>{TR_DATABASES}</strong></i></td>
+			<td colspan="2"><strong><i><?php tr_e('Sql databases and users') ?></strong></i></td>
 		</tr>
 		<!-- BDP: db_item -->
 		<tr>
@@ -89,9 +89,9 @@
 		</tr>
 		<tr>
 			<td colspan="2">
-				<p>{TR_REALLY_WANT_TO_DELETE_CUSTOMER_ACCOUNT}</p>
+				<p><?php tr_e('Are you sure you want to remove this customer account?') ?></p>
 				<input type="checkbox" value="1" name="delete" id="delete"/>
-				<label for="delete">{TR_YES_DELETE_ACCOUNT}</label>
+				<label for="delete"><?php tr_e('Yes') ?></label>
 			</td>
 		</tr>
 		</tbody>
@@ -99,7 +99,7 @@
 
 	<div class="buttons">
 		<input type="hidden" name="id" value="{USER_ID}"/>
-		<input type="submit" id="submit" value="{TR_DELETE}"/>
-		<a href="users.php" class="link_as_button">{TR_CANCEL}</a>
+		<input type="submit" id="submit" value="<?php tr_e('Delete') ?>"/>
+		<a href="users.php" class="link_as_button"><?php tr_e('Cancel') ?></a>
 	</div>
 </form>

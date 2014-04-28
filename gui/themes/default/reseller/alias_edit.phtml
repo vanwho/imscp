@@ -17,12 +17,12 @@
 	<table class="firstColFixed">
 		<thead>
 		<tr>
-			<th colspan="2">{TR_DOMAIN_ALIAS}</th>
+			<th colspan="2"><?php tr_e('Domain alias') ?></th>
 		</tr>
 		</thead>
 		<tbody>
 		<tr>
-			<td><label for="domain_alias_name">{TR_DOMAIN_ALIAS_NAME}</label></td>
+			<td><label for="domain_alias_name"><?php tr_e('Name') ?></label></td>
 			<td>
 				<span class="bold">www .</span>
 				<input type="text" name="domain_alias_name" id="domain_alias_name" value="{DOMAIN_ALIAS_NAME}"
@@ -30,24 +30,24 @@
 			</td>
 		</tr>
 		<tr>
-			<td>{TR_URL_FORWARDING} <span class="tips icon i_help" title="{TR_URL_FORWARDING_TOOLTIP}"></span></td>
+			<td><?php tr_e('Forward URL') ?> <span class="tips icon i_help" title="{TR_URL_FORWARDING_TOOLTIP}"></span></td>
 			<td>
 				<div class="radio">
 					<input type="radio" name="url_forwarding" id="url_forwarding_yes"{FORWARD_URL_YES} value="yes"/>
-					<label for="url_forwarding_yes">{TR_YES}</label>
+					<label for="url_forwarding_yes"><?php tr_e('Yes') ?></label>
 					<input type="radio" name="url_forwarding" id="url_forwarding_no"{FORWARD_URL_NO} value="no"/>
-					<label for="url_forwarding_no">{TR_NO}</label>
+					<label for="url_forwarding_no"><?php tr_e('No') ?></label>
 				</div>
 			</td>
 		</tr>
 		<tr id="tr_url_forwarding_data">
-			<td>{TR_FORWARD_TO_URL}</td>
+			<td><?php tr_e('Forward to URL') ?></td>
 			<td>
 				<label for="forward_url_scheme">
 					<select name="forward_url_scheme" id="forward_url_scheme">
-						<option value="http://"{HTTP_YES}>{TR_HTTP}</option>
-						<option value="https://"{HTTPS_YES}>{TR_HTTPS}</option>
-						<option value="ftp://"{FTP_YES}>{TR_FTP}</option>
+						<option value="http://"{HTTP_YES}>Http</option>
+						<option value="https://"{HTTPS_YES}>Https</option>
+						<option value="ftp://"{FTP_YES}>Ftp</option>
 					</select>
 				</label>
 				<label>
@@ -59,7 +59,7 @@
 	</table>
 
 	<div class="buttons">
-		<input name="Submit" type="submit" value="{TR_UPDATE}"/>
-		<a class="link_as_button" href="alias.php">{TR_CANCEL}</a>
+		<input name="Submit" type="submit" value="<?php tr_e('Update') ?>"/>
+		<a class="link_as_button" href="alias.php"><?php tr_e('Cancel') ?></a>
 	</div>
 </form>

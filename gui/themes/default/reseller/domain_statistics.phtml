@@ -1,12 +1,12 @@
 
 <form name="domain_statistics_frm" method="post" action="domain_statistics.php">
-	<label for="month">{TR_MONTH}</label>
+	<label for="month"><?php tr_e('Month') ?></label>
 	<select id="month" name="month">
 		<!-- BDP: month_list -->
 		<option {OPTION_SELECTED}>{MONTH_VALUE}</option>
 		<!-- EDP: month_list -->
 	</select>
-	<label for="year">{TR_YEAR}</label>
+	<label for="year"><?php tr_e('Year') ?></label>
 	<select id="year" name="year">
 		<!-- BDP: year_list -->
 		<option value="{VALUE}" {OPTION_SELECTED}>{HUMAN_VALUE}</option>
@@ -21,17 +21,17 @@
 <table>
 	<thead>
 	<tr>
-		<th>{TR_DAY}</th>
-		<th>{TR_WEB_TRAFFIC}</th>
-		<th>{TR_FTP_TRAFFIC}</th>
-		<th>{TR_SMTP_TRAFFIC}</th>
-		<th>{TR_POP3_TRAFFIC}</th>
-		<th>{TR_ALL_TRAFFIC}</th>
+		<th><?php tr_e('Day') ?></th>
+		<th><?php tr_e('Web traffic') ?></th>
+		<th><?php tr_e('Ftp traffic') ?></th>
+		<th><?php tr_e('Smtp traffic') ?></th>
+		<th><?php tr_e('Pop3 traffic') ?></th>
+		<th><?php tr_e('Total traffic') ?></th>
 	</tr>
 	</thead>
 	<tfoot>
 	<tr>
-		<td>{TR_ALL}</td>
+		<td><?php tr_e('Total traffic') ?></td>
 		<td>{ALL_WEB_TRAFFIC}</td>
 		<td>{ALL_FTP_TRAFFIC}</td>
 		<td>{ALL_SMTP_TRAFFIC}</td>

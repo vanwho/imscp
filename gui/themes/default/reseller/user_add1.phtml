@@ -27,22 +27,22 @@
 	<table class="firstColFixed">
 		<thead>
 		<tr>
-			<th colspan="2">{TR_CORE_DATA}</th>
+			<th colspan="2"><?php tr_e('Core date') ?></th>
 		</tr>
 		</thead>
 		<tbody>
 		<tr>
 			<td>
-				<label for="dmn_name">{TR_DOMAIN_NAME}</label>
+				<label for="dmn_name"><?php tr_e('Domain name') ?></label>
 				<span class="tips icon i_help" id="dmn_help" title="{TR_DMN_HELP}"></span>
 			</td>
 			<td>
-				<span class="bold">www .</span>
+				<span class="bold">www.</span>
 				<input type="text" name="dmn_name" id="dmn_name" value="{DOMAIN_NAME_VALUE}"/>
 			</td>
 		</tr>
 		<tr>
-			<td><label for="datepicker">{TR_DOMAIN_EXPIRE}</label></td>
+			<td><label for="datepicker"><?php tr_e('Domain expire date') ?></label></td>
 			<td>
 				<input type="text" name="datepicker" id="datepicker" value="{DATEPICKER_VALUE}"/>
 				<input type="checkbox" name="never_expire" id="never_expire" value="0"/>
@@ -51,7 +51,7 @@
 		</tr>
 		<!-- BDP: hosting_plan_entries_block -->
 		<tr>
-			<td><label for="dmn_tpl">{TR_CHOOSE_HOSTING_PLAN}</label></td>
+			<td><label for="dmn_tpl"><?php tr_e('Choose hosting plan') ?></label></td>
 			<td>
 				<select id="dmn_tpl" name="dmn_tpl">
 					<!-- BDP: hosting_plan_entry_block -->
@@ -62,13 +62,13 @@
 		</tr>
 		<!-- BDP: customize_hosting_plan_block -->
 		<tr>
-			<td>{TR_PERSONALIZE_TEMPLATE}</td>
+			<td><?php tr_e('Customize hosting plan') ?></td>
 			<td>
 				<div class="radio">
 					<input type="radio" id="chtpl_yes" name="chtpl" value="_yes_" {CHTPL1_VAL} />
-					<label for="chtpl_yes">{TR_YES}</label>
+					<label for="chtpl_yes"><?php tr_e('Yes') ?></label>
 					<input type="radio" id="chtpl_no" name="chtpl" value="_no_" {CHTPL2_VAL} />
-					<label for="chtpl_no">{TR_NO}</label>
+					<label for="chtpl_no"><?php tr_e('No') ?></label>
 				</div>
 			</td>
 		</tr>
@@ -78,7 +78,7 @@
 	</table>
 
 	<div class="buttons">
-		<input name="Submit" type="submit" value="{TR_NEXT_STEP}"/>
+		<input name="Submit" type="submit" value="<?php tr_e('Next step') ?>"/>
 		<input type="hidden" name="uaction" value="user_add_next"/>
 	</div>
 </form>

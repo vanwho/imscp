@@ -51,7 +51,7 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td><label for="customer_id">{TR_CUSTOMER_ACCOUNT}</label></td>
+			<td><label for="customer_id"><?php tr_e('Customer account') ?></label></td>
 			<td>
 				<select name="customer_id" id="customer_id">
 					<!-- BDP: customer_option -->
@@ -62,7 +62,7 @@
 		</tr>
 		<tr>
 			<td>
-				<label for="domain_alias_name">{TR_DOMAIN_ALIAS_NAME}</label>
+				<label for="domain_alias_name"><?php tr_e('Name') ?></label>
 				<span class="tips icon i_help" id="domain_alias_name_tooltip" title="{TR_DOMAIN_ALIAS_NAME_TOOLTIP}"></span>
 			</td>
 			<td>
@@ -71,15 +71,15 @@
 			</td>
 		</tr>
 		<tr>
-			<td>{TR_SHARED_MOUNT_POINT}<span class="tips icon i_help" title="{TR_SHARED_MOUNT_POINT_TOOLTIP}"></span></td>
+			<td><?php tr_e('Shared mount point') ?><span class="tips icon i_help" title="{TR_SHARED_MOUNT_POINT_TOOLTIP}"></span></td>
 			<td>
 				<div class="radio">
 					<input type="radio" name="shared_mount_point" id="shared_mount_point_yes"
 						   value="yes"{SHARED_MOUNT_POINT_YES}/>
-					<label for="shared_mount_point_yes">{TR_YES}</label>
+					<label for="shared_mount_point_yes"><?php tr_e('Yes') ?></label>
 					<input type="radio" name="shared_mount_point" id="shared_mount_point_no"
 						   value="no"{SHARED_MOUNT_POINT_NO}/>
-					<label for="shared_mount_point_no">{TR_NO}</label>
+					<label for="shared_mount_point_no"><?php tr_e('No') ?></label>
 				</div>
 				<label for="shared_mount_point_domain">
 					<select name="shared_mount_point_domain" id="shared_mount_point_domain">
@@ -91,18 +91,18 @@
 			</td>
 		</tr>
 		<tr>
-			<td>{TR_URL_FORWARDING} <span class="tips icon i_help" title="{TR_URL_FORWARDING_TOOLTIP}"></span></td>
+			<td><?php tr_e('Forward URL') ?> <span class="tips icon i_help" title="{TR_URL_FORWARDING_TOOLTIP}"></span></td>
 			<td>
 				<div class="radio">
 					<input type="radio" name="url_forwarding" id="url_forwarding_yes"{FORWARD_URL_YES} value="yes"/>
-					<label for="url_forwarding_yes">{TR_YES}</label>
+					<label for="url_forwarding_yes"><?php tr_e('Yes') ?></label>
 					<input type="radio" name="url_forwarding" id="url_forwarding_no"{FORWARD_URL_NO} value="no"/>
-					<label for="url_forwarding_no">{TR_NO}</label>
+					<label for="url_forwarding_no"><?php tr_e('No') ?></label>
 				</div>
 			</td>
 		</tr>
 		<tr id="tr_url_forwarding_data">
-			<td>{TR_FORWARD_TO_URL}</td>
+			<td><?php tr_e('Forward to') ?></td>
 			<td>
 				<label for="forward_url_scheme">
 					<select name="forward_url_scheme" id="forward_url_scheme">
@@ -121,6 +121,6 @@
 
 	<div class="buttons">
 		<input name="Submit" type="submit" value="{TR_ADD}"/>
-		<a class="link_as_button" href="alias.php">{TR_CANCEL}</a>
+		<a class="link_as_button" href="alias.php"><?php tr_e('Cancel') ?></a>
 	</div>
 </form>

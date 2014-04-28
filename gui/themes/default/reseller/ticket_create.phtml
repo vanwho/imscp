@@ -3,34 +3,34 @@
 	<table class="firstColFixed">
 		<thead>
 		<tr>
-			<th colspan="2">{TR_NEW_TICKET}</th>
+			<th colspan="2"><?php tr_e('New ticket') ?></th>
 		</tr>
 		</thead>
 		<tbody>
 		<tr>
-			<td><label for="urgency">{TR_URGENCY}</label></td>
+			<td><label for="urgency"><?php tr_e('Priority') ?></label></td>
 			<td>
 				<select id="urgency" name="urgency">
-					<option value="1"{OPT_URGENCY_1}>{TR_LOW}</option>
-					<option value="2"{OPT_URGENCY_2}>{TR_MEDIUM}</option>
-					<option value="3"{OPT_URGENCY_3}>{TR_HIGH}</option>
-					<option value="4"{OPT_URGENCY_4}>{TR_VERY_HIGH}</option>
+					<option value="1"{OPT_URGENCY_1}><?php tr_e('Low') ?></option>
+					<option value="2"{OPT_URGENCY_2}><?php tr_e('Medium') ?></option>
+					<option value="3"{OPT_URGENCY_3}><?php tr_e('High') ?></option>
+					<option value="4"{OPT_URGENCY_4}><?php tr_e('Critical') ?></option>
 				</select>
 			</td>
 		</tr>
 		<tr>
-			<td><label for="subject">{TR_SUBJECT}</label></td>
+			<td><label for="subject"><?php tr_e('Subject') ?></label></td>
 			<td><input class=inputTitle type="text" id="subject" name="subject" value="{SUBJECT}"/></td>
 		</tr>
 		<tr>
-			<td><label for="user_message">{TR_YOUR_MESSAGE}</label></td>
+			<td><label for="user_message"><?php tr_e('Body') ?></label></td>
 			<td><textarea id="user_message" name="user_message">{USER_MESSAGE}</textarea></td>
 		</tr>
 		</tbody>
 	</table>
 
 	<div class="buttons">
-		<input name="submit" type="submit" value="{TR_CREATE}"/>
+		<input name="submit" type="submit" value="<?php tr_e('Create') ?>"/>
 		<input name="uaction" type="hidden" value="send_msg"/>
 	</div>
 </form>

@@ -2,7 +2,7 @@
 <table class="firstColFixed">
 	<thead>
 	<tr>
-		<th>{TR_LOGO_FILE}</th>
+		<th><?php tr_e('Logo file') ?></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -40,12 +40,12 @@
 	<table class="firstColFixed">
 		<thead>
 		<tr>
-			<th colspan="2">{TR_LAYOUT_COLOR}</th>
+			<th colspan="2"><?php tr_e('Layout color') ?></th>
 		</tr>
 		</thead>
 		<tbody>
 		<tr>
-			<td><label for="layoutColor">{TR_CHOOSE_LAYOUT_COLOR}</label></td>
+			<td><label for="layoutColor"><?php tr_e('Choose layout color') ?></label></td>
 			<td>
 				<select name="layoutColor" id="layoutColor">
 					<!-- BDP: layout_color_block -->
@@ -65,19 +65,19 @@
 	<table class="firstColFixed">
 		<thead>
 		<tr>
-			<th colspan="2">{TR_OTHER_SETTINGS}</th>
+			<th colspan="2"><?php tr_e('Other settings') ?></th>
 		</tr>
 		</thead>
 		<tbody>
 		<tr>
-			<td><label for="mainMenuShowLabels">{TR_MAIN_MENU_SHOW_LABELS}</label></td>
+			<td><label for="mainMenuShowLabels"><?php tr_e('Show main menu labels') ?></label></td>
 			<td>
 				<select name="mainMenuShowLabels" id="mainMenuShowLabels">
-					<option value="0"{MAIN_MENU_SHOW_LABELS_OFF}>{TR_DISABLED}</option>
-					<option value="1"{MAIN_MENU_SHOW_LABELS_ON}>{TR_ENABLED}</option>
+					<option value="0"{MAIN_MENU_SHOW_LABELS_OFF}><?php tr_e('No') ?></option>
+					<option value="1"{MAIN_MENU_SHOW_LABELS_ON}><?php tr_e('Yes') ?></option>
 				</select>
 				<input type="hidden" name="uaction" value="changeShowLabels"/>
-				<input name="submit" type="submit" value="{TR_CHANGE}"/>
+				<input name="submit" type="submit" value="<?php tr_e('Update') ?>"/>
 			</td>
 		</tr>
 		</tbody>
