@@ -4,11 +4,11 @@ This is the branch for the next major release 2.0.0.
 
 ## TODO
 
-### Engine (imscp-installer)
+### Engine
 
  No defined yet
 
-### FrontEnd (imscp-frontend)
+### FrontEnd
 
  - ImscpBase module
  - ImscpUser module
@@ -24,6 +24,6 @@ This is the branch for the next major release 2.0.0.
  - ImscpServer module
  - ...
 
-### Engine (imscp-engine)
+### Engine
 
  No defined yet
