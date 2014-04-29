@@ -33,6 +33,9 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~3.7",
-        "zendframework/zendframework": "2.3.*"
+        "zendframework/zendframework": "2.3.*",
+        "zendframework/zftool": "dev-master",
+        "zendframework/zend-developer-tools": "1.0.0-BETA3",
+        "doctrine/doctrine-orm-module": "0.*"
     }
 }
