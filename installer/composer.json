@@ -1,6 +1,6 @@
 {
     "name": "imscp/imscp-installer",
-    "description": "i-MSCP 2",
+    "description": "Provide installer for i-MSCP 2",
     "keywords": [
         "imscp",
         "panel",

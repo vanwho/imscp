@@ -1,6 +1,6 @@
 {
     "name": "imscp/imscp-backend",
-    "description": "i-MSCP 2",
+    "description": "Provide backend for i-MSCP 2",
     "keywords": [
         "imscp",
         "panel",

@@ -1,12 +1,12 @@
 {
     "name": "imscp/imscp-frontend",
-    "description": "i-MSCP 2",
+    "description": "Provide frontend for i-MSCP 2",
     "keywords": [
         "imscp",
         "panel",
         "hosting",
         "linux",
-        "fontend"
+        "frontend"
     ],
     "license": "LGPL-2.1+",
     "authors": [
