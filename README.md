@@ -6,17 +6,17 @@ This is the branch for the next major release.
 
 ### FrontEnd
 
-	- ImscpBase module
-	- ImscpUser module
-	- iMSCPAccount module
-	- ImscpDomain module
-	- ImscpFtp module
-	- ImscpSql module
-	- ImscpAps module
-	- ImscpPlugin module
-	- ImscpPackage module
-	- ...
+ - ImscpBase module
+ - ImscpUser module
+ - imscpAccount module
+ - ImscpDomain module
+ - ImscpFtp module
+ - ImscpSql module
+ - ImscpAps module
+ - ImscpPlugin module
+ - ImscpPackage module
+- ...
 
 ### Engine
 
-	No yet defined
+ No yet defined
