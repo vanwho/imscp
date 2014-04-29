@@ -29,5 +29,9 @@
         "imscp/imscp-frontend-aps": "self.version",
         "imscp/imscp-frontend-plugin": "self.version",
         "imscp/imscp-frontend-package": "self.version"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~3.7",
+        "zendframework/zendframework": "2.3.*"
     }
 }
