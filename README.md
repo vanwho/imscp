@@ -4,11 +4,15 @@ This is the branch for the next major release.
 
 ## TODO
 
-### FrontEnd
+### Engine (imscp-installer)
+
+ No defined yet
+
+### FrontEnd (imscp-frontend)
 
  - ImscpBase module
  - ImscpUser module
-  - ImscpSsh modume
+  - ImscpSsh module
  - ImscpAccount module
  - ImscpDomain module
  - ImscpFtp module
@@ -19,6 +23,6 @@ This is the branch for the next major release.
  - ImscpPackage module
  - ...
 
-### Engine
+### Engine (imscp-engine)
 
- No yet defined
+ No defined yet
