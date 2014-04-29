@@ -13,9 +13,9 @@ use Zend\ModuleManager\Feature\ConfigProviderInterface;
 class Module implements ConfigProviderInterface, AutoloaderProviderInterface
 {
 	/**
-	 * Returns configuration to merge with application configuration
+	 * Returns configuration to merge with base configuration
 	 *
-	 * @return array|\Traversable
+	 * @return array
 	 */
 	public function getConfig()
 	{

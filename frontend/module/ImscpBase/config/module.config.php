@@ -35,5 +35,13 @@ return array(
 				__DIR__ . '/../assets',
 			)
 		),
+		'caching' => array(
+			'default' => array(
+				'cache' => 'FilePath',
+				'options' => array(
+					'dir' => 'public'
+				),
+			)
+		),
 	),
 );
