@@ -1,0 +1,27 @@
+{
+    "name": "imscp-frontend/imscp-aps",
+    "description": "Provide DNS management for i-MSCP frontend",
+    "keywords": [
+        "imscp",
+        "panel",
+        "hosting",
+        "linux",
+        "fontend",
+        "dns"
+    ],
+    "license": "LGPL-2.1+",
+    "authors": [
+        {
+            "name": "Laurent Declercq",
+            "email": "l.declercq@nuxwin.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.23",
+        "imscp-frontend/imscp-user": "self.version"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~3.7",
+        "zendframework/zendframework": "2.3.*"
+    }
+}

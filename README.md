@@ -11,17 +11,19 @@ This is the branch for the next major release 2.0.0.
 ### FrontEnd
 
  - ImscpBase module
- - ImscpUser module
- - ImscpSsh module
  - ImscpAccount module
+ - ImscpAps module
+ - ImscpDns module
  - ImscpDomain module
  - ImscpFtp module
  - ImscpMail module
- - ImscpSql module
- - ImscpAps module
  - ImscpPlugin module
  - ImscpPackage module
+ - ImscpProduct module
  - ImscpServer module
+ - ImscpSsh module
+ - ImscpSql module
+ - ImscpUser module
  - ...
 
 ### Engine

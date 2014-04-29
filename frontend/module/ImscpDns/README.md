@@ -1,2 +1,2 @@
-APS Module from i-MSCP
+DNS Module from i-MSCP
 ======================
