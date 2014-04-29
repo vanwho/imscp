@@ -8,14 +8,16 @@ This is the branch for the next major release.
 
  - ImscpBase module
  - ImscpUser module
- - imscpAccount module
+  - ImscpSsh modume
+ - ImscpAccount module
  - ImscpDomain module
  - ImscpFtp module
+ - ImscpMail module
  - ImscpSql module
  - ImscpAps module
  - ImscpPlugin module
  - ImscpPackage module
-- ...
+ - ...
 
 ### Engine
 
