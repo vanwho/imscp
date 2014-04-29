@@ -1,0 +1,38 @@
+{
+    "name": "imscp/imscp-frontend",
+    "description": "i-MSCP 2",
+    "keywords": [
+        "imscp",
+        "panel",
+        "hosting",
+        "linux",
+        "fontend"
+    ],
+    "license": "LGPL-2.1+",
+    "authors": [
+        {
+            "name": "Laurent Declercq",
+            "email": "l.declercq@nuxwin.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.23"
+    },
+    "replace": {
+        "imscp/imscp-frontend-base": "self.version",
+        "imscp/imscp-frontend-user": "self.version",
+        "imscp/imscp-frontend-ssh": "self.version",
+        "imscp/imscp-frontend-account": "self.version",
+        "imscp/imscp-frontend-domain": "self.version",
+        "imscp/imscp-frontend-ftp": "self.version",
+        "imscp/imscp-frontend-mail": "self.version",
+        "imscp/imscp-frontend-sql": "self.version",
+        "imscp/imscp-frontend-aps": "self.version",
+        "imscp/imscp-frontend-plugin": "self.version",
+        "imscp/imscp-frontend-package": "self.version"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~3.7",
+        "zendframework/zendframework": "2.3.*"
+    }
+}

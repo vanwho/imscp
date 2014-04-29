@@ -1,0 +1,18 @@
+{
+    "name": "imscp/imscp-backend",
+    "description": "i-MSCP 2",
+    "keywords": [
+        "imscp",
+        "panel",
+        "hosting",
+        "linux",
+        "backend"
+    ],
+    "license": "LGPL-2.1+",
+    "authors": [
+        {
+            "name": "Laurent Declercq",
+            "email": "l.declercq@nuxwin.com"
+        }
+    ]
+}
