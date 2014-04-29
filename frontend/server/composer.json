@@ -1,13 +1,13 @@
 {
-    "name": "imscp/imscp-frontend-sql",
-    "description": "Provide sql management for i-MSCP 2",
+    "name": "imscp/imscp-frontend-server",
+    "description": "Provide server management for i-MSCP 2",
     "keywords": [
         "imscp",
         "panel",
         "hosting",
         "linux",
         "fontend",
-        "sql"
+        "server"
     ],
     "license": "LGPL-2.1+",
     "authors": [
@@ -18,7 +18,7 @@
     ],
     "require": {
         "php": ">=5.3.23",
-        "imscp/imscp-frontend-user": "self.version"
+        "imscp/imscp-frontend-base": "self.version"
     },
     "require-dev": {
         "phpunit/phpunit": "~3.7",

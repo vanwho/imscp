@@ -1,0 +1,27 @@
+{
+    "name": "imscp/imscp-frontend-user",
+    "description": "Provide user management for i-MSCP 2",
+    "keywords": [
+        "imscp",
+        "panel",
+        "hosting",
+        "linux",
+        "fontend",
+        "user"
+    ],
+    "license": "LGPL-2.1+",
+    "authors": [
+        {
+            "name": "Laurent Declercq",
+            "email": "l.declercq@nuxwin.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.23",
+        "imscp/imscp-frontend-base": "self.version"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~3.7",
+        "zendframework/zendframework": "2.3.*"
+    }
+}

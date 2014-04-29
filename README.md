@@ -21,6 +21,7 @@ This is the branch for the next major release.
  - ImscpAps module
  - ImscpPlugin module
  - ImscpPackage module
+ - ImscpServer module
  - ...
 
 ### Engine (imscp-engine)
