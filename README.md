@@ -1,6 +1,6 @@
 ## i-MSCP - internet Multi Server Control Panel
 
-This is the branch for the next major release.
+This is the branch for the next major release 2.0.0.
 
 ## TODO
 
@@ -12,7 +12,7 @@ This is the branch for the next major release.
 
  - ImscpBase module
  - ImscpUser module
-  - ImscpSsh module
+ - ImscpSsh module
  - ImscpAccount module
  - ImscpDomain module
  - ImscpFtp module
