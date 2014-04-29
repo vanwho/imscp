@@ -1,5 +1,5 @@
 {
-    "name": "imscp/imscp-frontend",
+    "name": "imscp/frontend",
     "description": "Provide frontend for i-MSCP 2",
     "keywords": [
         "imscp",
@@ -19,17 +19,17 @@
         "php": ">=5.3.23"
     },
     "replace": {
-        "imscp/imscp-frontend-base": "self.version",
-        "imscp/imscp-frontend-user": "self.version",
-        "imscp/imscp-frontend-ssh": "self.version",
-        "imscp/imscp-frontend-account": "self.version",
-        "imscp/imscp-frontend-domain": "self.version",
-        "imscp/imscp-frontend-ftp": "self.version",
-        "imscp/imscp-frontend-mail": "self.version",
-        "imscp/imscp-frontend-sql": "self.version",
-        "imscp/imscp-frontend-aps": "self.version",
-        "imscp/imscp-frontend-plugin": "self.version",
-        "imscp/imscp-frontend-package": "self.version"
+        "imscp-frontend/imscp-base": "self.version",
+        "imscp-frontend/imscp-user": "self.version",
+        "imscp-frontend/imscp-ssh": "self.version",
+        "imscp-frontend/imscp-account": "self.version",
+        "imscp-frontend/imscp-domain": "self.version",
+        "imscp-frontend/imscp-ftp": "self.version",
+        "imscp-frontend/imscp-mail": "self.version",
+        "imscp-frontend/imscp-sql": "self.version",
+        "imscp-frontend/imscp-aps": "self.version",
+        "imscp-frontend/imscp-plugin": "self.version",
+        "imscp-frontend/imscp-package": "self.version"
     },
     "require-dev": {
         "phpunit/phpunit": "~3.7",
