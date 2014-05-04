@@ -60,7 +60,7 @@ interface EditableSettingInterface extends SettingInterface
      * Set option values
      *
      * @param array $optionValues
-     * @return EditableSettingsInterface
+     * @return EditableSettingInterface
      */
     public function setOptionValues($optionValues);
 

@@ -42,7 +42,6 @@ interface SettingInterface
      */
     public function getValue();
 
-
     /**
      * Get settings level
      *
