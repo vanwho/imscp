@@ -21,6 +21,8 @@
 namespace ImscpUser\Settings\Authentication;
 
 use ImscpSettings\Settings\EditableSettingInterface;
+use Zend\I18n\Translator\TranslatorAwareInterface;
+use Zend\I18n\Translator\TranslatorAwareTrait;
 
 /**
  * Class IdentityFields
@@ -28,8 +30,10 @@ use ImscpSettings\Settings\EditableSettingInterface;
  * @package ImscpUser\Setting\Authentication
  * @author Laurent Declercq <l.declercq@nuxwin.com>
  */
-class IdentityFields implements EditableSettingInterface
+class IdentityFields implements EditableSettingInterface, TranslatorAwareInterface
 {
+    use TranslatorAwareTrait;
+
     /**
      * @var array
      */
@@ -65,7 +69,7 @@ class IdentityFields implements EditableSettingInterface
      */
     public function getLabel()
     {
-        return "Authentication identity match";
+        return $this->getTranslator()->translate('Authentication identity match');
     }
 
     /**
@@ -73,7 +77,7 @@ class IdentityFields implements EditableSettingInterface
      */
     public function getDescription()
     {
-        return 'Specify the allowable identity modes';
+        return $this->getTranslator()->translate('Specify the allowable identity modes');
     }
 
     /**
@@ -93,10 +97,7 @@ class IdentityFields implements EditableSettingInterface
     }
 
     /**
-     * Set option values
-     *
-     * @param array $optionsValues
-     * @return IdentityFields
+     * {@inheritdoc}
      */
     public function setOptionValues($optionsValues)
     {
@@ -106,9 +107,7 @@ class IdentityFields implements EditableSettingInterface
     }
 
     /**
-     * Get option values
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getOptionValues()
     {
@@ -116,9 +115,7 @@ class IdentityFields implements EditableSettingInterface
     }
 
     /**
-     * Get settings level
-     *
-     * @return string|array
+     * {@inheritdoc}
      */
     public function getLevel()
     {

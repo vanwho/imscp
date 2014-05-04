@@ -21,6 +21,8 @@
 namespace ImscpUser\Settings\Authentication;
 
 use ImscpSettings\Settings\EditableSettingInterface;
+use Zend\I18n\Translator\TranslatorAwareInterface;
+use Zend\I18n\Translator\TranslatorAwareTrait;
 
 /**
  * Class AllowedLoginState
@@ -28,8 +30,11 @@ use ImscpSettings\Settings\EditableSettingInterface;
  * @package ImscpUser\Settings\Authentication
  * @author Laurent Declercq <l.declercq@nuxwin.com>
  */
-class AllowedLoginState implements EditableSettingInterface
+class AllowedLoginState implements EditableSettingInterface, TranslatorAwareInterface
 {
+
+    use TranslatorAwareTrait;
+
     /**
      * @var array
      */
@@ -64,7 +69,7 @@ class AllowedLoginState implements EditableSettingInterface
      */
     public function getLabel()
     {
-        return "Allowed login states";
+        return $this->getTranslator()->translate('Allowed login states');
     }
 
     /**
@@ -72,7 +77,7 @@ class AllowedLoginState implements EditableSettingInterface
      */
     public function getDescription()
     {
-        return 'State which allow users to login';
+        return $this->getTranslator()->translate('State which allow users to login');
     }
 
     /**
@@ -92,10 +97,7 @@ class AllowedLoginState implements EditableSettingInterface
     }
 
     /**
-     * Set option values
-     *
-     * @param array $optionsValues
-     * @return AllowedLoginState
+     * {@inheritdoc}
      */
     public function setOptionValues($optionsValues)
     {
@@ -105,9 +107,7 @@ class AllowedLoginState implements EditableSettingInterface
     }
 
     /**
-     * Get option values
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getOptionValues()
     {
@@ -115,9 +115,7 @@ class AllowedLoginState implements EditableSettingInterface
     }
 
     /**
-     * Get settings level
-     *
-     * @return string|array
+     * {@inheritdoc}
      */
     public function getLevel()
     {

@@ -21,6 +21,8 @@
 namespace ImscpUser\Settings\Authentication;
 
 use ImscpSettings\Settings\EditableSettingInterface;
+use Zend\I18n\Translator\TranslatorAwareInterface;
+use Zend\I18n\Translator\TranslatorAwareTrait;
 
 /**
  * Class PasswordCost
@@ -28,8 +30,10 @@ use ImscpSettings\Settings\EditableSettingInterface;
  * @package ImscpUser\Settings\Authentication
  * @author Laurent Declercq <l.declercq@nuxwin.com>
  */
-class PasswordCost implements EditableSettingInterface
+class PasswordCost implements EditableSettingInterface, TranslatorAwareInterface
 {
+    use TranslatorAwareTrait;
+
     /**
      * @var array
      */
@@ -69,7 +73,7 @@ class PasswordCost implements EditableSettingInterface
      */
     public function getLabel()
     {
-        return "Authentication password cost";
+        return $this->getTranslator()->translate('Authentication password cost');
     }
 
     /**
@@ -77,7 +81,9 @@ class PasswordCost implements EditableSettingInterface
      */
     public function getDescription()
     {
-        return 'The number represents the base-2 logarithm of the iteration count used for hashing.';
+        return $this->getTranslator()->translate(
+            'The number represents the base-2 logarithm of the iteration count used for hashing.'
+        );
     }
 
     /**
@@ -97,9 +103,7 @@ class PasswordCost implements EditableSettingInterface
     }
 
     /**
-     * Set option values
-     *
-     * @return PasswordCost
+     * {@inheritdoc}
      */
     public function setOptionValues($optionsValues)
     {
@@ -109,9 +113,7 @@ class PasswordCost implements EditableSettingInterface
     }
 
     /**
-     * Get option values
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getOptionValues()
     {
@@ -119,9 +121,7 @@ class PasswordCost implements EditableSettingInterface
     }
 
     /**
-     * Get settings level
-     *
-     * @return string|array
+     * {@inheritdoc}
      */
     public function getLevel()
     {

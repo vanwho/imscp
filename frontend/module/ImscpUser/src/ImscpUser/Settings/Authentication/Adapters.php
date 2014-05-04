@@ -21,6 +21,8 @@
 namespace ImscpUser\Settings\Authentication;
 
 use ImscpSettings\Settings\EditableSettingInterface;
+use Zend\I18n\Translator\TranslatorAwareInterface;
+use Zend\I18n\Translator\TranslatorAwareTrait;
 
 /**
  * Class Adapters
@@ -28,8 +30,11 @@ use ImscpSettings\Settings\EditableSettingInterface;
  * @package ImscpUser\Settings\Authentication
  * @author Laurent Declercq <l.declercq@nuxwin.com>
  */
-class Adapters implements EditableSettingInterface
+class Adapters implements EditableSettingInterface, TranslatorAwareInterface
 {
+
+    use TranslatorAwareTrait;
+
     /**
      * @var array
      */
@@ -43,6 +48,9 @@ class Adapters implements EditableSettingInterface
     protected $optionsValues = [
         'ImscpUser\\Authentication\\Adapter\\Db'
     ];
+
+
+
 
     /**
      * {@inheritdoc}
@@ -65,7 +73,7 @@ class Adapters implements EditableSettingInterface
      */
     public function getLabel()
     {
-        return "Authentication adapters";
+        return $this->getTranslator()->translate("Authentication adapters");
     }
 
     /**
@@ -73,7 +81,7 @@ class Adapters implements EditableSettingInterface
      */
     public function getDescription()
     {
-        return 'Authentication adapters which you want enable';
+        return $this->getTranslator()->translate('Authentication adapters which you want enable');
     }
 
     /**
@@ -93,10 +101,7 @@ class Adapters implements EditableSettingInterface
     }
 
     /**
-     * Set option values
-     *
-     * @param array $optionsValues
-     * @return Adapters
+     * {@inheritdoc}
      */
     public function setOptionValues($optionsValues)
     {
@@ -106,9 +111,7 @@ class Adapters implements EditableSettingInterface
     }
 
     /**
-     * Get option values
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getOptionValues()
     {
@@ -116,9 +119,7 @@ class Adapters implements EditableSettingInterface
     }
 
     /**
-     * Get settings level
-     *
-     * @return string|array
+     * {@inheritdoc}
      */
     public function getLevel()
     {
