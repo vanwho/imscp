@@ -26,7 +26,7 @@ namespace ImscpBase\Controller;
  * @package ImscpBase\Controller
  * @author Laurent Declercq <l.declercq@nuxwin.com>
  */
-abstract class BaseCustomerActionController extends BaseActionController
+abstract class BaseResellerActionController extends BaseActionController
 {
 
 }
