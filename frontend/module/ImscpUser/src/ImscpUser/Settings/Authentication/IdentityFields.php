@@ -34,14 +34,14 @@ class IdentityFields implements EditableSettingInterface
      * @var array
      */
     protected $value = [
-        'email', 'username'
+        'username', 'email'
     ];
 
     /**
      * @var array
      */
     protected $optionsValues = [
-        'email', 'username'
+        'username', 'email'
     ];
 
     /**

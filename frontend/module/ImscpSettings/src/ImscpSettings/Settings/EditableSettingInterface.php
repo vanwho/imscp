@@ -67,7 +67,7 @@ interface EditableSettingInterface extends SettingInterface
     /**
      * Get option values
      *
-     * @return array
+     * @return array|null
      */
     public function getOptionValues();
 }
