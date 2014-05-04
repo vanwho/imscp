@@ -32,7 +32,6 @@ use Zend\I18n\Translator\TranslatorAwareTrait;
  */
 class AllowedLoginState implements EditableSettingInterface, TranslatorAwareInterface
 {
-
     use TranslatorAwareTrait;
 
     /**

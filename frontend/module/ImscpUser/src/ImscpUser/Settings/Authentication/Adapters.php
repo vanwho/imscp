@@ -32,7 +32,6 @@ use Zend\I18n\Translator\TranslatorAwareTrait;
  */
 class Adapters implements EditableSettingInterface, TranslatorAwareInterface
 {
-
     use TranslatorAwareTrait;
 
     /**
@@ -48,9 +47,6 @@ class Adapters implements EditableSettingInterface, TranslatorAwareInterface
     protected $optionsValues = [
         'ImscpUser\\Authentication\\Adapter\\Db'
     ];
-
-
-
 
     /**
      * {@inheritdoc}
