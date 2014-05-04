@@ -49,6 +49,6 @@ class AuthenticationSettingsAbstractFactory implements AbstractFactoryInterface
             $service->setTranslator($translator);
         }
 
-        return new $requestedName;
+        return $service;
     }
 }
