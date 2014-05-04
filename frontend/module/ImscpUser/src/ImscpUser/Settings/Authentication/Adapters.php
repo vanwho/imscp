@@ -20,15 +20,15 @@
 
 namespace ImscpUser\Settings\Authentication;
 
-use ImscpSettings\Settings\EditableSettingsInterface;
+use ImscpSettings\Settings\EditableSettingInterface;
 
 /**
- * Class AdaptersSetting
+ * Class Adapters
  *
  * @package ImscpUser\Settings\Authentication
  * @author Laurent Declercq <l.declercq@nuxwin.com>
  */
-class Adapters implements EditableSettingsInterface
+class Adapters implements EditableSettingInterface
 {
     /**
      * @var array
@@ -100,7 +100,7 @@ class Adapters implements EditableSettingsInterface
      */
     public function setOptionValues($optionsValues)
     {
-        $this->optionsValues[] = $optionsValues;
+        $this->optionsValues = $optionsValues;
 
         return $this;
     }

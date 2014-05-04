@@ -20,7 +20,7 @@
 
 namespace ImscpUser\Settings\Authentication;
 
-use ImscpSettings\Settings\EditableSettingsInterface;
+use ImscpSettings\Settings\EditableSettingInterface;
 
 /**
  * Class PasswordCost
@@ -28,7 +28,7 @@ use ImscpSettings\Settings\EditableSettingsInterface;
  * @package ImscpUser\Settings\Authentication
  * @author Laurent Declercq <l.declercq@nuxwin.com>
  */
-class PasswordCost implements EditableSettingsInterface
+class PasswordCost implements EditableSettingInterface
 {
     /**
      * @var array
