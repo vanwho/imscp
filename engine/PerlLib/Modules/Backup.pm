@@ -53,9 +53,35 @@ use parent 'Modules::Abstract';
 
 =cut
 
-sub process()
+sub process($$)
 {
+	my ($this, taskId) = @_;
 
+	my $rs = 0;
+
+	my $rdata = $this->{'db'}->doQuery('SELECT * FROM jobs WHERE task_id = ?', $taskId);
+	unless(ref $rdata eq 'HASH') {
+		error($rdata);
+		return 1;
+	}
+
+	my ($domainId, $domainType) = split '_', $rdata->{'domain_id'};
+
+	if($rdata->{'job_type'} eq 'backup_domain') {
+		my $rs = $self->_backupDomainData($domainId, $domainType);
+		$rs if $rs;
+	} elsif $rdata->{'job_type'} eq 'restore_domain') {
+		my $rs = $self->_restoreDomainData($domainId, $domainType);
+		$rs if $rs;
+	}
+
+	$rdata = $this->{'db'}->doQuery(
+		'UPDATE domain SET domain_status = ? WHERE domain_id = ?',
+		($rs ? scalar getMessageByType('error') : 'ok'),
+		$self->{'task_id'}
+	);
+
+	0;
 }
 
 =back
@@ -76,32 +102,39 @@ sub _init
 {
 	my $self = $_[0];
 
- 	$self->{'hooksManager'} = iMSCP::HooksManager->getInstance();
- 	$self->{'db'} = iMSCP::Database->factory();
+	$self->{'hooksManager'} = iMSCP::HooksManager->getInstance();
+	$self->{'db'} = iMSCP::Database->factory();
+
+	# TODO Create backup root (mirror) directory if needed (eg, if mirror is not located on remote server
+	# TODO allow per reseller remote server (allow reseller to setup remote server where data will be pushed using rsync)
 
 	$self;
 }
 
-=item _backupDomainData()
+=item _backupDomainData($domainId, $domainType)
 
-	Backup data of the given domain
+ Backup data of the given domain
 
 =cut
 
-sub _backupDomainData()
+sub _backupDomainData($$$)
 {
+	my ($this, $domainId, $domainType) = @_;
 
+	0;
 }
 
-=item _restoreDomainData()
+=item _restoreDomainData($domainId, $domainType)
 
  Restore data of the given domain
 
 =cut
 
-sub _restoreDomainData
+sub _restoreDomainData($$$)
 {
-	Restore data of the given domain
+	my ($this, $domainId, $domainType) = @_;
+
+	0;
 }
 
 =item _restoreDomainMetaData
@@ -112,7 +145,7 @@ sub _restoreDomainData
 
 sub _restoreDomainMetaData()
 {
-
+	0;
 }
 
 =item restoreDomainSqlData()
@@ -121,8 +154,9 @@ sub _restoreDomainMetaData()
 
 =cut
 
-sub restoreDomainSqlData{
-
+sub restoreDomainSqlData
+{
+	0;
 }
 
 =item _restoreDomainMailData
@@ -133,7 +167,7 @@ sub restoreDomainSqlData{
 
 sub _restoreDomainMail()
 {
-
+	0;
 }
 
 =item _restoreDomainWebData
@@ -144,7 +178,7 @@ sub _restoreDomainMail()
 
 sub _restoreDomainWebData()
 {
-
+	0;
 }
 
 =back

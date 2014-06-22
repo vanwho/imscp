@@ -88,6 +88,25 @@ sub delete
 
 =item
 
+ Backup item
+
+ Should be called for items with 'tobackup' status.
+
+ return int 0 on success, other on failure
+
+=cut restore()
+
+sub restore
+{
+	my $self = $_[0];
+
+	$self->{'action'} = 'backup';
+
+	$self->_runAllActions();
+}
+
+=item
+
  Restore item
 
  Should be called for items with 'torestore' status.
