@@ -142,7 +142,7 @@ class AutoloaderFactory
             if (!class_exists(static::DEFAULT_LOADER)) {
                 // Retrieves filename from the classname
                 $defaultLoader = substr(strrchr(static::DEFAULT_LOADER, '\\'), 1);
-                require_once __DIR__ . "/$defaultLoader.php";
+                require_once __DIR__ . "/AutoloaderFactory.php";
             }
 
             static::$defaultLoader = new UniversalLoader();
