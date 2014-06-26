@@ -188,7 +188,7 @@ sub _runAction ($$$$)
 	my ($self, $action, $items, $itemType) = @_;
 
 	for (@{$items}) {
-		my $paramName = ($itemType eq 'Packages') ? 'packages' : $_;
+		my $paramName = ($itemType eq 'Packages') ? 'Package' : $_;
 
 		# Does this module provide data for the current item
 		if(exists $self->{$paramName}) {

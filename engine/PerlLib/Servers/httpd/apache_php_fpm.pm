@@ -407,11 +407,11 @@ sub deleteDmn($$)
 				my $skelDir;
 
 				if($data->{'DOMAIN_TYPE'} eq 'dmn') {
-					$skelDir = "$self->{'apacheCfgDir'}/skel/domain";
+					$skelDir = "$main::imscpConfig{'CONF_DIR'}/skel/domain";
 				} elsif($data->{'DOMAIN_TYPE'} eq 'als') {
-					$skelDir = "$self->{'apacheCfgDir'}/skel/alias";
+					$skelDir = "$main::imscpConfig{'CONF_DIR'}/skel/alias";
 				} else {
-					$skelDir = "$self->{'apacheCfgDir'}/skel/subdomain";
+					$skelDir = "$main::imscpConfig{'CONF_DIR'}/skel/subdomain";
 				}
 
 				for(iMSCP::Dir->new('dirname' => $skelDir)->getAll()) {
@@ -1954,16 +1954,16 @@ sub _addFiles($$)
 	if($data->{'FORWARD'} eq 'no') {
 		my $webDir = $data->{'WEB_DIR'};
 
-		# Build domain/subdomain Web directory tree using skeleton from (eg /etc/imscp/apache/skel) - BEGIN
+		# Build domain/subdomain Web directory tree using skeleton from (eg /etc/imscp/skel) - BEGIN
 
 		my $skelDir;
 
 		if($data->{'DOMAIN_TYPE'} eq 'dmn') {
-			$skelDir = "$self->{'apacheCfgDir'}/skel/domain";
+			$skelDir = "$main::imscpConfig{'CONF_DIR'}/skel/domain";
 		} elsif($data->{'DOMAIN_TYPE'} eq 'als') {
-			$skelDir = "$self->{'apacheCfgDir'}/skel/alias";
+			$skelDir = "$main::imscpConfig{'CONF_DIR'}/skel/alias";
 		} else {
-			$skelDir = "$self->{'apacheCfgDir'}/skel/subdomain";
+			$skelDir = "$main::imscpConfig{'CONF_DIR'}/skel/subdomain";
 		}
 
 		my ($tmpDir, $stdout, $stderr);
@@ -2012,7 +2012,7 @@ sub _addFiles($$)
 			}
 		}
 
-		# Build domain/subdomain Web directory tree using skeleton from (eg /etc/imscp/apache/skel) - END
+		# Build domain/subdomain Web directory tree using skeleton from (eg /etc/imscp/skel) - END
 
 		my $protectedParentDir = dirname($webDir);
 		$protectedParentDir = dirname($protectedParentDir) while(! -d $protectedParentDir);

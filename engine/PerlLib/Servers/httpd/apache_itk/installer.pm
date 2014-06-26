@@ -319,7 +319,7 @@ sub _setApacheVersion()
 	my $self = $_[0];
 
 	my ($stdout, $stderr);
-	my $rs = execute("$self->{'config'}->{'CMD_HTTPD_CTL'} -v", \$stdout, \$stderr);
+	my $rs = execute("$self->{'config'}->{'CMD_APACHE2CTL'} -v", \$stdout, \$stderr);
 	debug($stdout) if $stdout;
 	error($stderr) if $stderr && $rs;
 	error('Unable to find Apache version') if $rs && ! $stderr;
