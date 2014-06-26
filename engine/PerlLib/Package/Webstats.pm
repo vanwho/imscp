@@ -104,8 +104,8 @@ sub showDialog($$)
 				eval "require $package";
 
 				if(! $@) {
-					package = $package->getInstance();
-					$rs = $package->showDialog($dialog) if package->can('showDialog');
+					$package = $package->getInstance();
+					$rs = $package->showDialog($dialog) if $package->can('showDialog');
 					last if $rs;
 				} else {
 					error($@);
@@ -253,7 +253,7 @@ sub uninstall
 		}
 	}
 
-	$rs = $self->_removePackages($packages) if @${packages};
+	$rs = $self->_removePackages($packages) if @{$packages};
 
 	$rs;
 }

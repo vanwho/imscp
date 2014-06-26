@@ -505,7 +505,7 @@ sub _addAwstatsConfig
 		AWSTATS_CACHE_DIR => $main::imscpConfig{'AWSTATS_CACHE_DIR'},
 		AWSTATS_ENGINE_DIR => $main::imscpConfig{'AWSTATS_ENGINE_DIR'},
 		AWSTATS_WEB_DIR => $main::imscpConfig{'AWSTATS_WEB_DIR'},
-		CMD_LOGRESOLVEMERGE => "$main::imscpConfig{'CMD_PERL'} $awstatsPackaeRootDir/Scripts/logresolvemerge.pl",
+		CMD_LOGRESOLVEMERGE => "$main::imscpConfig{'CMD_PERL'} $awstatsPackageRootDir/Scripts/logresolvemerge.pl",
 		DOMAIN_NAME => $data->{'DOMAIN_NAME'},
 		LOG_DIR => "$httpd->{'config'}->{'HTTPD_LOG_DIR'}/$data->{'DOMAIN_NAME'}",
 	};

@@ -253,7 +253,7 @@ sub uninstall
 		}
 	}
 
-	$rs = $self->_removePackages($packages) if @${packages};
+	$rs = $self->_removePackages($packages) if @{$packages};
 
 	$rs;
 }

@@ -361,7 +361,7 @@ sub _installFiles
 		error($stderr) if $rs && $stderr;
 		return $rs if $rs;
 	} else {
-		error("Couldn't find the imscp/phpmyadmin package into the local repository");
+		error("Couldn't find the imscp/phpmyadmin package into the packages cache directory");
 		$rs = 1;
 	}
 

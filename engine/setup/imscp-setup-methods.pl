@@ -2511,7 +2511,7 @@ sub setupPostInstallPackages
 				$rs = step(
 					sub { $package->postinstall() },
 					sprintf("Running %s package postinstall tasks...", ref $package),
-					$nbPackage,
+					$nbPackages,
 					$step
 				);
 
