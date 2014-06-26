@@ -14,7 +14,7 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="i-MSCP Control Panel"
 NAME=imscp_panel
-STARTER=/usr/local/sbin/$NAME
+STARTER=/var/www/fcgi/master/php5-fcgid-starter
 DAEMON=/usr/bin/php5-cgi
 PIDFILE=/var/run/$NAME.pid
 TIMEOUT=30
