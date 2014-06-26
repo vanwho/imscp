@@ -32,7 +32,7 @@ use lib "$FindBin::Bin/..", "$FindBin::Bin/../PerlLib", "$FindBin::Bin/../PerlVe
 use iMSCP::Debug;
 use iMSCP::Bootstrapper;
 use iMSCP::Servers;
-use iMSCP::Addons;
+use iMSCP::Packages;
 
 # Turn off localisation features to force any command output to be in English
 $ENV{'LC_MESSAGES'} = 'C';
@@ -78,8 +78,8 @@ sub process
 		}
 	}
 
-	for(iMSCP::Addons->getInstance()->get()) {
-		my $package = "Addons::$_";
+	for(iMSCP::Packages->getInstance()->get()) {
+		my $package = "Package::$_";
 
 		eval "require $package";
 

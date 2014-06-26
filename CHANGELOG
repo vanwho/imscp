@@ -5,7 +5,7 @@
 Git stable
 ------------------------------------------------------------------------------------------------------------------------
 
-ADDONS:
+PACKAGES:
 	Fixed: Quotation marks must be escaped in PhpMyAdmin configuration file
 	Fixed: Quotation marks must be escaped in Roundcube configuration file
 

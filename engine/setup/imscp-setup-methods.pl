@@ -58,7 +58,7 @@ use iMSCP::SystemUser;
 use iMSCP::OpenSSL;
 use Email::Valid;
 use iMSCP::Servers;
-use iMSCP::Addons;
+use iMSCP::Packages;
 use iMSCP::Getopt;
 
 # Boot
@@ -77,7 +77,7 @@ sub setupBoot
 	0;
 }
 
-# Allow any server/addon to register its setup hook functions on the hooks manager before any other tasks
+# Allow any server/package to register its setup hook functions on the hooks manager before any other tasks
 sub setupRegisterHooks()
 {
 	my ($hooksManager, $rs) = (iMSCP::HooksManager->getInstance(), 0);
@@ -100,8 +100,8 @@ sub setupRegisterHooks()
 		return $rs if $rs;
 	}
 
-	for(iMSCP::Addons->getInstance()->get()) {
-		my $package = "Addons::$_";
+	for(iMSCP::Packages->getInstance()->get()) {
+		my $package = "Package::$_";
 
 		eval "require $package";
 
@@ -198,11 +198,11 @@ sub setupTasks
 		[\&setupServiceSsl,                 'Setup SSL for i-MSCP services'],
 		[\&setupCron,                       'Setup cron tasks'],
 		[\&setupPreInstallServers,          'Servers pre-installation'],
-		[\&setupPreInstallAddons,           'Addons pre-installation'],
+		[\&setupPreInstallPackages,         'Packages pre-installation'],
 		[\&setupInstallServers,             'Servers installation'],
-		[\&setupInstallAddons,              'Addons installation'],
+		[\&setupInstallPackages,            'Packages installation'],
 		[\&setupPostInstallServers,         'Servers post-installation'],
-		[\&setupPostInstallAddons,          'Addons post-installation'],
+		[\&setupPostInstallPackages,        'Packages post-installation'],
 		[\&setupInitScripts,                'Setting i-MSCP init scripts'],
 		[\&setupRebuildCustomerFiles,       'Rebuilding customers files'],
 		[\&setupSetPermissions,             'Setting permissions'],
@@ -2299,31 +2299,31 @@ sub setupPreInstallServers
 	iMSCP::HooksManager->getInstance()->trigger('afterSetupPreInstallServers');
 }
 
-# Call preinstall method on all i-MSCP addon packages
-sub setupPreInstallAddons
+# Call preinstall method on all i-MSCP packages
+sub setupPreInstallPackages
 {
-	my $rs = iMSCP::HooksManager->getInstance()->trigger('beforeSetupPreInstallAddons');
+	my $rs = iMSCP::HooksManager->getInstance()->trigger('beforeSetupPreInstallPackages');
 	return $rs if $rs;
 
-	my @addons = iMSCP::Addons->getInstance()->get();
-	my $nbAddons = scalar @addons;
+	my @packages = iMSCP::Packages->getInstance()->get();
+	my $nbPackages = scalar @packages;
 	my $step = 1;
 
 	startDetail();
 
-	for(@addons) {
-		my $package = "Addons::$_";
+	for(@packages) {
+		my $package = "Package::$_";
 
 		eval "require $package";
 
 		unless($@) {
-			my $addon = $package->getInstance();
+			my $package = $package->getInstance();
 
-			if($addon->can('preinstall')) {
+			if($package->can('preinstall')) {
 				$rs = step(
-					sub { $addon->preinstall() },
-					sprintf("Running %s addon preinstall tasks...", ref $addon),
-					$nbAddons,
+					sub { $package->preinstall() },
+					sprintf("Running %s package preinstall tasks...", ref $package),
+					$nbPackages,
 					$step
 				);
 
@@ -2342,7 +2342,7 @@ sub setupPreInstallAddons
 
 	return $rs if $rs;
 
-	iMSCP::HooksManager->getInstance()->trigger('afterSetupPreInstallAddons');
+	iMSCP::HooksManager->getInstance()->trigger('afterSetupPreInstallPackages');
 }
 
 # Call install method on all i-MSCP server packages
@@ -2393,31 +2393,31 @@ sub setupInstallServers
 	iMSCP::HooksManager->getInstance()->trigger('afterSetupInstallServers');
 }
 
-# Call install method on all i-MSCP addon packages
-sub setupInstallAddons
+# Call install method on all i-MSCP packages
+sub setupInstallPackages
 {
-	my $rs = iMSCP::HooksManager->getInstance()->trigger('beforeSetupInstallAddons');
+	my $rs = iMSCP::HooksManager->getInstance()->trigger('beforeSetupInstallPackages');
 	return $rs if $rs;
 
-	my @addons = iMSCP::Addons->getInstance()->get();
-	my $nbAddons = scalar @addons;
+	my @packages = iMSCP::Packages->getInstance()->get();
+	my $nbPackages = scalar @packages;
 	my $step = 1;
 
 	startDetail();
 
-	for(@addons) {
-		my $package = "Addons::$_";
+	for(@packages) {
+		my $package = "Package::$_";
 
 		eval "require $package";
 
 		unless($@) {
-			my $addon = $package->getInstance();
+			my $package = $package->getInstance();
 
-			if($addon->can('install')) {
+			if($package->can('install')) {
 				$rs = step(
-					sub { $addon->install() },
-					sprintf("Running %s addon install tasks...", ref $addon),
-					$nbAddons,
+					sub { $package->install() },
+					sprintf("Running %s package install tasks...", ref $package),
+					$nbPackages,
 					$step
 				);
 
@@ -2436,7 +2436,7 @@ sub setupInstallAddons
 
 	return $rs if $rs;
 
-	iMSCP::HooksManager->getInstance()->trigger('afterSetupInstallAddons');
+	iMSCP::HooksManager->getInstance()->trigger('afterSetupInstallPackages');
 }
 
 # Call postinstall method on all i-MSCP server packages
@@ -2487,31 +2487,31 @@ sub setupPostInstallServers
 	iMSCP::HooksManager->getInstance()->trigger('afterSetupPostInstallServers');
 }
 
-# Call postinstall method on all i-MSCP addon packages
-sub setupPostInstallAddons
+# Call postinstall method on all i-MSCP packages
+sub setupPostInstallPackages
 {
-	my $rs = iMSCP::HooksManager->getInstance()->trigger('beforeSetupPostInstallAddons');
+	my $rs = iMSCP::HooksManager->getInstance()->trigger('beforeSetupPostInstallPackages');
 	return $rs if $rs;
 
-	my @addons = iMSCP::Addons->getInstance()->get();
-	my $nbAddons = scalar @addons;
+	my @packages = iMSCP::Packages->getInstance()->get();
+	my $nbPackages = scalar @packages;
 	my $step = 1;
 
 	startDetail();
 
-	for(@addons) {
-		my $package = "Addons::$_";
+	for(@packages) {
+		my $package = "Package::$_";
 
 		eval "require $package";
 
 		unless($@) {
-			my $addon = $package->getInstance();
+			my $package = $package->getInstance();
 
-			if($addon->can('postinstall')) {
+			if($package->can('postinstall')) {
 				$rs = step(
-					sub { $addon->postinstall() },
-					sprintf("Running %s addon postinstall tasks...", ref $addon),
-					$nbAddons,
+					sub { $package->postinstall() },
+					sprintf("Running %s package postinstall tasks...", ref $package),
+					$nbPackage,
 					$step
 				);
 
@@ -2530,7 +2530,7 @@ sub setupPostInstallAddons
 
 	return $rs if $rs;
 
-	iMSCP::HooksManager->getInstance()->trigger('afterSetupPostInstallAddons');
+	iMSCP::HooksManager->getInstance()->trigger('afterSetupPostInstallPackages');
 }
 
 # Restart all services needed by i-MSCP
@@ -2543,8 +2543,8 @@ sub setupRestartServices
 		#['Variable holding service name', 'command to execute', 'ignore error if 0 exit on error if 1']
 		[$main::imscpConfig{'IMSCP_NETWORK_SNAME'}, 'restart', 1],
 		[$main::imscpConfig{'IMSCP_DAEMON_SNAME'}, 'restart', 1],
-		[$main::imscpConfig{'POSTGREY_SNAME'}, 'restart', 1], # FIXME This should be done by an addon
-		[$main::imscpConfig{'POLICYD_WEIGHT_SNAME'}, 'restart', 0] # FIXME This should be done by the addon
+		[$main::imscpConfig{'POSTGREY_SNAME'}, 'restart', 1], # FIXME This should be done by a package
+		[$main::imscpConfig{'POLICYD_WEIGHT_SNAME'}, 'restart', 0] # FIXME This should be done by the package
 	);
 
 	my ($stdout, $stderr);

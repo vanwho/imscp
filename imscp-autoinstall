@@ -269,7 +269,7 @@ EOF
 		[\&doImscpBackup,       'Backup existing i-MSCP installation if any'],
 		[\&installTmp,          'Installing i-MSCP files on file system'],
 		[\&setupBoot,           'Setup bootstrapping'],
-		[\&setupRegisterHooks,  'Registering servers/addons setup hooks'],
+		[\&setupRegisterHooks,  'Registering servers/packages setup hooks'],
 		[\&setupDialog,         'Processing i-MSCP setup dialog if any'],
 		[\&setupTasks,          'Processing i-MSCP setup tasks'],
 		[\&removeTmp,           'Removing temporary files']

@@ -17,7 +17,6 @@ HTTPD_LOG_DIR = /var/log/nginx
 
 PHP_STARTER_DIR = /var/www/fcgi
 PHP_CGI_BIN = /usr/bin/php5-cgi
-
 PHP_FCGI_CHILDREN = 5
 PHP_FCGI_MAX_REQUESTS = 1000
 SPAWN_FCGI_BIN = /usr/bin/spawn-fcgi

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<install>
-    <folders export="SYSTEM_GUI_ROOT">${SYSTEM_ROOT}/gui</folders>
-    <copy>${SYSTEM_GUI_ROOT}/*</copy>
-</install>

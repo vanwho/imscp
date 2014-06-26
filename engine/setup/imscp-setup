@@ -101,7 +101,7 @@ sub setupStart
 		require $hookFile;
 	}
 
-	# Allow any server/addon to register their setup hook functions
+	# Allow any server/package to register their setup hook functions
 	setupRegisterHooks();
 }
 

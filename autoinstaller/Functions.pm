@@ -407,28 +407,10 @@ sub installEngine
 
 sub installGui
 {
-	unless(chdir "$FindBin::Bin/gui") {
-		error("Unable to change directory to $FindBin::Bin/gui");
-		return 1;
-	}
-
-	my $rs = _processXmlFile("$FindBin::Bin/gui/install.xml");
-	return $rs if $rs;
-
-#	my $dir = iMSCP::Dir->new('dirname' => "$FindBin::Bin/gui");
-#	my @configs = $dir->getDirs();
-
-#	for(@configs) {
-#		if (-f "$FindBin::Bin/gui/$_/install.xml") {
-#			unless(chdir "$FindBin::Bin/gui/$_") {
-#				error("Unable to change directory to $FindBin::Bin/gui/$_");
-#				return 1;
-#			}
-#
-#			$rs = _processXmlFile("$FindBin::Bin/gui/$_/install.xml") ;
-#			return $rs if $rs;
-#		}
-#	}
+	my ($stdout, $stderr);
+	my $rs = execute("$main::imscpConfig{'CMD_CP'} -fR $FindBin::Bin/gui $main::{'SYSTEM_ROOT'}", \$stdout, \$stderr);
+	debug($stdout) if $stdout;
+	error($stderr) if $stderr && $rs;
 
 	$rs;
 }
@@ -538,7 +520,9 @@ sub savePersistentData
 	if(-d "$main::imscpConfig{'ROOT_DIR'}/gui/themes/user_logos") {
 		$rs = execute(
 			"$main::imscpConfig{'CMD_CP'} -fRT $main::imscpConfig{'ROOT_DIR'}/gui/themes/user_logos " .
-			"$destdir$main::imscpConfig{'ROOT_DIR'}/gui/data/persistent/ispLogos", \$stdout, \$stderr
+				"$destdir$main::imscpConfig{'ROOT_DIR'}/gui/data/persistent/ispLogos",
+			\$stdout,
+			\$stderr
 		);
 		debug($stdout) if $stdout;
 		error($stderr) if $stderr && $rs;
@@ -547,10 +531,13 @@ sub savePersistentData
 
 	# Save Web directories skeletons
 
+	# Move old skel directory to new location
 	if(-d "$main::imscpConfig{'CONF_DIR'}/apache/skel") {
 		$rs = execute(
 			"$main::imscpConfig{'CMD_MV'} $main::imscpConfig{'CONF_DIR'}/apache/skel " .
-			"$destdir$main::imscpConfig{'CONF_DIR'}/skel", \$stdout, \$stderr
+				"$main::imscpConfig{'CONF_DIR'}/skel",
+			\$stdout,
+			\$stderr
 		);
 		debug($stdout) if $stdout;
 		error($stderr) if $stderr && $rs;
@@ -560,7 +547,9 @@ sub savePersistentData
 	if(-d "$main::imscpConfig{'CONF_DIR'}/skel") {
 		$rs = execute(
 			"$main::imscpConfig{'CMD_CP'} -fRT $main::imscpConfig{'CONF_DIR'}/skel " .
-			"$destdir$main::imscpConfig{'CONF_DIR'}/skel", \$stdout, \$stderr
+				"$destdir$main::imscpConfig{'CONF_DIR'}/skel",
+			\$stdout,
+			\$stderr
 		);
 		debug($stdout) if $stdout;
 		error($stderr) if $stderr && $rs;
@@ -571,7 +560,9 @@ sub savePersistentData
 	if(-d "$main::imscpConfig{'ROOT_DIR'}/gui/data/logs") {
 		$rs = execute(
 			"$main::imscpConfig{'CMD_CP'} -fRT $main::imscpConfig{'ROOT_DIR'}/gui/data/logs " .
-			"$destdir$main::imscpConfig{'ROOT_DIR'}/gui/data/logs", \$stdout, \$stderr
+				"$destdir$main::imscpConfig{'ROOT_DIR'}/gui/data/logs",
+			\$stdout,
+			\$stderr
 		);
 		debug($stdout) if $stdout;
 		error($stderr) if $stderr && $rs;
@@ -582,7 +573,9 @@ sub savePersistentData
 	if(-d "$main::imscpConfig{'ROOT_DIR'}/gui/data/persistent") {
 		$rs = execute(
 			"$main::imscpConfig{'CMD_CP'} -fRT $main::imscpConfig{'ROOT_DIR'}/gui/data/persistent " .
-			"$destdir$main::imscpConfig{'ROOT_DIR'}/gui/data/persistent", \$stdout, \$stderr
+				"$destdir$main::imscpConfig{'ROOT_DIR'}/gui/data/persistent",
+			\$stdout,
+			\$stderr
 		);
 		debug($stdout) if $stdout;
 		error($stderr) if $stderr && $rs;
@@ -593,7 +586,9 @@ sub savePersistentData
 	if(-d "$main::imscpConfig{'ROOT_DIR'}/gui/data/ispLogos") {
 		$rs = execute(
 			"$main::imscpConfig{'CMD_CP'} -fRT $main::imscpConfig{'ROOT_DIR'}/gui/data/ispLogos " .
-			"$destdir$main::imscpConfig{'ROOT_DIR'}/gui/data/persistent/ispLogos", \$stdout, \$stderr
+				"$destdir$main::imscpConfig{'ROOT_DIR'}/gui/data/persistent/ispLogos",
+			\$stdout,
+			\$stderr
 		);
 		debug($stdout) if $stdout;
 		error($stderr) if $stderr && $rs;
@@ -604,7 +599,9 @@ sub savePersistentData
 	if(-d "$main::imscpConfig{'ROOT_DIR'}/gui/data/softwares") {
 		$rs = execute(
 			"$main::imscpConfig{'CMD_CP'} -fRT $main::imscpConfig{'ROOT_DIR'}/gui/data/softwares " .
-			"$destdir$main::imscpConfig{'ROOT_DIR'}/gui/data/persistent/softwares", \$stdout, \$stderr
+				"$destdir$main::imscpConfig{'ROOT_DIR'}/gui/data/persistent/softwares",
+			\$stdout,
+			\$stderr
 		);
 		debug($stdout) if $stdout;
 		error($stderr) if $stderr && $rs;
@@ -615,8 +612,22 @@ sub savePersistentData
 	if(-d "$main::imscpConfig{'ROOT_DIR'}/gui/plugins") {
 		$rs = execute(
 			"$main::imscpConfig{'CMD_CP'} -fRT $main::imscpConfig{'ROOT_DIR'}/gui/plugins " .
-			"$destdir$main::imscpConfig{'ROOT_DIR'}/gui/plugins",
-			\$stdout, \$stderr
+				"$destdir$main::imscpConfig{'ROOT_DIR'}/gui/plugins",
+			\$stdout,
+			\$stderr
+		);
+		debug($stdout) if $stdout;
+		error($stderr) if $stderr && $rs;
+		return $rs if $rs;
+	}
+
+	# Move old package cache directory to new location
+	if(-d  "$main::imscpConfig{'CACHE_DATA_DIR'}/addons") {
+		$rs = execute(
+			"$main::imscpConfig{'CMD_MV'} $main::imscpConfig{'CACHE_DATA_DIR'}/addons " .
+				"$main::imscpConfig{'CACHE_DATA_DIR'}/packages",
+			\$stdout,
+			\$stderr
 		);
 		debug($stdout) if $stdout;
 		error($stderr) if $stderr && $rs;

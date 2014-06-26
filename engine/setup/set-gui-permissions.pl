@@ -33,7 +33,7 @@ use lib "$FindBin::Bin/..", "$FindBin::Bin/../PerlLib", "$FindBin::Bin/../PerlVe
 use iMSCP::Debug;
 use iMSCP::Bootstrapper;
 use iMSCP::Servers;
-use iMSCP::Addons;
+use iMSCP::Packages;
 
 # Turn off localisation features to force any command output to be in english
 $ENV{'LC_MESSAGES'} = 'C';
@@ -58,8 +58,8 @@ iMSCP::Bootstrapper->getInstance()->boot(
 sub run
 {
 	my @servers = iMSCP::Servers->getInstance()->get();
-	my @addons = iMSCP::Addons->getInstance()->get();
-	my $totalItems = @servers + @addons;
+	my @packages = iMSCP::Packages->getInstance()->get();
+	my $totalItems = @servers + @packages;
 	my $counter = 1;
 	my $rs = 0;
 
@@ -90,8 +90,8 @@ sub run
 		$counter++;
 	}
 
-	for(@addons) {
-		my $package = "Addons::$_";
+	for(@packages) {
+		my $package = "Package::$_";
 
 		eval "require $package";
 
@@ -99,10 +99,10 @@ sub run
 			my $instance = $package->getInstance();
 
 			if($instance->can('setGuiPermissions')) {
-				debug("Setting $_ addon frontEnd permissions");
+				debug("Setting $_ package frontEnd permissions");
 
 				if ($main::execmode eq 'setup') {
-					print "Setting frontEnd permissions for the $_ addon\t$totalItems\t$counter\n";
+					print "Setting frontEnd permissions for the $_ package\t$totalItems\t$counter\n";
 				}
 
 				$rs |= $instance->setGuiPermissions();
