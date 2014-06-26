@@ -8,17 +8,10 @@ HTTPD_SNAME = nginx
 HTTPD_CONF_DIR = /etc/nginx
 HTTPD_MODS_AVAILABLE_DIR = /etc/nginx/mods-available
 HTTPD_MODS_ENABLED_DIR = /etc/nginx/mods-enabled
-HTTPD_SITES_AVAILABLE_DIR = /etc/apache2/sites-available
-HTTPD_SITES_ENABLED_DIR = /etc/apache2/sites-enabled
+HTTPD_SITES_AVAILABLE_DIR = /etc/nginx/sites-available
+HTTPD_SITES_ENABLED_DIR = /etc/nginx/sites-enabled
 HTTPD_ROOT_DIR = /var/www
 HTTPD_LOG_DIR = /var/log/nginx
-
-CMD_A2ENSITE = /usr/sbin/a2ensite
-CMD_A2DISSITE = /usr/sbin/a2dissite
-CMD_A2ENMOD = /usr/sbin/a2enmod
-CMD_A2DISMOD = /usr/sbin/a2dismod
-CMD_APACHE2CTL = /usr/sbin/apache2ctl
-CMD_VLOGGER = /usr/local/sbin/vlogger
 
 # PHP / FASTCGI variables
 
