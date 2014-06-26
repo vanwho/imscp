@@ -168,7 +168,7 @@ sub _removeDirs
 {
 	my $self = $_[0];
 
-	iMSCP::Dir->new('dirname' => $self->{'config'}->{'APACHE_CUSTOM_SITES_CONFIG_DIR'})->remove();
+	iMSCP::Dir->new('dirname' => $self->{'config'}->{'HTTPD_CUSTOM_SITES_DIR'})->remove();
 }
 
 =item _restoreApacheConfig()
@@ -184,27 +184,27 @@ sub _restoreApacheConfig
 	my $self = $_[0];
 
 	my $rs = $self->{'httpd'}->disableMod('php_fpm_imscp')
-		if -f "$self->{'config'}->{'APACHE_MODS_DIR'}/php_fpm_imscp.load";
+		if -f "$self->{'config'}->{'HTTPD_MODS_AVAILABLE_DIR'}/php_fpm_imscp.load";
 	return $rs if $rs;
 
 	for ('php_fpm_imscp.conf', 'php_fpm_imscp.load') {
 		$rs = iMSCP::File->new(
-			'filename' => "$self->{'config'}->{'APACHE_MODS_DIR'}/$_"
-		)->delFile() if -f "$self->{'config'}->{'APACHE_MODS_DIR'}/$_";
+			'filename' => "$self->{'config'}->{'HTTPD_MODS_AVAILABLE_DIR'}/$_"
+		)->delFile() if -f "$self->{'config'}->{'HTTPD_MODS_AVAILABLE_DIR'}/$_";
 		return $rs if $rs;
 	}
 
 	for('00_nameserver.conf', '00_master_ssl.conf', '00_master.conf') {
-		if(-f "$self->{'config'}->{'APACHE_SITES_DIR'}/$_") {
+		if(-f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_") {
 			$rs = $self->{'httpd'}->disableSite($_);
 			return $rs if $rs;
 
-			$rs = iMSCP::File->new('filename' => "$self->{'config'}->{'APACHE_SITES_DIR'}/$_")->delFile();
+			$rs = iMSCP::File->new('filename' => "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_")->delFile();
 			return $rs if $rs;
 		}
 	}
 
-	for ("$main::imscpConfig{'LOGROTATE_CONF_DIR'}/apache2", "$self->{'config'}->{'APACHE_CONF_DIR'}/ports.conf") {
+	for ("$main::imscpConfig{'LOGROTATE_CONF_DIR'}/apache2", "$self->{'config'}->{'HTTPD_CONF_DIR'}/ports.conf") {
 		my $filename = fileparse($_);
 
 		$rs = iMSCP::File->new(
@@ -214,11 +214,11 @@ sub _restoreApacheConfig
 	}
 
 
-	$rs = iMSCP::Dir->new('dirname' => $self->{'config'}->{'APACHE_CUSTOM_SITES_CONFIG_DIR'})->remove();
+	$rs = iMSCP::Dir->new('dirname' => $self->{'config'}->{'HTTPD_CUSTOM_SITES_DIR'})->remove();
 	return $rs if $rs;
 
 	for('000-default', 'default') {
-		$rs = $self->{'httpd'}->enableSite($_) if -f "$self->{'config'}->{'APACHE_SITES_DIR'}/$_";
+		$rs = $self->{'httpd'}->enableSite($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
 		return $rs if $rs;
 	}
 

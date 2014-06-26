@@ -104,7 +104,7 @@ sub _removeDirs
 {
 	my $self = $_[0];
 
-	iMSCP::Dir->new('dirname' => $self->{'config'}->{'APACHE_CUSTOM_SITES_CONFIG_DIR'})->remove();
+	iMSCP::Dir->new('dirname' => $self->{'config'}->{'HTTPD_CUSTOM_SITES_DIR'})->remove();
 }
 
 sub _restoreConf
@@ -113,7 +113,7 @@ sub _restoreConf
 
 	my $rs = 0;
 
-	for ("$main::imscpConfig{LOGROTATE_CONF_DIR}/apache2", "$self->{'config'}->{'APACHE_CONF_DIR'}/ports.conf") {
+	for ("$main::imscpConfig{LOGROTATE_CONF_DIR}/apache2", "$self->{'config'}->{'HTTPD_CONF_DIR'}/ports.conf") {
 		my $filename = fileparse($_);
 
 		$rs	= iMSCP::File->new(
@@ -135,16 +135,16 @@ sub _vHostConf
 		$rs = $self->{'httpd'}->disableSite($_);
 		return $rs if $rs;
 
-		if(-f "$self->{'config'}->{'APACHE_SITES_DIR'}/$_") {
+		if(-f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_") {
 			$rs = iMSCP::File->new(
-				'filename' => "$self->{'config'}->{'APACHE_SITES_DIR'}/$_"
+				'filename' => "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_"
 			)->delFile();
 			return $rs if $rs;
 		}
 	}
 
 	for('000-default', 'default') {
-		$rs = $self->{'httpd'}->enableSite($_) if -f "$self->{'config'}->{'APACHE_SITES_DIR'}/$_";
+		$rs = $self->{'httpd'}->enableSite($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
 		return $rs if $rs;
 	}
 

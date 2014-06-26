@@ -406,13 +406,13 @@ sub _addAwstatsSection($$$$)
 			) .
 			process(
 				{
-					AUTHZ_ALLOW_ALL => (qv("v$httpd->{'config'}->{'APACHE_VERSION'}") >= qv('v2.4.0'))
+					AUTHZ_ALLOW_ALL => (qv("v$httpd->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0'))
 						? 'Require all granted' : 'Allow from all',
 					AWSTATS_WEB_DIR => $main::imscpConfig{'AWSTATS_WEB_DIR'},
 					DOMAIN_NAME => $data->{'DOMAIN_NAME'},
 					HOME_DIR => $data->{'HOME_DIR'},
-					HTACCESS_USERS_FILE_NAME => $httpd->{'config'}->{'HTACCESS_USERS_FILE_NAME'},
-					HTACCESS_GROUPS_FILE_NAME => $httpd->{'config'}->{'HTACCESS_GROUPS_FILE_NAME'},
+					HTACCESS_USERS_FILENAME => $httpd->{'config'}->{'HTACCESS_USERS_FILENAME'},
+					HTACCESS_GROUPS_FILENAME => $httpd->{'config'}->{'HTACCESS_GROUPS_FILENAME'},
 					WEBSTATS_GROUP_AUTH => $main::imscpConfig{'WEBSTATS_GROUP_AUTH'},
 					WEBSTATS_RPATH => $main::imscpConfig{'WEBSTATS_RPATH'}
 				},
@@ -451,8 +451,8 @@ sub _getApacheConfSnippet
     <Location /{WEBSTATS_RPATH}>
         AuthType Basic
         AuthName "Statistics for domain {DOMAIN_NAME}"
-        AuthUserFile {HOME_DIR}/{HTACCESS_USERS_FILE_NAME}
-        AuthGroupFile {HOME_DIR}/{HTACCESS_GROUPS_FILE_NAME}
+        AuthUserFile {HOME_DIR}/{HTACCESS_USERS_FILENAME}
+        AuthGroupFile {HOME_DIR}/{HTACCESS_GROUPS_FILENAME}
         Require group {WEBSTATS_GROUP_AUTH}
     </Location>
 EOF
@@ -467,8 +467,8 @@ EOF
         RewriteRule ^(.+)\?config=([^\?\&]+)(.*) \$1\?config={DOMAIN_NAME}&\$3 [NC,L]
         AuthType Basic
         AuthName "Statistics for domain {DOMAIN_NAME}"
-        AuthUserFile {HOME_DIR}/{HTACCESS_USERS_FILE_NAME}
-        AuthGroupFile {HOME_DIR}/{HTACCESS_GROUPS_FILE_NAME}
+        AuthUserFile {HOME_DIR}/{HTACCESS_USERS_FILENAME}
+        AuthGroupFile {HOME_DIR}/{HTACCESS_GROUPS_FILENAME}
         Require group {WEBSTATS_GROUP_AUTH}
     </Location>
 EOF
@@ -507,7 +507,7 @@ sub _addAwstatsConfig
 		AWSTATS_WEB_DIR => $main::imscpConfig{'AWSTATS_WEB_DIR'},
 		CMD_LOGRESOLVEMERGE => "$main::imscpConfig{'CMD_PERL'} $awstatsAddonRootDir/Scripts/logresolvemerge.pl",
 		DOMAIN_NAME => $data->{'DOMAIN_NAME'},
-		LOG_DIR => "$httpd->{'config'}->{'APACHE_LOG_DIR'}/$data->{'DOMAIN_NAME'}",
+		LOG_DIR => "$httpd->{'config'}->{'HTTPD_LOG_DIR'}/$data->{'DOMAIN_NAME'}",
 	};
 
 	$tplFileContent = process($tags, $tplFileContent);

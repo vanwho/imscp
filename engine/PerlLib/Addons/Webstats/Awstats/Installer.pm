@@ -198,38 +198,6 @@ sub _init
 	$self;
 }
 
-# No longer needed since we are now logresolvemerge.pl which always parse also last rotated log file
-#=item _installLogrotate(\$content, $filename)
-#
-# Event listener responsible to add or remove the AWStats logrotate configuration snippet in the Apache logrotate file
-#
-# Param SCALAR reference - A reference to a scalar containing file content
-# Param Param SCALAR Filename
-# Return int 0 on success, other on failure
-#
-#=cut
-#
-#sub _installLogrotate($$$)
-#{
-#	my ($self, $content, $filename) = @_;
-#
-#	if ($filename eq 'logrotate.conf') {
-#		$$content = replaceBloc(
-#			"# SECTION custom BEGIN.\n",
-#			"# SECTION custom END.\n",
-#			"  prerotate\n" .
-#			"    IMSCP_APACHE_LOG_DIR=$self->{'httpd'}->{'config'}->{'APACHE_LOG_DIR'} " .
-#			"$main::imscpConfig{'ENGINE_ROOT_DIR'}/PerlLib/Addons/Webstats/Awstats/Scripts/awstats_updateall.pl now " .
-#			"-awstatsprog=$main::imscpConfig{'AWSTATS_ENGINE_DIR'}/awstats.pl &> /dev/null\n" .
-#			"  endscript\n",
-#			$$content,
-#			'preserve'
-#		);
-#	}
-#
-#	0;
-#}
-
 =item _makeCacheDir()
 
  Create cache directory for AWStats
@@ -261,7 +229,7 @@ sub _createGlobalAwstatsVhost
 {
 	my $self = $_[0];
 
-	my $apache24 = (qv("v$self->{'httpd'}->{'config'}->{'APACHE_VERSION'}") >= qv('v2.4.0'));
+	my $apache24 = (qv("v$self->{'httpd'}->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0'));
 
 	$self->{'httpd'}->setData(
 		{

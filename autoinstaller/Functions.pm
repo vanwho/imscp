@@ -295,8 +295,6 @@ sub processDistroInstallFiles
 	my $rs = _processXmlFile($file);
 	return $rs if $rs;
 
-	#################
-
 	# Get list of sub config dir from default config directory (debian)
 	my $dirDH = iMSCP::Dir->new('dirname' => $defaultConfigDir);
 	my @configDirs = $dirDH->getDirs();
@@ -313,8 +311,10 @@ sub processDistroInstallFiles
 		$file = -f ("$distroConfigDir/$_/install.xml")
 			? "$distroConfigDir/$_/install.xml" : "$defaultConfigDir/$_/install.xml";
 
-		$rs = _processXmlFile($file);
-		return $rs if $rs;
+		if(-f $file) {
+			$rs = _processXmlFile($file);
+			return $rs if $rs;
+		}
 	}
 
 	0;
@@ -407,10 +407,28 @@ sub installEngine
 
 sub installGui
 {
-	my ($stdout, $stderr);
-	my $rs = execute("$main::imscpConfig{'CMD_CP'} -fR $FindBin::Bin/gui $main::{'SYSTEM_ROOT'}", \$stdout, \$stderr);
-	debug($stdout) if $stdout;
-	error($stderr) if $stderr && $rs;
+	unless(chdir "$FindBin::Bin/gui") {
+		error("Unable to change directory to $FindBin::Bin/gui");
+		return 1;
+	}
+
+	my $rs = _processXmlFile("$FindBin::Bin/gui/install.xml");
+	return $rs if $rs;
+
+#	my $dir = iMSCP::Dir->new('dirname' => "$FindBin::Bin/gui");
+#	my @configs = $dir->getDirs();
+
+#	for(@configs) {
+#		if (-f "$FindBin::Bin/gui/$_/install.xml") {
+#			unless(chdir "$FindBin::Bin/gui/$_") {
+#				error("Unable to change directory to $FindBin::Bin/gui/$_");
+#				return 1;
+#			}
+#
+#			$rs = _processXmlFile("$FindBin::Bin/gui/$_/install.xml") ;
+#			return $rs if $rs;
+#		}
+#	}
 
 	$rs;
 }
@@ -516,10 +534,6 @@ sub savePersistentData
 	my ($stdout, $stderr);
 	my $destdir = $main::{'INST_PREF'};
 
-	#
-	## i-MSCP version prior 1.0.4
-	#
-
 	# Save ISP logos
 	if(-d "$main::imscpConfig{'ROOT_DIR'}/gui/themes/user_logos") {
 		$rs = execute(
@@ -531,15 +545,22 @@ sub savePersistentData
 		return $rs if $rs;
 	}
 
-	#
-	## i-MSCP version >= 1.0.4
-	#
-
 	# Save Web directories skeletons
+
 	if(-d "$main::imscpConfig{'CONF_DIR'}/apache/skel") {
 		$rs = execute(
-			"$main::imscpConfig{'CMD_CP'} -fRT $main::imscpConfig{'CONF_DIR'}/apache/skel " .
-			"$destdir$main::imscpConfig{'CONF_DIR'}/apache/skel", \$stdout, \$stderr
+			"$main::imscpConfig{'CMD_MV'} $main::imscpConfig{'CONF_DIR'}/apache/skel " .
+			"$destdir$main::imscpConfig{'CONF_DIR'}/skel", \$stdout, \$stderr
+		);
+		debug($stdout) if $stdout;
+		error($stderr) if $stderr && $rs;
+		return $rs if $rs;
+	}
+
+	if(-d "$main::imscpConfig{'CONF_DIR'}/skel") {
+		$rs = execute(
+			"$main::imscpConfig{'CMD_CP'} -fRT $main::imscpConfig{'CONF_DIR'}/skel " .
+			"$destdir$main::imscpConfig{'CONF_DIR'}/skel", \$stdout, \$stderr
 		);
 		debug($stdout) if $stdout;
 		error($stderr) if $stderr && $rs;

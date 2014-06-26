@@ -148,11 +148,11 @@ sub _removeVhost
 		return $rs if $rs;
 	}
 
-	if (-f "$httpd->{'config'}->{'APACHE_SITES_DIR'}/01_awstats.conf") {
+	if (-f "$httpd->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/01_awstats.conf") {
 		$rs = $httpd->disableSite('01_awstats.conf');
 		return $rs if $rs;
 
-		$rs = iMSCP::File->new('filename' => "$httpd->{'config'}->{'APACHE_SITES_DIR'}/01_awstats.conf")->delFile();
+		$rs = iMSCP::File->new('filename' => "$httpd->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/01_awstats.conf")->delFile();
 	}
 
 	$rs;

@@ -109,7 +109,7 @@ sub _removeDirs
 
 	my $rs = 0;
 
-	for ($self->{'config'}->{'APACHE_CUSTOM_SITES_CONFIG_DIR'}, $self->{'config'}->{'PHP_STARTER_DIR'}) {
+	for ($self->{'config'}->{'HTTPD_CUSTOM_SITES_DIR'}, $self->{'config'}->{'PHP_STARTER_DIR'}) {
 		$rs = iMSCP::Dir->new('dirname' => $_)->remove();
 		return $rs if $rs;
 	}
@@ -122,7 +122,7 @@ sub _restoreConf
 	my $self = $_[0];
 	my $rs = 0;
 
-	for ("$main::imscpConfig{'LOGROTATE_CONF_DIR'}/apache2", "$self->{'config'}->{'APACHE_CONF_DIR'}/ports.conf") {
+	for ("$main::imscpConfig{'LOGROTATE_CONF_DIR'}/apache2", "$self->{'config'}->{'HTTPD_CONF_DIR'}/ports.conf") {
 		my $filename = fileparse($_);
 
 		$rs	= iMSCP::File->new(
@@ -140,12 +140,12 @@ sub _fastcgiConf
 
 	my $rs = 0:
 
-	$rs = $self->{'httpd'}->disableMod($_) if -f "$self->{'config'}->{'APACHE_MODS_DIR'}/fcgid_imscp.load";
+	$rs = $self->{'httpd'}->disableMod($_) if -f "$self->{'config'}->{'HTTPD_MODS_AVAILABLE_DIR'}/fcgid_imscp.load";
 	return $rs if $rs;
 	
 	for ('fcgid_imscp.conf', 'fcgid_imscp.load') {
-		$rs = iMSCP::File->new('filename' => "$self->{'config'}->{'APACHE_MODS_DIR'}/$_")->delFile()
-			if -f "$self->{'config'}->{'APACHE_MODS_DIR'}/$_";
+		$rs = iMSCP::File->new('filename' => "$self->{'config'}->{'HTTPD_MODS_AVAILABLE_DIR'}/$_")->delFile()
+			if -f "$self->{'config'}->{'HTTPD_MODS_AVAILABLE_DIR'}/$_";
 		return $rs if $rs;
 	}
 
@@ -162,16 +162,16 @@ sub _vHostConf
 		$rs = $self->{'httpd'}->disableSite($_);
 		return $rs if $rs;
 
-		if(-f "$self->{'config'}->{'APACHE_SITES_DIR'}/$_") {
+		if(-f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_") {
 			$rs = iMSCP::File->new(
-				'filename' => "$self->{'config'}->{'APACHE_SITES_DIR'}/$_"
+				'filename' => "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_"
 			)->delFile();
 			return $rs if $rs;
 		}
 	}
 
 	for('000-default', 'default') {
-		$rs = $self->{'httpd'}->enableSite($_) if -f "$self->{'config'}->{'APACHE_SITES_DIR'}/$_";
+		$rs = $self->{'httpd'}->enableSite($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
 		return $rs if $rs;
 	}
 

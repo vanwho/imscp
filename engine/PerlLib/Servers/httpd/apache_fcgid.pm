@@ -293,9 +293,9 @@ sub disableDmn($$)
 
 	$self->setData(
 		{
-			AUTHZ_ALLOW_ALL => (qv("v$self->{'config'}->{'APACHE_VERSION'}") >= qv('v2.4.0'))
+			AUTHZ_ALLOW_ALL => (qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0'))
 				? 'Require all granted' : 'Allow from all',
-			APACHE_LOG_DIR => $self->{'config'}->{'APACHE_LOG_DIR'},
+			HTTPD_LOG_DIR => $self->{'config'}->{'HTTPD_LOG_DIR'},
 			DOMAIN_IP => ($ipMngr->getAddrVersion($data->{'DOMAIN_IP'}) eq 'ipv4')
 				? $data->{'DOMAIN_IP'} : "[$data->{'DOMAIN_IP'}]",
 		}
@@ -352,15 +352,15 @@ sub deleteDmn($$)
 
 	# Disable apache site files
 	for("$data->{'DOMAIN_NAME'}.conf", "$data->{'DOMAIN_NAME'}_ssl.conf") {
-		$rs = $self->disableSite($_) if -f "$self->{'config'}->{'APACHE_SITES_DIR'}/$_";
+		$rs = $self->disableSite($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
 		return $rs if $rs;
 	}
 
 	# Remove apache site files
 	for(
-		"$self->{'config'}->{'APACHE_SITES_DIR'}/$data->{'DOMAIN_NAME'}.conf",
-		"$self->{'config'}->{'APACHE_SITES_DIR'}/$data->{'DOMAIN_NAME'}_ssl.conf",
-		"$self->{'config'}->{'APACHE_CUSTOM_SITES_CONFIG_DIR'}/$data->{'DOMAIN_NAME'}.conf",
+		"$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$data->{'DOMAIN_NAME'}.conf",
+		"$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$data->{'DOMAIN_NAME'}_ssl.conf",
+		"$self->{'config'}->{'HTTPD_CUSTOM_SITES_DIR'}/$data->{'DOMAIN_NAME'}.conf",
 		"$self->{'apacheWrkDir'}/$data->{'DOMAIN_NAME'}.conf",
 		"$self->{'apacheWrkDir'}/$data->{'DOMAIN_NAME'}_ssl.conf",
 	) {
@@ -584,7 +584,7 @@ sub addHtuser($$)
 	my ($self, $data) = @_;
 
 	my $webDir = $data->{'WEB_DIR'};
-	my $fileName = $self->{'config'}->{'HTACCESS_USERS_FILE_NAME'};
+	my $fileName = $self->{'config'}->{'HTACCESS_USERS_FILENAME'};
 	my $filePath = "$webDir/$fileName";
 
 	# Unprotect root Web directory
@@ -635,7 +635,7 @@ sub deleteHtuser($$)
 	my ($self, $data) = @_;
 
 	my $webDir = $data->{'WEB_DIR'};
-	my $fileName = $self->{'config'}->{'HTACCESS_USERS_FILE_NAME'};
+	my $fileName = $self->{'config'}->{'HTACCESS_USERS_FILENAME'};
 	my $filePath = "$webDir/$fileName";
 
 	# Unprotect root Web directory
@@ -685,7 +685,7 @@ sub addHtgroup($$)
 	my ($self, $data) = @_;
 
 	my $webDir = $data->{'WEB_DIR'};
-	my $fileName = $self->{'config'}->{'HTACCESS_GROUPS_FILE_NAME'};
+	my $fileName = $self->{'config'}->{'HTACCESS_GROUPS_FILENAME'};
 	my $filePath = "$webDir/$fileName";
 
 	# Unprotect root Web directory
@@ -736,7 +736,7 @@ sub deleteHtgroup($$)
 	my ($self, $data) = @_;;
 
 	my $webDir = $data->{'WEB_DIR'};
-	my $fileName = $self->{'config'}->{'HTACCESS_GROUPS_FILE_NAME'};
+	my $fileName = $self->{'config'}->{'HTACCESS_GROUPS_FILENAME'};
 	my $filePath = "$webDir/$fileName";
 
 	# Unprotect root Web directory
@@ -788,8 +788,8 @@ sub addHtaccess($$)
 	# Here we process only if AUTH_PATH directory exists
 	# Note: It's temporary fix for 1.1.0-rc2 (See #749)
 	if(-d $data->{'AUTH_PATH'}) {
-		my $fileUser = "$data->{'HOME_PATH'}/$self->{'config'}->{'HTACCESS_USERS_FILE_NAME'}";
-		my $fileGroup = "$data->{'HOME_PATH'}/$self->{'config'}->{'HTACCESS_GROUPS_FILE_NAME'}";
+		my $fileUser = "$data->{'HOME_PATH'}/$self->{'config'}->{'HTACCESS_USERS_FILENAME'}";
+		my $fileGroup = "$data->{'HOME_PATH'}/$self->{'config'}->{'HTACCESS_GROUPS_FILENAME'}";
 		my $filePath = "$data->{'AUTH_PATH'}/.htaccess";
 
 		my $file = iMSCP::File->new('filename' => $filePath);
@@ -846,8 +846,8 @@ sub deleteHtaccess($$)
 	# Here we process only if AUTH_PATH directory exists
 	# Note: It's temporary fix for 1.1.0-rc2 (See #749)
 	if(-d $data->{'AUTH_PATH'}) {
-		my $fileUser = "$data->{'HOME_PATH'}/$self->{'config'}->{'HTACCESS_USERS_FILE_NAME'}";
-		my $fileGroup = "$data->{'HOME_PATH'}/$self->{'config'}->{'HTACCESS_GROUPS_FILE_NAME'}";
+		my $fileUser = "$data->{'HOME_PATH'}/$self->{'config'}->{'HTACCESS_USERS_FILENAME'}";
+		my $fileGroup = "$data->{'HOME_PATH'}/$self->{'config'}->{'HTACCESS_GROUPS_FILENAME'}";
 		my $filePath = "$data->{'AUTH_PATH'}/.htaccess";
 
 		my $file = iMSCP::File->new('filename' => $filePath);
@@ -920,7 +920,7 @@ sub addIps($$)
 	$rs = $self->{'hooksManager'}->trigger('beforeHttpdAddIps', \$content, $data);
 	return $rs if $rs;
 
-	unless(qv("v$self->{'config'}->{'APACHE_VERSION'}") >= qv('v2.4.0')) {
+	unless(qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0')) {
 		$content =~ s/NameVirtualHost[^\n]+\n//gi;
 
 		my $ipMngr = iMSCP::Net->getInstance();
@@ -1127,7 +1127,7 @@ sub installConfFile($$;$)
 
 	$rs = $fileHandler->copyFile(
 		$options->{'destination'}
-			? $options->{'destination'} : "$self->{'config'}->{'APACHE_SITES_DIR'}/$name$suffix"
+			? $options->{'destination'} : "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$name$suffix"
 	);
 	return $rs if $rs;
 
@@ -1338,7 +1338,7 @@ sub deleteTmp
 
 sub getRunningUser
 {
-	$_[0]->{'config'}->{'APACHE_USER'};
+	$_[0]->{'config'}->{'HTTPD_USER'};
 }
 
 =item getRunningGroup()
@@ -1351,7 +1351,7 @@ sub getRunningUser
 
 sub getRunningGroup
 {
-	$_[0]->{'config'}->{'APACHE_GROUP'};
+	$_[0]->{'config'}->{'HTTPD_GROUP'};
 }
 
 =item enableSite($sites)
@@ -1373,7 +1373,7 @@ sub enableSite($$)
 	my ($stdout, $stderr);
 
 	for(split(' ', $sites)){
-		if(-f "$self->{'config'}->{'APACHE_SITES_DIR'}/$_") {
+		if(-f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_") {
 			$rs = execute("$self->{'config'}->{'CMD_A2ENSITE'} $_", \$stdout, \$stderr);
 			debug($stdout) if $stdout;
 			error($stderr) if $stderr && $rs;
@@ -1407,7 +1407,7 @@ sub disableSite($$)
 	my ($stdout, $stderr);
 
 	for(split(' ', $sites)) {
-		if(-f "$self->{'config'}->{'APACHE_SITES_DIR'}/$_") {
+		if(-f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_") {
 			$rs = execute("$self->{'config'}->{'CMD_A2DISSITE'} $_", \$stdout, \$stderr);
 			debug($stdout) if $stdout;
 			error($stderr) if $stderr && $rs;
@@ -1628,21 +1628,21 @@ sub _addCfg($$)
 
 	# Disable and backup Apache sites if any
 	for("$data->{'DOMAIN_NAME'}.conf", "$data->{'DOMAIN_NAME'}_ssl.conf") {
-		$rs = $self->disableSite($_) if -f "$self->{'config'}->{'APACHE_SITES_DIR'}/$_";
+		$rs = $self->disableSite($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
 		return $rs if $rs;
 
 		$rs = iMSCP::File->new(
-			'filename' => "$self->{'config'}->{'APACHE_SITES_DIR'}/$_"
+			'filename' => "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_"
 		)->copyFile(
 			"$self->{'apacheBkpDir'}/$_." . time
-		) if -f "$self->{'config'}->{'APACHE_SITES_DIR'}/$_";
+		) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
 		return $rs if $rs;
 	}
 
 	# Remove previous Apache sites if any
 	for(
-		"$self->{'config'}->{'APACHE_SITES_DIR'}/$data->{'DOMAIN_NAME'}.conf",
-		"$self->{'config'}->{'APACHE_SITES_DIR'}/$data->{'DOMAIN_NAME'}_ssl.conf",
+		"$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$data->{'DOMAIN_NAME'}.conf",
+		"$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$data->{'DOMAIN_NAME'}_ssl.conf",
 		"$self->{'apacheWrkDir'}/$data->{'DOMAIN_NAME'}.conf",
 		"$self->{'apacheWrkDir'}/$data->{'DOMAIN_NAME'}_ssl.conf"
 	) {
@@ -1678,15 +1678,15 @@ sub _addCfg($$)
 		}
 	}
 
-	my $apache24 = (qv("v$self->{'config'}->{'APACHE_VERSION'}") >= qv('v2.4.0'));
+	my $apache24 = (qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0'));
 
 	my $ipMngr = iMSCP::Net->getInstance();
 
 	$self->setData(
 		{
-			APACHE_LOG_DIR => $self->{'config'}->{'APACHE_LOG_DIR'},
+			HTTPD_LOG_DIR => $self->{'config'}->{'HTTPD_LOG_DIR'},
 			PHP_STARTER_DIR => $self->{'config'}->{'PHP_STARTER_DIR'},
-			APACHE_CUSTOM_SITES_CONFIG_DIR => $self->{'config'}->{'APACHE_CUSTOM_SITES_CONFIG_DIR'},
+			HTTPD_CUSTOM_SITES_DIR => $self->{'config'}->{'HTTPD_CUSTOM_SITES_DIR'},
 			AUTHZ_ALLOW_ALL => $apache24 ? 'Require all granted' : 'Allow from all',
 			AUTHZ_DENY_ALL => $apache24 ? 'Require all denied' : 'Deny from all',
 			DOMAIN_IP => ($ipMngr->getAddrVersion($data->{'DOMAIN_IP'}) eq 'ipv4')
@@ -1713,8 +1713,8 @@ sub _addCfg($$)
 	$rs = $self->buildConfFile(
 		"$self->{'tplDir'}/custom.conf.tpl",
 		$data,
-		{ 'destination' => "$self->{'config'}->{'APACHE_CUSTOM_SITES_CONFIG_DIR'}/$data->{'DOMAIN_NAME'}.conf" }
-	) unless (-f "$self->{'config'}->{'APACHE_CUSTOM_SITES_CONFIG_DIR'}/$data->{'DOMAIN_NAME'}.conf");
+		{ 'destination' => "$self->{'config'}->{'HTTPD_CUSTOM_SITES_DIR'}/$data->{'DOMAIN_NAME'}.conf" }
+	) unless (-f "$self->{'config'}->{'HTTPD_CUSTOM_SITES_DIR'}/$data->{'DOMAIN_NAME'}.conf");
 	return $rs if $rs;
 
 	# Enable all Apache sites
@@ -1748,7 +1748,7 @@ sub _dmnFolders($$)
 	my $domainType = $data->{'DOMAIN_TYPE'};
 
 	push(@folders, [
-		"$self->{'config'}->{'APACHE_LOG_DIR'}/$data->{'DOMAIN_NAME'}",
+		"$self->{'config'}->{'HTTPD_LOG_DIR'}/$data->{'DOMAIN_NAME'}",
 		$main::imscpConfig{'ROOT_USER'},
 		$main::imscpConfig{'ROOT_GROUP'},
 		0750
@@ -1983,7 +1983,7 @@ sub _buildPHPini($$)
 	$self->setData(
 		{
 			PHP_STARTER_DIR => $self->{'config'}->{'PHP_STARTER_DIR'},
-			PHP5_FASTCGI_BIN => $self->{'config'}->{'PHP5_FASTCGI_BIN'}
+			PHP_CGI_BIN => $self->{'config'}->{'PHP_CGI_BIN'}
 		}
 	);
 

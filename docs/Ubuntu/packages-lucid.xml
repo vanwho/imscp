@@ -1,4 +1,8 @@
 <packages>
+    <frontend>
+        <package>nginx</package>
+        <package>spawn-fcgi</package>
+    </frontend>
     <httpd>
         <alternative default="apache_fcgid">
             <apache_fcgid>
@@ -6,7 +10,6 @@
                 <package>apache2-mpm-worker</package>
                 <package>apache2-suexec-custom</package>
                 <package>libapache2-mod-fcgid</package>
-                <package>php5-cgi</package>
             </apache_fcgid>
             <apache_itk>
                 <package>apache2</package>
