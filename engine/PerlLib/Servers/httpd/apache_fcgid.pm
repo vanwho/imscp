@@ -1421,7 +1421,7 @@ sub enableModules($$)
 {
 	my ($self, $modules) = @_;
 
-	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdEnableMods', \$modules);
+	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdEnableModules', \$modules);
 	return $rs if $rs;
 
 	my ($stdout, $stderr);
@@ -1432,7 +1432,7 @@ sub enableModules($$)
 
 	$self->{'restart'} = 'yes';
 
-	$self->{'hooksManager'}->trigger('afterHttpdEnableMods', $modules);
+	$self->{'hooksManager'}->trigger('afterHttpdEnableModules', $modules);
 }
 
 =item disableModules($modules)
