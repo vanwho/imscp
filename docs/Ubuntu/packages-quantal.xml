@@ -1,7 +1,11 @@
 <packages>
     <frontend>
-        <package>nginx</package>
-        <package>spawn-fcgi</package>
+        <alternative default="nginx">
+            <nginx>
+                <package>nginx</package>
+                <package>spawn-fcgi</package>
+            </nginx>
+        </alternative>
     </frontend>
     <httpd>
         <alternative default="apache_php_fpm">

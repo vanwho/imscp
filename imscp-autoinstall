@@ -137,8 +137,8 @@ if ($main::noprompt) {
 
 if($main::skippackages && ! iMSCP::Getopt->preseed) {
 	unless(
-		$main::imscpConfig{'HTTPD_SERVER'} && $main::imscpConfig{'PO_SERVER'} &&
-		$main::imscpConfig{'MTA_SERVER'} && $main::imscpConfig{'FTPD_SERVER'} &&
+		$main::imscpConfig{'FRONTEND_SERVER'} && $main::imscpConfig{'HTTPD_SERVER'} &&
+		$main::imscpConfig{'PO_SERVER'} && $main::imscpConfig{'MTA_SERVER'} && $main::imscpConfig{'FTPD_SERVER'} &&
 		$main::imscpConfig{'NAMED_SERVER'} && $main::imscpConfig{'SQL_SERVER'}
 	) {
 		$main::noprompt = 0;
