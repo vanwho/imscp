@@ -503,7 +503,7 @@ sub _buildHttpdConfig
 
 	# Install new file in production directory
 	my $file = iMSCP::File->new('filename' => "$self->{'wrkDir'}/00_nameserver.conf");
-	$rs = $file->copyFile($self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'});
+	$rs = $file->copyFile("$self->{'config'}->{'HTTPD_CONF_DIR'}/conf.d");
 	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterFrontEndBuildApacheConfFiles');

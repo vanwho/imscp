@@ -179,7 +179,7 @@ sub enableSites($$)
 			my $siteName = basename($_, '.conf');
 			# TODO make relative symlink
 			$rs = execute(
-				"$main::imscpConfig{'CMD_LN'} -fs $self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_" .
+				"$main::imscpConfig{'CMD_LN'} -fs $self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_ " .
 					"$self->{'config'}->{'HTTPD_SITES_ENABLED_DIR'}/$siteName",
 				\$stdout,
 				\$stderr
