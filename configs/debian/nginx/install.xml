@@ -6,6 +6,7 @@
     <copy_config>${SYSTEM_CONF}/nginx/parts</copy_config>
     <copy_config>${SYSTEM_CONF}/nginx/00_master.conf</copy_config>
     <copy_config>${SYSTEM_CONF}/nginx/00_master_ssl.conf</copy_config>
-    <copy_config>${SYSTEM_CONF}/nginx/00_nameserver.conf</copy_config>
+    <copy_config>${SYSTEM_CONF}/nginx/imscp_fastcgi.conf</copy_config>
+    <copy_config>${SYSTEM_CONF}/nginx/imscp_php.conf</copy_config>
     <copy_config>${SYSTEM_CONF}/nginx/nginx.data</copy_config>
 </install>

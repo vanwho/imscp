@@ -777,7 +777,7 @@ sub _oldEngineCompatibility
 
 	for('imscp.conf', '00_modcband.conf', '00_master.conf', '00_master_ssl.conf') {
 		if(-f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_") {
-			$rs = $self->{'httpd'}->disableSite($_);
+			$rs = $self->{'httpd'}->disableSites($_);
 			return $rs if $rs;
 
 			$rs = iMSCP::File->new('filename' => "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_")->delFile();

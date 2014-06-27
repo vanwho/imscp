@@ -1324,11 +1324,11 @@ sub getRunningGroup
 	$_[0]->{'config'}->{'HTTPD_GROUP'};
 }
 
-=item enableSite($sites)
+=item enableSites($sites)
 
  Enable the given sites
 
- Param string $site Names of sites to enable, each separated by a space
+ Param string $sites Names of sites to enable, each separated by a space
  Return int 0 on sucess, other on failure
 
 =cut

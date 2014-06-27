@@ -964,20 +964,6 @@ sub addIps($$)
 	0;
 }
 
-=item setGuiPermissions()
-
- Set gui permissions
-
- Return int 0 on success, other on failure
-
-=cut
-
-sub setGuiPermissions
-{
-	require Servers::httpd::apache_fcgid::installer;
-	Servers::httpd::apache_fcgid::installer->getInstance()->setGuiPermissions();
-}
-
 =item setEnginePermissions()
 
  Set engine permissions

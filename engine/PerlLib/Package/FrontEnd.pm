@@ -106,8 +106,7 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndPostInstall');
 	return $rs if $rs;
 
-	$self->start();
-	return $rs if $rs;
+	$self->{'start'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterFrontEndPostInstall');
 }
@@ -188,9 +187,10 @@ sub enableSites($$)
 			error($stderr) if $stderr && $rs;
 			return $rs if $rs;
 
-			$self->{'restart'} = 'yes';
+			$self->{'restart'} = 1;
 		} else {
-			warning("Site $_ doesn't exist");
+			error("Site $_ doesn't exist");
+			return 1;
 		}
 	}
 
@@ -202,7 +202,7 @@ sub enableSites($$)
  Disable the given sites
 
  Param string $siteS Names of sites to disable, each separated by a space
- Return int 0 on sucess, other on failure
+ Return int 0 on success, other on failure
 
 =cut
 
@@ -228,7 +228,7 @@ sub disableSites($$)
 			error($stderr) if $stderr && $rs;
 			return $rs if $rs;
 
-			$self->{'restart'} = 'yes';
+			$self->{'restart'} = 1;
 		}
 	}
 
@@ -239,7 +239,7 @@ sub disableSites($$)
 
  Start frontEnd
 
- Return int 0, other on failure
+ Return int 0 on success, other on failure
 
 =cut
 
@@ -256,7 +256,9 @@ sub start
 	error('Unable to start nginx') if $rs > 1;
 	return $rs if $rs > 1;
 
-	$rs = execute("$main::imscpConfig{'SERVICE_MNGR'} $main::imscpConfig{'IMSCP_PANEL_SNAME'} start 2>/dev/null", \$stdout);
+	$rs = execute(
+		"$main::imscpConfig{'SERVICE_MNGR'} $main::imscpConfig{'IMSCP_PANEL_SNAME'} start 2>/dev/null", \$stdout
+	);
 	debug($stdout) if $stdout;
 	error('Unable to start imscp panel (FCGI manager)') if $rs > 1;
 	return $rs if $rs > 1;
@@ -268,7 +270,7 @@ sub start
 
  Stop frontEnd
 
- Return int 0, other on failure
+ Return int 0 on success, other on failure
 
 =cut
 
@@ -280,18 +282,16 @@ sub stop
 	return $rs if $rs;
 
 	my $stdout;
-	$rs = execute(
-		"$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'HTTPD_SNAME'} stop 2>/dev/null", \$stdout
-	);
+	$rs = execute("$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'HTTPD_SNAME'} stop 2>/dev/null", \$stdout);
 	debug($stdout) if $stdout;
-	error('Unable to stop nginx') if $rs > 1;
+	error('Unable to stop nginx service') if $rs > 1;
 	return $rs if $rs > 1;
 
 	$rs = execute(
 		"$main::imscpConfig{'SERVICE_MNGR'} $main::imscpConfig{'IMSCP_PANEL_SNAME'} stop 2>/dev/null", \$stdout
 	);
 	debug($stdout) if $stdout;
-	error('Unable to stop imscp panel (FCGI manager)') if $rs > 1;
+	error('Unable to stop imscp panel service') if $rs > 1;
 	return $rs if $rs > 1;
 
 	$self->{'hooksManager'}->trigger('afterFrontEndStop');
@@ -301,7 +301,7 @@ sub stop
 
  Restart frontEnd
 
- Return int 0, other on failure
+ Return int 0 on success, other on failure
 
 =cut
 
@@ -437,11 +437,6 @@ sub _buildConf($$$$)
 {
 	my ($self, $cfgTpl, $filename, $tplVars) = @_;
 
-	unless(defined $cfgTpl) {
-		error('Empty template...');
-		return undef;
-	}
-
 	$self->{'hooksManager'}->trigger('beforeFrontEndBuildConf', \$cfgTpl, $filename, $tplVars);
 
 	$cfgTpl = process($tplVars, $cfgTpl);
@@ -450,6 +445,31 @@ sub _buildConf($$$$)
 	$self->{'hooksManager'}->trigger('afterFrontEndBuildConf', \$cfgTpl, $filename, $tplVars);
 
 	$cfgTpl;
+}
+
+=item END
+
+ Code triggered at the very end of script execution
+
+ - Start or restart httpd and php-fcgi if needed
+
+ Return int Exit code
+
+=cut
+
+END
+{
+	my $exitCode = $?;
+	my $self = Package::FrontEnd->getInstance();
+	my $rs = 0;
+
+	if($self->{'start'}) {
+		$rs = $self->start();
+	} elsif($self->{'restart'}) {
+		$rs = $self->restart();
+	}
+
+	$? = $exitCode || $rs;
 }
 
 =back

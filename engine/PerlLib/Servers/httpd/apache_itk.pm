@@ -960,20 +960,6 @@ sub addIps($$)
 	0;
 }
 
-=item setGuiPermissions()
-
- Set gui permissions
-
- Return int 0 on success, other on failure
-
-=cut
-
-sub setGuiPermissions
-{
-	require Servers::httpd::apache_itk::installer;
-	Servers::httpd::apache_itk::installer->getInstance()->setGuiPermissions();
-}
-
 =item setEnginePermissions()
 
  Set engine permissions
@@ -1325,11 +1311,11 @@ sub enableSites($$)
 	$self->{'hooksManager'}->trigger('afterHttpdEnableSites', $sites);
 }
 
-=item disableSite($sites)
+=item disableSites($sites)
 
  Disable the given sites
 
- Param string $sitse Names of sites to disable, each separated by a space
+ Param string $sites Names of sites to disable, each separated by a space
  Return int 0 on sucess, other on failure
 
 =cut
