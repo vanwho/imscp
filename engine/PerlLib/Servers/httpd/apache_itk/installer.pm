@@ -371,11 +371,11 @@ sub _buildPhpConfFiles
 	}
 
 	for(@toDisableModules) {
-		$rs = $self->{'httpd'}->disableMod($_) if -f "$self->{'config'}->{'HTTPD_MODS_AVAILABLE_DIR'}/$_.load";
+		$rs = $self->{'httpd'}->disableModules($_) if -f "$self->{'config'}->{'HTTPD_MODS_AVAILABLE_DIR'}/$_.load";
 		return $rs if $rs;
 	}
 
-	$rs = $self->{'httpd'}->enableMod("@toEnableModules");
+	$rs = $self->{'httpd'}->enableModules("@toEnableModules");
 	return $rs if $rs;
 
 	# Quick fix (Ubuntu PHP mcrypt module not enabled after fresh installation)
@@ -506,7 +506,7 @@ sub _buildApacheConfFiles
 	return $rs if $rs;
 
 	# Enable required apache modules
-	$rs = $self->{'httpd'}->enableMod('cgid proxy proxy_http rewrite ssl');
+	$rs = $self->{'httpd'}->enableModules('cgid proxy proxy_http rewrite ssl');
 	return $rs if $rs;
 
 	# Enbale 00_nameserver.conf file

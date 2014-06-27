@@ -1362,7 +1362,7 @@ sub enableSites($$)
 
  Disable the given sites
 
- Param string $sitse Names of sites to disable, each separated by a space
+ Param string $sites Names of sites to disable, each separated by a space
  Return int 0 on sucess, other on failure
 
 =cut
@@ -1392,7 +1392,7 @@ sub disableSites($$)
 	$self->{'hooksManager'}->trigger('afterHttpdDisableSites', $sites);
 }
 
-=item enableMod($modules)
+=item enableModules($modules)
 
  Enable the given Apache modules
 
@@ -1401,11 +1401,11 @@ sub disableSites($$)
 
 =cut
 
-sub enableMod($$)
+sub enableModules($$)
 {
 	my ($self, $modules) = @_;
 
-	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdEnableMod', \$modules);
+	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdEnableModules', \$modules);
 	return $rs if $rs;
 
 	my ($stdout, $stderr);
@@ -1416,10 +1416,10 @@ sub enableMod($$)
 
 	$self->{'restart'} = 'yes';
 
-	$self->{'hooksManager'}->trigger('afterHttpdEnableMod', $modules);
+	$self->{'hooksManager'}->trigger('afterHttpdEnableModules', $modules);
 }
 
-=item disableMod($modules)
+=item disableModules($modules)
 
  Disable the given Apache modules
 
@@ -1428,11 +1428,11 @@ sub enableMod($$)
 
 =cut
 
-sub disableMod($$)
+sub disableModules($$)
 {
 	my ($self, $modules) = @_;
 
-	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdDisableMod', \$modules);
+	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdDisableModules', \$modules);
 	return $rs if $rs;
 
 	my ($stdout, $stderr);
@@ -1443,7 +1443,7 @@ sub disableMod($$)
 
 	$self->{'restart'} = 'yes';
 
-	$self->{'hooksManager'}->trigger('afterHttpdDisableMod', $modules);
+	$self->{'hooksManager'}->trigger('afterHttpdDisableModules', $modules);
 }
 
 =item startPhpFpm()

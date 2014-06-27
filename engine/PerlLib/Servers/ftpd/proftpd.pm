@@ -53,7 +53,7 @@ use parent 'Common::SingletonClass';
 
 =item registerSetupHooks($hooksManager)
 
- Register setup hooks.
+ Register setup hooks
 
  Param iMSCP::HooksManager $hooksManager Hooks manager instance
  Return int 0 on success, other on failure
@@ -152,7 +152,7 @@ sub uninstall
 
 =item addUser(\%data)
 
- Process addUser tasks.
+ Process addUser tasks
 
  Param hash_ref $data Reference to a hash containing data as provided by User module
  Return int 0 on success, other on failure
@@ -327,7 +327,7 @@ sub getTraffic
 
 =item _init()
 
- Called by getInstance(). Initialize instance.
+ Called by getInstance(). Initialize instance
 
  Return Servers::ftpd::proftpd
 
@@ -360,7 +360,7 @@ sub _init
 
 =item END
 
- Code triggered at the very end of script execution.
+ Code triggered at the very end of script execution
 
  - Start or restart proftpd if needed
  - Remove old traffic logs file if exists

@@ -183,7 +183,7 @@ sub _restoreApacheConfig
 {
 	my $self = $_[0];
 
-	my $rs = $self->{'httpd'}->disableMod('php_fpm_imscp')
+	my $rs = $self->{'httpd'}->disableModules('php_fpm_imscp')
 		if -f "$self->{'config'}->{'HTTPD_MODS_AVAILABLE_DIR'}/php_fpm_imscp.load";
 	return $rs if $rs;
 
