@@ -13,6 +13,8 @@ HTTPD_SITES_ENABLED_DIR = /etc/nginx/sites-enabled
 HTTPD_ROOT_DIR = /var/www
 HTTPD_LOG_DIR = /var/log/nginx
 
+CMD_NGINX = /usr/sbin/nginx
+
 # PHP / FASTCGI variables
 
 PHP_STARTER_DIR = /var/www/fcgi

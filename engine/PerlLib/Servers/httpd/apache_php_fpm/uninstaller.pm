@@ -196,7 +196,7 @@ sub _restoreApacheConfig
 
 	for('00_nameserver.conf', '00_master_ssl.conf', '00_master.conf') {
 		if(-f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_") {
-			$rs = $self->{'httpd'}->disableSite($_);
+			$rs = $self->{'httpd'}->disableSites($_);
 			return $rs if $rs;
 
 			$rs = iMSCP::File->new('filename' => "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_")->delFile();
@@ -218,7 +218,7 @@ sub _restoreApacheConfig
 	return $rs if $rs;
 
 	for('000-default', 'default') {
-		$rs = $self->{'httpd'}->enableSite($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
+		$rs = $self->{'httpd'}->enableSites($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
 		return $rs if $rs;
 	}
 

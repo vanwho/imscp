@@ -132,7 +132,7 @@ sub _vHostConf
 	my $rs = 0;
 
 	for('00_nameserver.conf', '00_master_ssl.conf', '00_master.conf') {
-		$rs = $self->{'httpd'}->disableSite($_);
+		$rs = $self->{'httpd'}->disableSites($_);
 		return $rs if $rs;
 
 		if(-f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_") {
@@ -144,7 +144,7 @@ sub _vHostConf
 	}
 
 	for('000-default', 'default') {
-		$rs = $self->{'httpd'}->enableSite($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
+		$rs = $self->{'httpd'}->enableSites($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
 		return $rs if $rs;
 	}
 

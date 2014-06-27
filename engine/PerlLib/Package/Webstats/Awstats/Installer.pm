@@ -249,7 +249,7 @@ sub _createGlobalAwstatsVhost
 	$rs = $self->{'httpd'}->installConfFile('01_awstats.conf');
 	return $rs if $rs;
 
-	$self->{'httpd'}->enableSite('01_awstats.conf');
+	$self->{'httpd'}->enableSites('01_awstats.conf');
 }
 
 =item _disableDefaultConfig()

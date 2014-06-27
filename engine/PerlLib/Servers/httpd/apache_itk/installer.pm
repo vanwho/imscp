@@ -106,9 +106,6 @@ sub install
 	$rs = $self->_setApacheVersion();
 	return $rs if $rs;
 
-	$rs = $self->_addUser();
-	return $rs if $rs;
-
 	$rs = $self->_makeDirs();
 	return $rs if $rs;
 
@@ -116,9 +113,6 @@ sub install
 	return $rs if $rs;
 
 	$rs = $self->_buildApacheConfFiles();
-	return $rs if $rs;
-
-	$rs = $self->_buildMasterVhostFiles();
 	return $rs if $rs;
 
 	$rs = $self->_installLogrotate();
@@ -134,67 +128,6 @@ sub install
 	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterHttpdInstall', 'apache_itk');
-}
-
-=item setGuiPermissions
-
- Set gui permissions
-
- Return int 0 on success, other on failure
-
-=cut
-
-sub setGuiPermissions
-{
-	my $self = $_[0];
-
-	my $panelUName = $main::imscpConfig{'SYSTEM_USER_PREFIX'}.$main::imscpConfig{'SYSTEM_USER_MIN_UID'};
-	my $panelGName = $main::imscpConfig{'SYSTEM_USER_PREFIX'}.$main::imscpConfig{'SYSTEM_USER_MIN_UID'};
-	my $guiRootDir = $main::imscpConfig{'GUI_ROOT_DIR'};
-
-	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdSetGuiPermissions');
-	return $rs if $rs;
-
-	$rs = setRights(
-		$guiRootDir,
-		{ 'user' => $panelUName, 'group' => $panelGName, 'dirmode' => '0550', 'filemode' => '0440', 'recursive' => 1 }
-	);
-	return $rs if $rs;
-
-	$rs = setRights(
-		"$guiRootDir/themes",
-		{ 'user' => $panelUName, 'group' => $panelGName, 'dirmode' => '0550', 'filemode' => '0440', 'recursive' => 1 }
-	);
-	return $rs if $rs;
-
-	$rs = setRights(
-		"$guiRootDir/data",
-		{ 'user' => $panelUName, 'group' => $panelGName, 'dirmode' => '0700', 'filemode' => '0600', 'recursive' => 1 }
-	);
-	return $rs if $rs;
-
-	$rs = setRights(
-		"$guiRootDir/data/persistent",
-		{ 'user' => $panelUName, 'group' => $panelGName, 'dirmode' => '0750', 'filemode' => '0640', 'recursive' => 1 }
-	);
-	return $rs if $rs;
-
-	$rs = setRights("$guiRootDir/data", { 'user' => $panelUName, 'group' => $panelGName, 'mode' => '0550' });
-	return $rs if $rs;
-
-	$rs = setRights(
-		"$guiRootDir/i18n",
-		{ 'user' => $panelUName, 'group' => $panelGName, 'dirmode' => '0700', 'filemode' => '0600', 'recursive' => 1 }
-	);
-	return $rs if $rs;
-
-	$rs = setRights(
-		"$guiRootDir/plugins",
-		{ 'user' => $panelUName, 'group' => $panelGName, 'dirmode' => '0750', 'filemode' => '0640', 'recursive' => 1 }
-	);
-	return $rs if $rs;
-
-	$self->{'hooksManager'}->trigger('afterHttpdSetGuiPermissions');
 }
 
 =item setEnginePermissions
@@ -336,129 +269,6 @@ sub _setApacheVersion()
 	0;
 }
 
-=item _addUser()
-
- Add panel user
-
- Return int 0 on success, other on failure
-
-=cut
-
-sub _addUser
-{
-	my $self = $_[0];
-
-	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdAddUser');
-	return $rs if $rs;
-
-	my $userName =
-	my $groupName = $main::imscpConfig{'SYSTEM_USER_PREFIX'} . $main::imscpConfig{'SYSTEM_USER_MIN_UID'};
-
-	my ($database, $errStr) = main::setupGetSqlConnect($main::imscpConfig{'DATABASE_NAME'});
-	if(! $database) {
-		error("Unable to connect to SQL server: $errStr");
-		return 1;
-	}
-
-	my $rdata = $database->doQuery(
-		'admin_sys_uid',
-		'
-			SELECT
-				`admin_sys_name`, `admin_sys_uid`, `admin_sys_gname`
-			FROM
-				`admin`
-			WHERE
-				`admin_type` = ? AND `created_by` = ?
-			LIMIT 1
-		',
-		'admin',
-		'0'
-	);
-
-	unless(ref $rdata eq 'HASH') {
-		error($rdata);
-		return 1;
-	} elsif(! %{$rdata}) {
-		error('Unable to find admin user in database');
-		return 1;
-	}
-
-	my $adminSysName = $rdata->{(%{$rdata})[0]}->{'admin_sys_name'};
-	my $adminSysUid = $rdata->{(%{$rdata})[0]}->{'admin_sys_uid'};
-	my $adminSysGname = $rdata->{(%{$rdata})[0]}->{'admin_sys_gname'};
-
-	my ($oldUserName, undef, $userUid, $userGid) = getpwuid($adminSysUid);
-
-	if(! $oldUserName || $userUid == 0) {
-		# Creating i-MSCP Master Web user
-		$rs = iMSCP::SystemUser->new(
-			'username' => $userName,
-			'comment' => 'i-MSCP Master Web User',
-			'home' => $main::imscpConfig{'GUI_ROOT_DIR'},
-			'skipCreateHome' => 1
-		)->addSystemUser();
-		return $rs if $rs;
-
-		$userUid = getpwnam($userName);
-		$userGid = getgrnam($groupName);
-	} else {
-		# Modifying existents i-MSCP Master Web user
-		my @cmd = (
-			"$main::imscpConfig{'CMD_PKILL'} -KILL -u", escapeShell($oldUserName), ';',
-			"$main::imscpConfig{'CMD_USERMOD'}",
-			'-c', escapeShell('i-MSCP Master Web User'), # New comment
-			'-d', escapeShell($main::imscpConfig{'GUI_ROOT_DIR'}), # New homedir
-			'-l', escapeShell($userName), # New login
-			'-m', # Move current homedir content to new homedir
-			escapeShell($adminSysName) # Old username
-		);
-		my($stdout, $stderr);
-		$rs = execute("@cmd", \$stdout, \$stderr);
-		debug($stdout) if $stdout;
-		debug($stderr) if $stderr && $rs;
-		return $rs if $rs;
-
-		# Modifying existents i-MSCP Master Web group
-		@cmd = (
-			$main::imscpConfig{'CMD_GROUPMOD'},
-			'-n', escapeShell($groupName), # New group name
-			escapeShell($adminSysGname) # Current group name
-		);
-		debug($stdout) if $stdout;
-		debug($stderr) if $stderr && $rs;
-		$rs = execute("@cmd", \$stdout, \$stderr);
-		return $rs if $rs;
-	}
-
-	# Updating admin.admin_sys_name, admin.admin_sys_uid, admin.admin_sys_gname and admin.admin_sys_gid columns
-	$rdata = $database->doQuery(
-		'dummy',
-		'
-			UPDATE
-				`admin`
-			SET
-				`admin_sys_name` = ?, `admin_sys_uid` = ?, `admin_sys_gname` = ?, `admin_sys_gid` = ?
-			WHERE
-				`admin_type` = ?
-		',
-		$userName, $userUid, $groupName, $userGid, 'admin'
-	);
-	unless(ref $rdata eq 'HASH') {
-		error($rdata);
-		return 1;
-	}
-
-	# Adding i-MSCP Master Web user into i-MSCP group
-	$rs = iMSCP::SystemUser->new('username' => $userName)->addToGroup($main::imscpConfig{'IMSCP_GROUP'});
-	return $rs if $rs;
-
-	# Adding Apache user in i-MSCP Master Web group
-	$rs = iMSCP::SystemUser->new('username' => $self->{'config'}->{'HTTPD_USER'})->addToGroup($groupName);
-	return $rs if $rs;
-
-	$self->{'hooksManager'}->trigger('afterHttpdAddUser');
-}
-
 =item _makeDirs()
 
  Create needed directories
@@ -528,7 +338,7 @@ sub _buildPhpConfFiles
 	# Build file using template from apache/parts/php5.itk.ini
 	$rs = $self->{'httpd'}->buildConfFile(
 		$self->{'apacheCfgDir'} . '/parts/php5.itk.ini',
-		{},
+		{ },
 		{
 			'destination' => "$self->{'apacheWrkDir'}/php.ini",
 			'mode' => 0644,
@@ -545,8 +355,6 @@ sub _buildPhpConfFiles
 		$self->{'config'}->{"ITK_PHP5_PATH"}
 	);
 	return $rs if $rs;
-
-	# TODO PHP Browser Capabilities support file
 
 	# Disable/Enable Apache modules
 
@@ -702,142 +510,19 @@ sub _buildApacheConfFiles
 	return $rs if $rs;
 
 	# Enbale 00_nameserver.conf file
-	$rs = $self->{'httpd'}->enableSite('00_nameserver.conf');
+	$rs = $self->{'httpd'}->enableSites('00_nameserver.conf');
 	return $rs if $rs;
-
-	$self->{'hooksManager'}->trigger('afterHttpdBuildApacheConfFiles');
-}
-
-=item _buildMasterVhostFiles()
-
- Build Master vhost files
-
- Return int 0 on success, other on failure
-
-=cut
-
-sub _buildMasterVhostFiles
-{
-	my $self = $_[0];
-
-	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdBuildMasterVhostFiles');
-	return $rs if $rs;
-
-	my $adminEmailAddress = $main::imscpConfig{'DEFAULT_ADMIN_ADDRESS'};
-	my ($user, $domain) = split /@/, $adminEmailAddress;
-
-	$adminEmailAddress = "$user@" . idn_to_ascii($domain, 'utf-8');
-
-	$self->{'httpd'}->setData(
-		{
-			HTTPD_LOG_DIR => $self->{'config'}->{'HTTPD_LOG_DIR'},
-			BASE_SERVER_IP => $main::imscpConfig{'BASE_SERVER_IP'},
-			BASE_SERVER_VHOST => $main::imscpConfig{'BASE_SERVER_VHOST'},
-			DEFAULT_ADMIN_ADDRESS => $adminEmailAddress,
-			HOME_DIR => $main::imscpConfig{'GUI_ROOT_DIR'},
-			WEB_DIR => $main::imscpConfig{'GUI_ROOT_DIR'},
-			SYSTEM_USER_PREFIX => $main::imscpConfig{'SYSTEM_USER_PREFIX'},
-			SYSTEM_USER_MIN_UID => $main::imscpConfig{'SYSTEM_USER_MIN_UID'},
-			CONF_DIR => $main::imscpConfig{'CONF_DIR'},
-			RKHUNTER_LOG => $main::imscpConfig{'RKHUNTER_LOG'},
-			CHKROOTKIT_LOG => $main::imscpConfig{'CHKROOTKIT_LOG'},
-			PEAR_DIR => $main::imscpConfig{'PEAR_DIR'},
-			OTHER_ROOTKIT_LOG => ($main::imscpConfig{'OTHER_ROOTKIT_LOG'} ne '')
-				? ":$main::imscpConfig{'OTHER_ROOTKIT_LOG'}" : '',
-			CONF_DIR => $main::imscpConfig{'CONF_DIR'},
-			AUTHZ_ALLOW_ALL => (qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0'))
-				? 'Require all granted' : 'Allow from all'
-		}
-	);
-
-	# Build 00_master.conf file
-
-	# Force HTTPS if needed
-	if($main::imscpConfig{'BASE_SERVER_VHOST_PREFIX'} eq 'https://') {
-		$rs = $self->{'hooksManager'}->register(
-			'afterHttpdBuildConf',
-			sub {
-				my ($cfgTpl, $tplName) = @_;
-
-				if($tplName eq '00_master.conf') {
-					$$cfgTpl = replaceBloc(
-						"# SECTION custom BEGIN.\n",
-						"# SECTION custom END.\n",
-
-						"    # SECTION custom BEGIN.\n" .
-						getBloc(
-							"# SECTION custom BEGIN.\n",
-							"# SECTION custom END.\n",
-							$$cfgTpl
-						) .
-						"    RewriteEngine On\n" .
-						"    RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]\n" .
-						"    # SECTION custom END.\n",
-						$$cfgTpl
-					);
-				}
-
-				0;
-			}
-		);
-		return $rs if $rs;
-	}
-
-	# Build file using apache/00_master.conf template
-	$rs = $self->{'httpd'}->buildConfFile('00_master.conf', { CGI_SUPPORT => 'no', PHP_SUPPORT => 'yes' });
-	return $rs if $rs;
-
-	# Install new file in production directory
-	$rs = iMSCP::File->new(
-		'filename' => "$self->{'apacheWrkDir'}/00_master.conf"
-	)->copyFile(
-		"$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/00_master.conf"
-	);
-	return $rs if $rs;
-
-	$rs = $self->{'httpd'}->enableSite('00_master.conf');
-	return $rs if $rs;
-
-	if($main::imscpConfig{'PANEL_SSL_ENABLED'} eq 'yes') {
-		# Build 00_master_ssl.conf file
-
-		$rs = $self->{'httpd'}->buildConfFile('00_master_ssl.conf', { CGI_SUPPORT => 'no', PHP_SUPPORT => 'yes' });
-		return $rs if $rs;
-
-		$rs = iMSCP::File->new(
-			'filename' => "$self->{'apacheWrkDir'}/00_master_ssl.conf"
-		)->copyFile(
-			"$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/00_master_ssl.conf"
-		);
-		return $rs if $rs;
-
-		$rs = $self->{'httpd'}->enableSite('00_master_ssl.conf');
-		return $rs if $rs;
-	} else {
-		$rs = $self->{'httpd'}->disableSite(
-			'00_master_ssl.conf'
-		) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/00_master_ssl.conf";
-		return $rs if $rs;
-
-		for(
-			"$self->{'apacheWrkDir'}/00_master_ssl.conf",
-			"$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/00_master_ssl.conf"
-		) {
-			$rs = iMSCP::File->new('filename' => $_)->delFile() if -f $_;
-			return $rs if $rs;
-		}
-	}
 
 	# Disable defaults sites if any
 	#
 	# default, default-ssl (Debian < Jessie)
 	# 000-default.conf, default-ssl.conf' : (Debian >= Jessie)
 	for('default', 'default-ssl', '000-default.conf', 'default-ssl.conf') {
-		$rs = $self->{'httpd'}->disableSite($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
+		$rs = $self->{'httpd'}->disableSites($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
 		return $rs if $rs;
 	}
 
-	$self->{'hooksManager'}->trigger('afterHttpdBuildMasterVhostFiles');
+	$self->{'hooksManager'}->trigger('afterHttpdBuildApacheConfFiles');
 }
 
 =item _installLogrotate()
@@ -1012,7 +697,7 @@ sub _oldEngineCompatibility
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdOldEngineCompatibility');
 	return $rs if $rs;
 
-	for('imscp.conf', '00_modcband.conf') {
+	for('imscp.conf', '00_modcband.conf', '00_master.conf', '00_master_ssl_conf') {
 		if(-f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_") {
 			$rs = $self->{'httpd'}->disableSite($_);
 			return $rs if $rs;

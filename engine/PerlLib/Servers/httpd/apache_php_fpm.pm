@@ -361,7 +361,7 @@ sub deleteDmn($$)
 
 	# Disable apache site files
 	for("$data->{'DOMAIN_NAME'}.conf", "$data->{'DOMAIN_NAME'}_ssl.conf") {
-		$rs = $self->disableSite($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
+		$rs = $self->disableSites($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
 		return $rs if $rs;
 	}
 
@@ -956,7 +956,7 @@ sub addIps($$)
 	$rs = $self->installConfFile('00_nameserver.conf');
 	return $rs if $rs;
 
-	$rs = $self->enableSite('00_nameserver.conf');
+	$rs = $self->enableSites('00_nameserver.conf');
 	return $rs if $rs;
 
 	$self->{'restart'} = 'yes';
@@ -1326,18 +1326,18 @@ sub getRunningGroup
 
 =item enableSite($sites)
 
- Enable the given Apache sites
+ Enable the given sites
 
- Param string $site Names of Apache sites to enable, each separated by a space
+ Param string $site Names of sites to enable, each separated by a space
  Return int 0 on sucess, other on failure
 
 =cut
 
-sub enableSite($$)
+sub enableSites($$)
 {
 	my ($self, $sites) = @_;
 
-	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdEnableSite', \$sites);
+	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdEnableSites', \$sites);
 	return $rs if $rs;
 
 	my ($stdout, $stderr);
@@ -1355,23 +1355,23 @@ sub enableSite($$)
 		}
 	}
 
-	$self->{'hooksManager'}->trigger('afterHttpdEnableSite', $sites);
+	$self->{'hooksManager'}->trigger('afterHttpdEnableSites', $sites);
 }
 
-=item disableSite($sites)
+=item disableSites($sites)
 
- Disable the given Apache sites
+ Disable the given sites
 
- Param string $sitse Names of Apache sites to disable, each separated by a space
+ Param string $sitse Names of sites to disable, each separated by a space
  Return int 0 on sucess, other on failure
 
 =cut
 
-sub disableSite($$)
+sub disableSites($$)
 {
 	my ($self, $sites) = @_;
 
-	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdDisableSite', \$sites);
+	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdDisableSites', \$sites);
 	return $rs if $rs;
 
 	my ($stdout, $stderr);
@@ -1389,7 +1389,7 @@ sub disableSite($$)
 		}
 	}
 
-	$self->{'hooksManager'}->trigger('afterHttpdDisableSite', $sites);
+	$self->{'hooksManager'}->trigger('afterHttpdDisableSites', $sites);
 }
 
 =item enableMod($modules)
@@ -1758,7 +1758,7 @@ sub _addCfg($$)
 
 	# Disable and backup Apache sites if any
 	for("$data->{'DOMAIN_NAME'}.conf", "$data->{'DOMAIN_NAME'}_ssl.conf"){
-		$rs = $self->disableSite($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
+		$rs = $self->disableSites($_) if -f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_";
 		return $rs if $rs;
 
 		$rs = $self->apacheBkpConfFile("$self->{'apacheWrkDir'}/$_", '', 0);
@@ -1846,7 +1846,7 @@ sub _addCfg($$)
 
 	# Enable all Apache sites
 	for(keys %configs) {
-		$rs = $self->enableSite($_);
+		$rs = $self->enableSites($_);
 		return $rs if $rs;
 	}
 

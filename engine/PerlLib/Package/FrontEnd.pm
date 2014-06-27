@@ -35,13 +35,360 @@ use strict;
 use warnings;
 
 use iMSCP::Debug;
+use iMSCP::Config;
+use iMSCP::Execute;
+use iMSCP::HooksManager;
+use iMSCP::TemplateParser;
+use File::Basename;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION
 
- This is the FrontTend package for i-MSCP
+ i-MSCP FrontEnd package
 
 =head1 PUBLIC METHODS
+
+=item preinstall()
+
+ Process preinstall tasks
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub preinstall
+{
+	my $self = $_[0];
+
+	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndPreInstall');
+	return $rs if $rs;
+
+	$rs = $self->stop();
+	return $rs if $rs;
+
+	$self->{'hooksManager'}->trigger('afterFrontEndPreInstall');
+}
+
+=item install()
+
+ Process install tasks
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub install
+{
+	my $self = $_[0];
+
+	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndInstall');
+	return $rs if $rs;
+
+	require Package::FrontEnd::Installer;
+	$rs = Package::FrontEnd::Installer->getInstance()->install();
+	return $rs if $rs;
+
+	$self->{'hooksManager'}->trigger('afterFrontEndInstall');
+}
+
+=item postinstall()
+
+ Process postinstall tasks
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub postinstall
+{
+	my $self = $_[0];
+
+	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndPostInstall');
+	return $rs if $rs;
+
+	$self->start();
+	return $rs if $rs;
+
+	$self->{'hooksManager'}->trigger('afterFrontEndPostInstall');
+}
+
+=item uninstall()
+
+ Process uninstall tasks
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub uninstall
+{
+	my $self = $_[0];
+
+	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndUninstall');
+	return $rs if $rs;
+
+	require Package::FrontEnd::Uninstaller;
+	$rs = Package::FrontEnd::Uninstaller->getInstance()->uninstall();
+	return $rs if $rs;
+
+	$self->{'hooksManager'}->trigger('afterFrontEndUninstall');
+}
+
+=item setGuiPermissions()
+
+ Set file permissions
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub setGuiPermissions
+{
+	my $self = $_[0];
+
+	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndSetPermissions');
+	return $rs if $rs;
+
+	require Package::FrontEnd::Installer;
+	$rs = Package::FrontEnd::Installer->getInstance()->setGuiPermissions();
+	return $rs if $rs;
+
+	$self->{'hooksManager'}->trigger('beforeFrontEndSetPermissions');
+}
+
+=item enableSites($sites)
+
+ Enable the given sites
+
+ Param string $sites Names of sites to enable, each separated by a space
+ Return int 0 on sucess, other on failure
+
+=cut
+
+sub enableSites($$)
+{
+	my ($self, $sites) = @_;
+
+	my $rs = $self->{'hooksManager'}->trigger('beforeEnableFrontEndSites', \$sites);
+	return $rs if $rs;
+
+	my ($stdout, $stderr);
+
+	for(split(' ', $sites)){
+		if(-f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_") {
+			my $siteName = basename($_, '.conf');
+			# TODO make relative symlink
+			$rs = execute(
+				"$main::imscpConfig{'CMD_LN'} -fs $self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_" .
+					"$self->{'config'}->{'HTTPD_SITES_ENABLED_DIR'}/$siteName",
+				\$stdout,
+				\$stderr
+			);
+			debug($stdout) if $stdout;
+			error($stderr) if $stderr && $rs;
+			return $rs if $rs;
+
+			$self->{'restart'} = 'yes';
+		} else {
+			warning("Site $_ doesn't exist");
+		}
+	}
+
+	$self->{'hooksManager'}->trigger('afterEnableFrontEndSites', $sites);
+}
+
+=item disableSites($sites)
+
+ Disable the given sites
+
+ Param string $siteS Names of sites to disable, each separated by a space
+ Return int 0 on sucess, other on failure
+
+=cut
+
+sub disableSites($$)
+{
+	my ($self, $sites) = @_;
+
+	my $rs = $self->{'hooksManager'}->trigger('beforeDisableFrontEndSites', \$sites);
+	return $rs if $rs;
+
+	my ($stdout, $stderr);
+
+	for(split(' ', $sites)) {
+		my $siteName = basename($_, '.conf');
+
+		if(-s "$self->{'config'}->{'HTTPD_SITES_ENABLED_DIR'}/$siteName") {
+			$rs = execute(
+				"$main::imscpConfig{'CMD_RM'} -f $self->{'config'}->{'HTTPD_SITES_ENABLED_DIR'}/$siteName",
+				\$stdout,
+				\$stderr
+			);
+			debug($stdout) if $stdout;
+			error($stderr) if $stderr && $rs;
+			return $rs if $rs;
+
+			$self->{'restart'} = 'yes';
+		}
+	}
+
+	$self->{'hooksManager'}->trigger('afterHttpdDisableFrontEndSites', $sites);
+}
+
+=item start()
+
+ Start frontEnd
+
+ Return int 0, other on failure
+
+=cut
+
+sub start
+{
+	my $self = $_[0];
+
+	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndStart');
+	return $rs if $rs;
+
+	my $stdout;
+	$rs = execute("$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'HTTPD_SNAME'} start 2>/dev/null", \$stdout);
+	debug($stdout) if $stdout;
+	error('Unable to start nginx') if $rs > 1;
+	return $rs if $rs > 1;
+
+	$rs = execute("$main::imscpConfig{'SERVICE_MNGR'} $main::imscpConfig{'IMSCP_PANEL_SNAME'} start 2>/dev/null", \$stdout);
+	debug($stdout) if $stdout;
+	error('Unable to start imscp panel (FCGI manager)') if $rs > 1;
+	return $rs if $rs > 1;
+
+	$self->{'hooksManager'}->trigger('afterFrontEndStart');
+}
+
+=item stop()
+
+ Stop frontEnd
+
+ Return int 0, other on failure
+
+=cut
+
+sub stop
+{
+	my $self = $_[0];
+
+	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndStop');
+	return $rs if $rs;
+
+	my $stdout;
+	$rs = execute(
+		"$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'HTTPD_SNAME'} stop 2>/dev/null", \$stdout
+	);
+	debug($stdout) if $stdout;
+	error('Unable to stop nginx') if $rs > 1;
+	return $rs if $rs > 1;
+
+	$rs = execute(
+		"$main::imscpConfig{'SERVICE_MNGR'} $main::imscpConfig{'IMSCP_PANEL_SNAME'} stop 2>/dev/null", \$stdout
+	);
+	debug($stdout) if $stdout;
+	error('Unable to stop imscp panel (FCGI manager)') if $rs > 1;
+	return $rs if $rs > 1;
+
+	$self->{'hooksManager'}->trigger('afterFrontEndStop');
+}
+
+=item restart()
+
+ Restart frontEnd
+
+ Return int 0, other on failure
+
+=cut
+
+sub restart
+{
+	my $self = $_[0];
+
+	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndRestart');
+	return $rs if $rs;
+
+	$rs = $self->stop();
+	return$rs if $rs;
+
+	$rs = $self->start();
+	return $rs if $rs;
+
+	$self->{'hooksManager'}->trigger('afterFrontEndRestart');
+}
+
+=item buildConfFile($file, \%data, [\%options = {}])
+
+ Build the given configuration file
+
+ Param string $file Absolute path to config file or config filename relative to the $self->{'cfgDir'} directory
+ Param hash $tplVars Reference to a hash containing template variables
+ Param hash_ref $options Reference to a hash containing options such as destination, mode, user and group for final file
+ Return int 0 on success, other on failure
+
+=cut
+
+sub buildConfFile($$$;$)
+{
+	my ($self, $file, $tplVars, $options) = @_;
+
+	$options ||= {};
+
+	my ($name, $path, $suffix) = fileparse($file);
+
+	# Load template
+
+	my $cfgTpl;
+	my $rs = $self->{'hooksManager'}->trigger('onLoadTemplate', 'frontend', $name, \$cfgTpl, $tplVars);
+	return $rs if $rs;
+
+	unless(defined $cfgTpl) {
+		$file = "$self->{'cfgDir'}/$file" unless -d $path && $path ne './';
+
+		$cfgTpl = iMSCP::File->new('filename' => $file)->get();
+		unless(defined $cfgTpl) {
+			error("Unable to read $file");
+			return 1;
+		}
+	}
+
+	# Build file
+
+	$rs = $self->{'hooksManager'}->trigger('beforeFrontEndBuildConfFile', \$cfgTpl, "$name$suffix", $tplVars, $options);
+	return $rs if $rs;
+
+	$cfgTpl = $self->_buildConf($cfgTpl, "$name$suffix", $tplVars);
+	return 1 unless defined $cfgTpl;
+
+	$cfgTpl =~ s/\n{2,}/\n\n/g; # Remove any duplicate blank lines
+
+	$rs = $self->{'hooksManager'}->trigger('afterFrontEndBuildConfFile', \$cfgTpl, "$name$suffix", $tplVars, $options);
+	return $rs if $rs;
+
+	# Store file
+
+	my $fileHandler = iMSCP::File->new(
+		'filename' => ($options->{'destination'} ? $options->{'destination'} : "$self->{'wrkDir'}/$name$suffix")
+	);
+
+	$rs = $fileHandler->set($cfgTpl);
+	return $rs if $rs;
+
+	$rs = $fileHandler->save();
+	return $rs if $rs;
+
+	$rs = $fileHandler->mode($options->{'mode'} ? $options->{'mode'} : 0644);
+	return $rs if $rs;
+
+	$fileHandler->owner(
+		$options->{'user'} ? $options->{'user'} : $main::imscpConfig{'ROOT_USER'},
+		$options->{'group'} ? $options->{'group'} : $main::imscpConfig{'ROOT_GROUP'}
+	);
+}
 
 =back
 
@@ -53,7 +400,7 @@ use parent 'Common::SingletonClass';
 
  Initialize instance
 
- Return Package::Policyd
+ Return Package::FrontEnd
 
 =cut
 
@@ -61,7 +408,48 @@ sub _init
 {
 	my $self = $_[0];
 
+	$self->{'start'} = 0;
+	$self->{'restart'} = 0;
+
+	$self->{'cfgDir'} = "$main::imscpConfig{'CONF_DIR'}/nginx";
+	$self->{'bkpDir'} = "$self->{'cfgDir'}/backup";
+	$self->{'wrkDir'} = "$self->{'cfgDir'}/working";
+
+	tie %{$self->{'config'}}, 'iMSCP::Config', 'fileName' => "$self->{'cfgDir'}/nginx.data";
+
+	$self->{'hooksManager'} = iMSCP::HooksManager->getInstance();
+
 	$self;
+}
+
+=item _buildConf($cfgTpl, $filename, \%tplVars)
+
+ Build the given configuration template
+
+ Param string $cfgTpl String representing content of the configuration template
+ Param string $filename Configuration template name
+ Param hash $tplVars Reference to a hash containing template variables
+ Return string String representing content of configuration template or undef
+
+=cut
+
+sub _buildConf($$$$)
+{
+	my ($self, $cfgTpl, $filename, $tplVars) = @_;
+
+	unless(defined $cfgTpl) {
+		error('Empty template...');
+		return undef;
+	}
+
+	$self->{'hooksManager'}->trigger('beforeFrontEndBuildConf', \$cfgTpl, $filename, $tplVars);
+
+	$cfgTpl = process($tplVars, $cfgTpl);
+	return undef if ! $cfgTpl;
+
+	$self->{'hooksManager'}->trigger('afterFrontEndBuildConf', \$cfgTpl, $filename, $tplVars);
+
+	$cfgTpl;
 }
 
 =back
