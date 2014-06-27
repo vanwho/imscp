@@ -516,6 +516,7 @@ sub _buildHttpdConfig
 		BASE_SERVER_VHOST => $main::imscpConfig{'BASE_SERVER_VHOST'},
 		BASE_SERVER_IP => $main::imscpConfig{'BASE_SERVER_IP'},
 		BASE_SERVER_VHOST_HTTP_PORT => $main::imscpConfig{'BASE_SERVER_VHOST_HTTP_PORT'},
+		BASE_SERVER_VHOST_HTTPS_PORT => $main::imscpConfig{'BASE_SERVER_VHOST_HTTPS_PORT'},
 		WEB_DIR => $main::imscpConfig{'GUI_ROOT_DIR'},
 		CONF_DIR => $main::imscpConfig{'CONF_DIR'}
 	};
