@@ -2034,7 +2034,12 @@ sub setupInitScripts
 
 	my ($rdata, $service, $stdout, $stderr);
 
-	for ($main::imscpConfig{'IMSCP_NETWORK_SNAME'}, $main::imscpConfig{'IMSCP_DAEMON_SNAME'}) {
+	for (
+		$main::imscpConfig{'IMSCP_NETWORK_SNAME'},
+		$main::imscpConfig{'IMSCP_DAEMON_SNAME'},
+		$main::imscpConfig{'IMSCP_PANEL_SNAME'}
+
+	) {
 		next if $_ eq 'no';
 
 		my $initScriptPath = "$main::imscpConfig{'INIT_SCRIPTS_DIR'}/$_";

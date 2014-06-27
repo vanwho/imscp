@@ -35,6 +35,8 @@ use strict;
 use warnings;
 
 use iMSCP::Debug;
+use iMSCP::Config;
+use iMSCP::HooksManager;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION
@@ -112,7 +114,7 @@ sub uninstall
 	Package::Roundcube::Uninstaller->getInstance()->uninstall();
 }
 
-=item setGuiPermissions()
+=item setPermissionsListener()
 
  Set file permissions
 
@@ -120,7 +122,7 @@ sub uninstall
 
 =cut
 
-sub setGuiPermissions
+sub setPermissionsListener
 {
 	require Package::Roundcube::Installer;
 	Package::Roundcube::Installer->getInstance()->setGuiPermissions();
@@ -192,6 +194,11 @@ sub _init
 	$self->{'wrkDir'} = "$self->{'cfgDir'}/working";
 
 	tie %{$self->{'config'}}, 'iMSCP::Config', 'fileName' => "$self->{'cfgDir'}/roundcube.data";
+
+	# Roundcube permissions must be set after FrontEnd base permissions
+	iMSCP::HooksManager->getInstance()->register(
+		'afterFrontEndSetPermissions', sub { $self->setPermissionsListener(@_) }
+	);
 
 	$self;
 }

@@ -89,13 +89,13 @@ sub setGuiPermissions
 	my $guiPublicDir = $main::imscpConfig{'GUI_PUBLIC_DIR'};
 
 	my $rs = setRights(
-		"$guiPublicDir/tools/filemanager",
+		"$guiPublicDir/tools/ftp",
 		{ 'user' => $panelUName, 'group' => $panelGName, 'dirmode' => '0550', 'filemode' => '0440', 'recursive' => 1 }
 	);
 	return $rs if $rs;
 
 	setRights(
-		"$guiPublicDir/tools/filemanager/data",
+		"$guiPublicDir/tools/ftp/data",
 		{ 'user' => $panelUName, 'group' => $panelGName, 'dirmode' => '0700', 'filemode' => '0600', 'recursive' => 1 }
 	);
 }
@@ -123,13 +123,13 @@ sub _installFiles
 		my $guiPublicDir = $main::imscpConfig{'GUI_PUBLIC_DIR'};
 
 		my ($stdout, $stderr);
-		$rs = execute("$main::imscpConfig{'CMD_RM'} -fR $guiPublicDir/tools/filemanager", \$stdout, \$stderr);
+		$rs = execute("$main::imscpConfig{'CMD_RM'} -fR $guiPublicDir/tools/ftp", \$stdout, \$stderr);
 		debug($stdout) if $stdout;
 		error($stderr) if $rs && $stderr;
 		return $rs if $rs;
 
 		$rs = execute(
-			"$main::imscpConfig{'CMD_CP'} -R $repoDir/vendor/imscp/ajaxplorer $guiPublicDir/tools/filemanager",
+			"$main::imscpConfig{'CMD_CP'} -R $repoDir/vendor/imscp/ajaxplorer $guiPublicDir/tools/ftp",
 			\$stdout,
 			\$stderr
 		);
@@ -137,7 +137,7 @@ sub _installFiles
 		error($stderr) if $rs && $stderr;
 		return $rs if $rs;
 
-		$rs = execute("$main::imscpConfig{'CMD_RM'} -fR $guiPublicDir/tools/filemanager/.git", \$stdout, \$stderr);
+		$rs = execute("$main::imscpConfig{'CMD_RM'} -fR $guiPublicDir/tools/ftp/.git", \$stdout, \$stderr);
 		debug($stdout) if $stdout;
 		error($stderr) if $rs && $stderr;
 		return $rs if $rs;

@@ -97,7 +97,7 @@ sub setGuiPermissions
 	my $panelGName = $main::imscpConfig{'SYSTEM_USER_PREFIX'} . $main::imscpConfig{'SYSTEM_USER_MIN_UID'};
 
 	setRights(
-		"$main::imscpConfig{'GUI_PUBLIC_DIR'}/tools/filemanager",
+		"$main::imscpConfig{'GUI_PUBLIC_DIR'}/tools/ftp",
 		{ 'user' => $panelUName, 'group' => $panelGName, 'dirmode' => '0550', 'filemode' => '0440', 'recursive' => 1 }
 	);
 }
@@ -142,13 +142,13 @@ sub _installFiles
 		my $guiPublicDir = $main::imscpConfig{'GUI_PUBLIC_DIR'};
 
 		my ($stdout, $stderr);
-		$rs = execute("$main::imscpConfig{'CMD_RM'} -fR $guiPublicDir/tools/filemanager", \$stdout, \$stderr);
+		$rs = execute("$main::imscpConfig{'CMD_RM'} -fR $guiPublicDir/tools/ftp", \$stdout, \$stderr);
 		debug($stdout) if $stdout;
 		error($stderr) if $rs && $stderr;
 		return $rs if $rs;
 
 		$rs = execute(
-			"$main::imscpConfig{'CMD_CP'} -R $repoDir/vendor/imscp/net2ftp $guiPublicDir/tools/filemanager",
+			"$main::imscpConfig{'CMD_CP'} -R $repoDir/vendor/imscp/net2ftp $guiPublicDir/tools/ftp",
 			\$stdout,
 			\$stderr
 		);
@@ -156,7 +156,7 @@ sub _installFiles
 		error($stderr) if $rs && $stderr;
 		return $rs if $rs;
 
-		$rs = execute("$main::imscpConfig{'CMD_RM'} -fR $guiPublicDir/tools/filemanager/.git", \$stdout, \$stderr);
+		$rs = execute("$main::imscpConfig{'CMD_RM'} -fR $guiPublicDir/tools/ftp/.git", \$stdout, \$stderr);
 		debug($stdout) if $stdout;
 		error($stderr) if $rs && $stderr;
 		return $rs if $rs;
@@ -198,7 +198,7 @@ sub _buildConfig
 
 	my $panelUName =
 	my $panelGName = $main::imscpConfig{'SYSTEM_USER_PREFIX'} . $main::imscpConfig{'SYSTEM_USER_MIN_UID'};
-	my $conffile = "$main::imscpConfig{'GUI_PUBLIC_DIR'}/tools/filemanager/settings.inc.php";
+	my $conffile = "$main::imscpConfig{'GUI_PUBLIC_DIR'}/tools/ftp/settings.inc.php";
 
 	# Define data
 

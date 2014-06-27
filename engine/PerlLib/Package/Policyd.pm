@@ -36,6 +36,7 @@ use strict;
 use warnings;
 
 use iMSCP::Debug;
+use iMSCP::Config;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION

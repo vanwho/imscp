@@ -37,6 +37,7 @@ use warnings;
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
 
 use iMSCP::Debug;
+use iMSCP::Config;
 use iMSCP::HooksManager;
 use iMSCP::TemplateParser;
 use iMSCP::Composer;

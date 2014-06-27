@@ -153,7 +153,7 @@ sub setGuiPermissions
 	$rs = Package::FrontEnd::Installer->getInstance()->setGuiPermissions();
 	return $rs if $rs;
 
-	$self->{'hooksManager'}->trigger('beforeFrontEndSetPermissions');
+	$self->{'hooksManager'}->trigger('afterFrontEndSetPermissions');
 }
 
 =item enableSites($sites)

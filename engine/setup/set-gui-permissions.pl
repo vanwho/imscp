@@ -19,7 +19,6 @@
 #
 # @category    i-MSCP
 # @copyright   2010-2014 by i-MSCP | http://i-mscp.net
-# @author      Daniel Andreca <sci2tech@gmail.com>
 # @author      Laurent Declercq <l.declercq@nuxwin.com>
 # @link        http://i-mscp.net i-MSCP Home Site
 # @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
@@ -57,13 +56,11 @@ iMSCP::Bootstrapper->getInstance()->boot(
 
 sub run
 {
-	my @servers = iMSCP::Servers->getInstance()->get();
-	my @packages = iMSCP::Packages->getInstance()->get();
-	my $totalItems = @servers + @packages;
-	my $counter = 1;
 	my $rs = 0;
 
-	for(@servers) {
+	my @toProcess = ();
+
+	for(iMSCP::Servers->getInstance()->get()) {
 		next if $_ eq 'noserver';
 
 		my $package = "Servers::$_";
@@ -72,45 +69,40 @@ sub run
 
 		unless($@) {
 			my $instance = $package->factory();
-
-			if($instance->can('setGuiPermissions')) {
-				debug("Setting $_ server frontEnd permissions");
-
-				if ($main::execmode eq 'setup') {
-					print "Setting frontEnd permissions for the $_ server\t$totalItems\t$counter\n";
-				}
-
-				$rs |= $instance->setGuiPermissions();
-			}
+			push @toProcess, [$_, $instance] if $instance->can('setGuiPermissions');
 		} else {
 			error($@);
 			$rs = 1;
 		}
-
-		$counter++;
 	}
 
-	for(@packages) {
+	for(iMSCP::Packages->getInstance()->get()) {
 		my $package = "Package::$_";
 
 		eval "require $package";
 
 		unless($@) {
 			my $instance = $package->getInstance();
-
-			if($instance->can('setGuiPermissions')) {
-				debug("Setting $_ package frontEnd permissions");
-
-				if ($main::execmode eq 'setup') {
-					print "Setting frontEnd permissions for the $_ package\t$totalItems\t$counter\n";
-				}
-
-				$rs |= $instance->setGuiPermissions();
-			}
+			push @toProcess, [$_, $instance] if $instance->can('setGuiPermissions');
 		} else {
 			error($@);
 			$rs = 1;
 		}
+	}
+
+	my $totalItems = @toProcess;
+	my $counter = 1;
+
+	for(@toProcess) {
+		my ($package, $instance) = @{$_};
+
+		debug("Setting $_ package frontEnd permissions");
+
+		if ($main::execmode eq 'setup') {
+			print "Setting frontEnd permissions for the $package package\t$totalItems\t$counter\n";
+		}
+
+		$rs |= $instance->setGuiPermissions();
 
 		$counter++;
 	}
@@ -126,7 +118,6 @@ sub run
 			$rs |= iMSCP::Mail->new()->errmsg($msg);
 		}
 	}
-
 
 	$rs;
 }

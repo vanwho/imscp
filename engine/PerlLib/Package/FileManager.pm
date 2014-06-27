@@ -36,7 +36,8 @@ use warnings;
 
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
 
-use iMSCP::Debug;
+use iMSCP::Debug;;
+use iMSCP::HooksManager;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION
@@ -164,7 +165,7 @@ sub install
 	0;
 }
 
-=item setGuiPermissions()
+=item setPermissionsListener()
 
  Set file permissions
 
@@ -172,7 +173,7 @@ sub install
 
 =cut
 
-sub setGuiPermissions
+sub setPermissionsListener
 {
 	my $self = $_[0];
 
@@ -217,6 +218,11 @@ sub _init()
 	@{$self->{'PACKAGES'}} = iMSCP::Dir->new(
 		'dirname' => "$main::imscpConfig{'ENGINE_ROOT_DIR'}/PerlLib/Package/FileManager"
 	)->getDirs();
+
+	# Filemanager permissions must be set after FrontEnd base permissions
+	iMSCP::HooksManager->getInstance()->register(
+		'afterFrontEndSetPermissions', sub { print "Set Filemanager permission\n"; $self->setPermissionsListener(@_) }
+	);
 
 	$self;
 }

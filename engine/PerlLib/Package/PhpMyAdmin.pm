@@ -34,6 +34,9 @@ package Package::PhpMyAdmin;
 use strict;
 use warnings;
 
+use iMSCP::Debug;
+use iMSCP::Config;
+use iMSCP::HooksManager;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION
@@ -127,7 +130,7 @@ sub uninstall
 	Package::PhpMyAdmin::Uninstaller->getInstance()->uninstall();
 }
 
-=item setGuiPermissions()
+=item setPermissionsListener()
 
  Set file permissions
 
@@ -135,7 +138,7 @@ sub uninstall
 
 =cut
 
-sub setGuiPermissions
+sub setPermissionsListener
 {
 	require Package::PhpMyAdmin::Installer;
 	Package::PhpMyAdmin::Installer->getInstance()->setGuiPermissions();
@@ -164,6 +167,11 @@ sub _init
 	$self->{'wrkDir'} = "$self->{'cfgDir'}/working";
 
 	tie %{$self->{'config'}}, 'iMSCP::Config', 'fileName' => "$self->{'cfgDir'}/phpmyadmin.data";
+
+	# PhpMyAdmin permissions must be set after FrontEnd base permissions
+	iMSCP::HooksManager->getInstance()->register(
+		'afterFrontEndSetPermissions', sub { $self->setPermissionsListener(@_) }
+	);
 
 	$self;
 }
