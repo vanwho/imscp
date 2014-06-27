@@ -106,7 +106,8 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndPostInstall');
 	return $rs if $rs;
 
-	$self->{'start'} = 1;
+	$rs = $self->start();
+	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterFrontEndPostInstall');
 }
