@@ -43,56 +43,27 @@ use parent 'Common::SingletonClass';
 
 =head1 PUBLIC METHODS
 
-=item preinstall()
-
-Process preinstall tasks
-
-Return int 0 on success, other on failure
-
-=cut
-
-sub preinstall
-{
-
-}
-
-=item install()
-
-Process install tasks
-
-Return int 0 on success, other on failure
-
-=cut
-
-sub install
-{
-;
-}
-
 =item uninstall()
 
-Process uninstall tasks
+ Process uninstall tasks
 
-Return int 0 on success, other on failure
+ Return int 0 on success, other on failure
 
 =cut
 
 sub uninstall
 {
+	my $self = $_[0];
 
-}
+	my $rs = $self->_removeHttpdConfig();
+	return $rs if $rs;
 
-=item setGuiPermissions()
+	$rs = $self->_removePhpConfig();
+	return $rs if $rs;
 
-Set file permissions
+	$self->_removeInitScript();
 
-Return int 0 on success, other on failure
-
-=cut
-
-sub setGuiPermissions
-{
-
+	0;
 }
 
 =back
@@ -114,6 +85,51 @@ sub _init
 	my $self = $_[0];
 
 	$self;
+}
+
+=item _removeHttpdConfig()
+
+ Remove httpd configuration
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub _removeHttpdConfig
+{
+	my $self = $_[0];
+
+	0;
+}
+
+=item _removePhpConfig()
+
+ Remove PHP configuration
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub _removePhpConfig _removeInitScript()
+{
+	my $self = $_[0];
+
+	0;
+}
+
+=item _removeInitScript()
+
+ Remove init script
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub _removeInitScript
+{
+	my $self = $_[0];
+
+	0;
 }
 
 =back
