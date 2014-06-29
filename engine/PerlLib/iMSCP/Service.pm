@@ -29,11 +29,12 @@
 # @link        http://i-mscp.net i-MSCP Home Site
 # @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
-package iMSCP::Servers;
+package iMSCP::Service;
 
 use strict;
 use warnings;
 
+use iMSCP::Debug;
 use iMSCP::Execute;
 use parent 'Common::SingletonClass';
 
@@ -151,7 +152,7 @@ sub status($$)
 
  Initialize instance
 
- Return iMSCP::Servers
+ Return iMSCP::Service
 
 =cut
 
@@ -159,8 +160,8 @@ sub _init
 {
 	my $self = $_[0];
 
-	my $self->{'service_provider'} = $main::imscpConfig{'SERVICE_MNGR'};
-	my $self->{'service_status_provider'} = $main::imscpConfig{'CMD_PGREP'};
+	$self->{'service_provider'} = $main::imscpConfig{'SERVICE_MNGR'};
+	$self->{'service_status_provider'} = $main::imscpConfig{'CMD_PGREP'};
 
 	$self;
 }
@@ -175,10 +176,10 @@ sub _init
 
 sub _runCommand($$)
 {
-	my ($self, $command);
+	my ($self, $command) = @_;
 
 	my ($stdout, $stderr);
-	my $rs = execute($command, \$stdout, \ $stderr);
+	my $rs = execute($command, \$stdout, \$stderr);
 	debug($stdout) if $stdout;
 	debug($stderr) if $stderr;
 	return 1 if $rs;

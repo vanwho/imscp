@@ -46,6 +46,7 @@ use iMSCP::Dir;
 use iMSCP::Ext2Attributes qw(setImmutable clearImmutable isImmutable);
 use iMSCP::Rights;
 use iMSCP::Net;
+use iMSCP::Service;
 use File::Temp;
 use File::Basename;
 
@@ -130,7 +131,7 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdPostInstall', 'apache_php_fpm');
 	return $rs if $rs;
 
-	$self->{'start'} = 'yes';
+	$self->{'start'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterHttpdPostInstall', 'apache_php_fpm');
 }
@@ -191,7 +192,7 @@ sub addUser($$)
 	$rs = iMSCP::SystemUser->new('username' => $self->getRunningUser())->addToGroup($data->{'GROUP'});
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->flushData();
 
@@ -218,7 +219,7 @@ sub deleteUser($$)
 	$rs = iMSCP::SystemUser->new('username' => $self->getRunningUser())->removeFromGroup($data->{'GROUP'});
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterHttpdDelUser', $data);
 }
@@ -247,7 +248,7 @@ sub addDmn($$)
 	$rs = $self->_addFiles($data);
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->flushData();
 
@@ -336,7 +337,7 @@ sub disableDmn($$)
 		return $rs if $rs;
 	}
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->flushData();
 
@@ -467,7 +468,7 @@ sub deleteDmn($$)
 		return 1;
 	}
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterHttpdDelDmn', $data);
 }
@@ -496,7 +497,7 @@ sub addSub($$)
 	$rs = $self->_addFiles($data);
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->flushData();
 
@@ -959,7 +960,7 @@ sub addIps($$)
 	$rs = $self->enableSites('00_nameserver.conf');
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	delete $self->{'data'};
 
@@ -1349,7 +1350,7 @@ sub enableSites($$)
 			error($stderr) if $stderr && $rs;
 			return $rs if $rs;
 
-			$self->{'restart'} = 'yes';
+			$self->{'restart'} = 1;
 		} else {
 			warning("Site $_ doesn't exist");
 		}
@@ -1383,7 +1384,7 @@ sub disableSites($$)
 			error($stderr) if $stderr && $rs;
 			return $rs if $rs;
 
-			$self->{'restart'} = 'yes';
+			$self->{'restart'} = 1;
 		} else {
 			warning("Site $_ doesn't exist");
 		}
@@ -1414,7 +1415,7 @@ sub enableModules($$)
 	error($stderr) if $stderr && $rs;
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterHttpdEnableModules', $modules);
 }
@@ -1441,7 +1442,7 @@ sub disableModules($$)
 	error($stderr) if $stderr && $rs;
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterHttpdDisableModules', $modules);
 }
@@ -1450,7 +1451,7 @@ sub disableModules($$)
 
  Start PHP FPM
 
- Return int 0, other on failure
+ Return int 0 on success, 1 on failure
 
 =cut
 
@@ -1461,13 +1462,20 @@ sub startPhpFpm
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdStartPhpFpm');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute(
-		"$main::imscpConfig{'SERVICE_MNGR'} $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'} start 2>/dev/null", \$stdout
-	);
-	debug($stdout) if $stdout;
-	error('Unable to start PHP-FPM') if $rs > 1;
-	return $rs if $rs > 1;
+	$rs = iMSCP::Service->getInstance()->start($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}, 'php-fpm');
+
+	if($rs) {
+		# In case the service do not start, we must ensure that it's not because no conffile exists
+		# By default (new installs, no pool configuration file is created and so, the service remains stopped)
+		my @conffiles = iMSCP::Dir->new(
+			'dirname' => $self->{'phpfpmConfig'}->{'PHP_FPM_POOLS_CONF_DIR'}, 'fileType' => '.conf'
+		)->getFiles();
+
+		if(@conffiles) {
+			error("Unable to start $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'} service") if $rs;
+			return $rs if $rs;
+		}
+	}
 
 	$self->{'hooksManager'}->trigger('afterHttpdStartPhpFpm');
 }
@@ -1476,7 +1484,7 @@ sub startPhpFpm
 
  Stop PHP FPM
 
- Return int 0, other on failure
+ Return int 0 on success, 1 on failure
 
 =cut
 
@@ -1487,13 +1495,9 @@ sub stopPhpFpm
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdStopPhpFpm');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute(
-		"$main::imscpConfig{'SERVICE_MNGR'} $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'} stop 2>/dev/null", \$stdout
-	);
-	debug($stdout) if $stdout;
-	error('Unable to stop PHP-FPM') if $rs > 1;
-	return $rs if $rs > 1;
+	$rs = iMSCP::Service->getInstance()->stop($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}, 'php-fpm');
+	error("Unable to stop $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'} service") if $rs;
+	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterHttpdStopPhpFpm');
 }
@@ -1502,7 +1506,7 @@ sub stopPhpFpm
 
  Restart or Reload PHP FPM
 
- Return int 0, other on failure
+ Return int 0 on success, 1 on failure
 
 =cut
 
@@ -1513,14 +1517,15 @@ sub restartPhpFpm
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdRestartPhpFpm');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute(
-		"$main::imscpConfig{'SERVICE_MNGR'} $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'} " .
-			($self->{'forceRestart'} ? 'restart' : 'reload') . ' 2>/dev/null', \$stdout
-	);
-	debug($stdout) if $stdout;
-	error('Unable to restart/reload PHP-FPM') if $rs > 1;
-	return $rs if $rs > 1;
+	if($self->{'forceRestart'}) {
+		$rs = iMSCP::Service->getInstance()->restart($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}, 'php-fpm');
+		error("Unable to stop $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}") if $rs;
+		return $rs if $rs;
+	} else {
+		$rs = iMSCP::Service->getInstance()->reload($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}, 'php-fpm');
+		error("Unable to stop $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'} service") if $rs;
+		return $rs if $rs;
+	}
 
 	$self->{'hooksManager'}->trigger('afterHttpdRestartPhpFpm');
 }
@@ -1535,7 +1540,7 @@ sub restartPhpFpm
 
 sub forceRestart
 {
-	$_[0]->{'forceRestart'} = 'yes';
+	$_[0]->{'forceRestart'} = 1;
 
 	0;
 }
@@ -1544,7 +1549,7 @@ sub forceRestart
 
  Start Apache
 
- Return int 0, other on failure
+ Return int 0 on success, 1 on failure
 
 =cut
 
@@ -1555,11 +1560,9 @@ sub startApache
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdStart');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute("$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'HTTPD_SNAME'} start 2>/dev/null", \$stdout);
-	debug($stdout) if $stdout;
-	error('Unable to start Apache2') if $rs > 1;
-	return $rs if $rs > 1;
+	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'HTTPD_SNAME'});
+	error("Unable to start $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
+	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterHttpdStart');
 }
@@ -1568,7 +1571,7 @@ sub startApache
 
  Stop Apache
 
- Return int 0, other on failure
+ Return int 0 on success, 1 on failure
 
 =cut
 
@@ -1579,11 +1582,9 @@ sub stopApache
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdStop');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute("$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'HTTPD_SNAME'} stop 2>/dev/null", \$stdout);
-	debug($stdout) if $stdout;
-	error('Unable to stop Apache2') if $rs > 1;
-	return $rs if $rs > 1;
+	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'HTTPD_SNAME'});
+	error("Unable to stop $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
+	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterHttpdStop');
 }
@@ -1592,7 +1593,7 @@ sub stopApache
 
  Restart or Reload Apache
 
- Return int 0, other on failure
+ Return int 0 on success, 1 on failure
 
 =cut
 
@@ -1603,15 +1604,15 @@ sub restartApache
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdRestart');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute(
-		"$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'HTTPD_SNAME'} " .
-			($self->{'forceRestart'} ? 'restart' : 'reload') . ' 2>/dev/null',
-		\$stdout
-	);
-	debug($stdout) if $stdout;
-	error('Unable to restart/reload Apache2') if $rs > 1;
-	return $rs if $rs > 1;
+	if($self->{'forceRestart'}) {
+		$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'HTTPD_SNAME'});
+		error("Unable to stop $self->{'config'}->{'HTTPD_SNAME'}") if $rs;
+		return $rs if $rs;
+	} else {
+		$rs = iMSCP::Service->getInstance()->reload($self->{'config'}->{'PHP_FPM_SNAME'});
+		error("Unable to stop $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
+		return $rs if $rs;
+	}
 
 	$self->{'hooksManager'}->trigger('afterHttpdRestart');
 }
@@ -1707,6 +1708,9 @@ sub phpfpmBkpConfFile($$;$$)
 sub _init
 {
 	my $self = $_[0];
+
+	$self->{'start'} = 0;
+	$self->{'restart'} = 0;
 
 	$self->{'hooksManager'} = iMSCP::HooksManager->getInstance();
 
@@ -2152,10 +2156,10 @@ END
 	my $self = Servers::httpd::apache_php_fpm->getInstance();
 	my $rs = 0;
 
-	if($self->{'start'} && $self->{'start'} eq 'yes') {
+	if($self->{'start'}) {
 		$rs = $self->startPhpFpm();
 		$rs |= $self->startApache();
-	} elsif($self->{'restart'} && $self->{'restart'} eq 'yes') {
+	} elsif($self->{'restart'}) {
 		$rs = $self->restartPhpFpm();
 		$rs |= $self->restartApache();
 	}

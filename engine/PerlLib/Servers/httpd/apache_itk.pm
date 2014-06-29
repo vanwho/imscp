@@ -129,7 +129,7 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdPostInstall', 'apache_itk');
 	return $rs if $rs;
 
-	$self->{'start'} = 'yes';
+	$self->{'start'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterHttpdPostInstall', 'apache_itk');
 }
@@ -184,7 +184,7 @@ sub addUser($$)
 	$rs = iMSCP::SystemUser->new('username' => $self->getRunningUser())->addToGroup($data->{'GROUP'});
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterHttpdAddUser', $data);
 }
@@ -209,7 +209,7 @@ sub deleteUser($$)
 	$rs = iMSCP::SystemUser->new('username' => $self->getRunningUser())->removeFromGroup($data->{'GROUP'});
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterHttpdDelUser', $data);
 }
@@ -238,7 +238,7 @@ sub addDmn($$)
 	$rs = $self->_addFiles($data) if $data->{'FORWARD'} eq 'no';
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->flushData();
 
@@ -327,7 +327,7 @@ sub disableDmn($$)
 		return $rs if $rs;
 	}
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->flushData();
 
@@ -457,7 +457,7 @@ sub deleteDmn($$)
 		return 1;
 	}
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterHttpdDelDmn', $data);
 }
@@ -486,7 +486,7 @@ sub addSub($$)
 	$rs = $self->_addFiles($data) if $data->{'FORWARD'} eq 'no';
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->flushData();
 
@@ -953,7 +953,7 @@ sub addIps($$)
 	$rs = $self->enableSites('00_nameserver.conf');
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	delete $self->{'data'};
 
@@ -1302,7 +1302,7 @@ sub enableSites($$)
 			error($stderr) if $stderr && $rs;
 			return $rs if $rs;
 
-			$self->{'restart'} = 'yes';
+			$self->{'restart'} = 1;
 		} else {
 			warning("Site $_ doesn't exist");
 		}
@@ -1336,7 +1336,7 @@ sub disableSites($$)
 			error($stderr) if $stderr && $rs;
 			return $rs if $rs;
 
-			$self->{'restart'} = 'yes';
+			$self->{'restart'} = 1;
 		} else {
 			warning("Site $_ doesn't exist");
 		}
@@ -1367,7 +1367,7 @@ sub enableModules($$)
 	error($stderr) if $stderr && $rs;
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterHttpdEnableModules', $modules);
 }
@@ -1394,7 +1394,7 @@ sub disableModules($$)
 	error($stderr) if $stderr && $rs;
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterHttpdDisableModules', $modules);
 }
@@ -1409,7 +1409,7 @@ sub disableModules($$)
 
 sub forceRestart
 {
-	$_[0]->{'forceRestart'} = 'yes';
+	$_[0]->{'forceRestart'} = 1;
 
 	0;
 }
@@ -1418,7 +1418,7 @@ sub forceRestart
 
  Start Apache
 
- Return int 0, other on failure
+ Return int 0 on success, 1 on failure
 
 =cut
 
@@ -1429,11 +1429,9 @@ sub start
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdStart');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute("$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'HTTPD_SNAME'} start 2>/dev/null", \$stdout);
-	debug($stdout) if $stdout;
-	error('Unable to start Apache2') if $rs > 1;
-	return $rs if $rs > 1;
+	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'HTTPD_SNAME'});
+	error("Unable to start $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
+	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterHttpdStart');
 }
@@ -1442,7 +1440,7 @@ sub start
 
  Stop Apache
 
- Return int 0, other on failure
+ Return int 0 on success, 1 on failure
 
 =cut
 
@@ -1453,11 +1451,9 @@ sub stop
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdStop');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute("$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'HTTPD_SNAME'} stop 2>/dev/null", \$stdout);
-	debug($stdout) if $stdout;
-	error('Unable to stop Apache2') if $rs > 1;
-	return $rs if $rs > 1;
+	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'HTTPD_SNAME'});
+	error("Unable to start $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
+	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterHttpdStop');
 }
@@ -1466,7 +1462,7 @@ sub stop
 
  Restart or Reload Apache
 
- Return int 0, other on failure
+ Return int 0 on success, 1 on failure
 
 =cut
 
@@ -1477,15 +1473,15 @@ sub restart
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdRestart');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute(
-		"$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'HTTPD_SNAME'} " .
-			($self->{'forceRestart'} ? 'restart' : 'reload') . ' 2>/dev/null',
-		\$stdout,
-	);
-	debug($stdout) if $stdout;
-	error('Unable to restart/reload Apache2') if $rs > 1;
-	return $rs if $rs > 1;
+	if($self->{'forceRestart'}) {
+		$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'HTTPD_SNAME'});
+		error("Unable to stop $self->{'config'}->{'HTTPD_SNAME'}") if $rs;
+		return $rs if $rs;
+	} else {
+		$rs = iMSCP::Service->getInstance()->reload($self->{'config'}->{'HTTPD_SNAME'});
+		error("Unable to stop $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
+		return $rs if $rs;
+	}
 
 	$self->{'hooksManager'}->trigger('afterHttpdRestart');
 }
@@ -1507,6 +1503,9 @@ sub restart
 sub _init
 {
 	my $self = $_[0];
+
+	$self->{'start'} = 0;
+	$self->{'restart'} = 0;
 
 	$self->{'hooksManager'} = iMSCP::HooksManager->getInstance();
 
@@ -1889,9 +1888,9 @@ END
 	my $self = Servers::httpd::apache_itk->getInstance();
 	my $rs = 0;
 
-	if($self->{'start'} && $self->{'start'} eq 'yes') {
+	if($self->{'start'}) {
 		$rs = $self->start();
-	} elsif($self->{'restart'} && $self->{'restart'} eq 'yes') {
+	} elsif($self->{'restart'}) {
 		$rs = $self->restart();
 	}
 
