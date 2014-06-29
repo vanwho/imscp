@@ -40,6 +40,7 @@ use iMSCP::Dir;
 use iMSCP::Execute;
 use iMSCP::File;
 use iMSCP::Rights;
+use iMSCP::TemplateParser;
 use iMSCP::SystemUser;
 use Package::FrontEnd;
 use File::Basename;
@@ -534,12 +535,14 @@ sub _buildHttpdConfig
 	$rs = $self->{'hooksManager'}->trigger('beforeFrontEndBuildHttpdVhosts');
 	return $rs if $rs;
 
+	my $httpsPort = $main::imscpConfig{'BASE_SERVER_VHOST_HTTPS_PORT'};
+
 	# Set needed data
 	my $tplVars = {
 		BASE_SERVER_VHOST => $main::imscpConfig{'BASE_SERVER_VHOST'},
 		BASE_SERVER_IP => $main::imscpConfig{'BASE_SERVER_IP'},
 		BASE_SERVER_VHOST_HTTP_PORT => $main::imscpConfig{'BASE_SERVER_VHOST_HTTP_PORT'},
-		BASE_SERVER_VHOST_HTTPS_PORT => $main::imscpConfig{'BASE_SERVER_VHOST_HTTPS_PORT'},
+		BASE_SERVER_VHOST_HTTPS_PORT => $httpsPort,
 		WEB_DIR => $main::imscpConfig{'GUI_ROOT_DIR'},
 		CONF_DIR => $main::imscpConfig{'CONF_DIR'}
 	};
@@ -564,7 +567,7 @@ sub _buildHttpdConfig
 							"# SECTION custom END.\n",
 							$$cfgTpl
 						) .
-						"    rewrite .* https://$host$request_uri redirect;\n" .
+						"    rewrite .* https://\$host:$httpsPort\$request_uri redirect;\n" .
 						"    # SECTION custom END.\n",
 						$$cfgTpl
 					);
