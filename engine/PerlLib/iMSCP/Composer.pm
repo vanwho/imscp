@@ -207,7 +207,7 @@ sub _getComposer
 "
 Fetching composer installer from http://getcomposer.org.
 
-Please wait, depending of your connection, this may take few seconds...
+Please wait, depending on your connection, this may take few seconds...
 "
 		);
 
@@ -235,7 +235,7 @@ Please wait, depending of your connection, this may take few seconds...
 "
 Updating composer installer from http://getcomposer.org.
 
-Please wait, depending of your connection, this may take few seconds...
+Please wait, depending on your connection, this may take few seconds...
 "
 		);
 
