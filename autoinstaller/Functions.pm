@@ -43,6 +43,7 @@ use iMSCP::HooksManager;
 use iMSCP::Execute;
 use iMSCP::Dir;
 use iMSCP::File;
+use iMSCP::Service;
 use File::Find;
 use Cwd;
 

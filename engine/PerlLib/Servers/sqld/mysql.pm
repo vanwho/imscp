@@ -138,11 +138,9 @@ sub restart
 	my $rs = $self->{'hooksManager'}->trigger('beforeSqldRestart');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute("$main::imscpConfig{'SERVICE_MNGR'} mysql restart 2>/dev/null", \$stdout);
-	debug($stdout) if $stdout;
-	error('Unable to restart MySQL server') if $rs > 1;
-	return $rs if $rs > 1;
+	$rs = iMSCP::Service->getInstance()->restart('mysql', 'mysqld');
+	error("Unable to restart mysql service") if $rs;
+	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterSqldRestart');
 }

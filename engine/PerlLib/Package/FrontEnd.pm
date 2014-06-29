@@ -39,6 +39,7 @@ use iMSCP::Config;
 use iMSCP::Execute;
 use iMSCP::HooksManager;
 use iMSCP::TemplateParser;
+use iMSCP::Service;
 use File::Basename;
 use parent 'Common::SingletonClass';
 
@@ -251,18 +252,15 @@ sub start
 	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndStart');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute("$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'HTTPD_SNAME'} start 2>/dev/null", \$stdout);
-	debug($stdout) if $stdout;
-	error('Unable to start nginx') if $rs > 1;
-	return $rs if $rs > 1;
+	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'HTTPD_SNAME'});
+	error("Unable to start $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
+	return $rs if $rs;
 
-	$rs = execute(
-		"$main::imscpConfig{'SERVICE_MNGR'} $main::imscpConfig{'IMSCP_PANEL_SNAME'} start 2>/dev/null", \$stdout
+	$rs = iMSCP::Service->getInstance()->start(
+		$main::imscpConfig{'IMSCP_PANEL_SNAME'}, $self->{'config'}->{'PHP_CGI_BIN'}
 	);
-	debug($stdout) if $stdout;
-	error('Unable to start imscp panel (FCGI manager)') if $rs > 1;
-	return $rs if $rs > 1;
+	error("Unable to start imscp_panel (FCGI manager) service") if $rs;
+	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterFrontEndStart');
 }
@@ -282,18 +280,15 @@ sub stop
 	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndStop');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute("$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'HTTPD_SNAME'} stop 2>/dev/null", \$stdout);
-	debug($stdout) if $stdout;
-	error('Unable to stop nginx service') if $rs > 1;
-	return $rs if $rs > 1;
+	$rs = iMSCP::Service->getInstance()->start("$self->{'config'}->{'HTTPD_SNAME'}");
+	error("Unable to stop $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
+	return $rs if $rs;
 
-	$rs = execute(
-		"$main::imscpConfig{'SERVICE_MNGR'} $main::imscpConfig{'IMSCP_PANEL_SNAME'} stop 2>/dev/null", \$stdout
+	$rs = iMSCP::Service->getInstance()->stop(
+		$main::imscpConfig{'IMSCP_PANEL_SNAME'}, $self->{'config'}->{'PHP_CGI_BIN'}
 	);
-	debug($stdout) if $stdout;
-	error('Unable to stop imscp panel service') if $rs > 1;
-	return $rs if $rs > 1;
+	error("Unable to stop imscp_panel (FCGI manager) service") if $rs;
+	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterFrontEndStop');
 }
@@ -313,10 +308,14 @@ sub restart
 	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndRestart');
 	return $rs if $rs;
 
-	$rs = $self->stop();
-	return$rs if $rs;
+	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'HTTPD_SNAME'});
+	error("Unable to restart $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
+	return $rs if $rs;
 
-	$rs = $self->start();
+	$rs = iMSCP::Service->getInstance()->restart(
+		$main::imscpConfig{'IMSCP_PANEL_SNAME'}, $self->{'config'}->{'PHP_CGI_BIN'}
+	);
+	error("Unable to restart imscp_panel (FCGI manager) service") if $rs;
 	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterFrontEndRestart');

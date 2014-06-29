@@ -226,13 +226,9 @@ sub restart
 	my $rs = $self->{'hooksManager'}->trigger('beforePoRestart');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute(
-		"$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'DOVECOT_SNAME'} restart 2>/dev/null", \$stdout
-	);
-	debug($stdout) if $stdout;
-	error('Unable to restart Dovecot') if $rs > 1;
-	return $rs if $rs > 1;
+	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'DOVECOT_SNAME'});
+	error("Unable to restart $self->{'config'}->{'DOVECOT_SNAME'} service") if $rs;
+	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterPoRestart');
 }

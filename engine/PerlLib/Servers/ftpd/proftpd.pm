@@ -39,6 +39,7 @@ use iMSCP::Debug;
 use iMSCP::HooksManager;
 use iMSCP::Execute;
 use iMSCP::File;
+use iMSCP::Service;
 use File::Basename;
 use parent 'Common::SingletonClass';
 
@@ -211,11 +212,9 @@ sub start
 	my $rs = $self->{'hooksManager'}->trigger('beforeFtpdStart');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute("$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'FTPD_SNAME'} start 2>/dev/null", \$stdout);
-	debug($stdout) if $stdout;
-	error('Unable to start Proftpd') if $rs > 1;
-	return $rs if $rs > 1;
+	$rs =  iMSCP::Service->getInstance()->start($self->{'config'}->{'FTPD_SNAME'});
+	error("Unable to start $self->{'config'}->{'FTPD_SNAME'} service") if $rs;
+	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterFtpdStart');
 }
@@ -235,11 +234,9 @@ sub stop
 	my $rs = $self->{'hooksManager'}->trigger('beforeFtpdStop');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute("$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'FTPD_SNAME'} stop 2>/dev/null", \$stdout);
-	debug($stdout) if $stdout;
-	error('Unable to stop Proftpd') if $rs > 1;
-	return $rs if $rs > 1;
+	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'FTPD_SNAME'});
+	error("Unable to stop $self->{'config'}->{'FTPD_SNAME'} service") if $rs;
+	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterFtpdStop');
 }
@@ -259,11 +256,9 @@ sub restart
 	my $rs = $self->{'hooksManager'}->trigger('beforeFtpdRestart');
 	return $rs if $rs;
 
-	my $stdout;
-	$rs = execute("$main::imscpConfig{'SERVICE_MNGR'} $self->{'config'}->{'FTPD_SNAME'} restart 2>/dev/null", \$stdout);
-	debug($stdout) if $stdout;
-	error('Unable to restart Proftpd') if $rs > 1;
-	return $rs if $rs > 1;
+	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'FTPD_SNAME'});
+	error("Unable to restart $self->{'config'}->{'FTPD_SNAME'} service") if $rs;
+	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterFtpdRestart');
 }

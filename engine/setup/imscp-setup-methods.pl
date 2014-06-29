@@ -60,6 +60,7 @@ use Email::Valid;
 use iMSCP::Servers;
 use iMSCP::Packages;
 use iMSCP::Getopt;
+use iMSCP::Service;
 
 # Boot
 sub setupBoot
@@ -2536,37 +2537,60 @@ sub setupRestartServices
 	return $rs if $rs;
 
 	my @services = (
-		#['Variable holding service name', 'command to execute', 'ignore error if 0 exit on error if 1']
-		[$main::imscpConfig{'IMSCP_NETWORK_SNAME'}, 'restart', 1],
-		[$main::imscpConfig{'IMSCP_DAEMON_SNAME'}, 'restart', 1],
-		[$main::imscpConfig{'POSTGREY_SNAME'}, 'restart', 1], # FIXME This should be done by a package
-		[$main::imscpConfig{'POLICYD_WEIGHT_SNAME'}, 'restart', 0] # FIXME This should be done by the package
+		# ['service name', 'process name', 'ignore error if 0, exit on error']
+		[$main::imscpConfig{'IMSCP_DAEMON_SNAME'}, 'imscp_daemon'],
+		[$main::imscpConfig{'POSTGREY_SNAME'}, 'postgrey'], # FIXME This should be done by a package
+		[$main::imscpConfig{'POLICYD_WEIGHT_SNAME'}, 'policyd-weight'] # FIXME This should be done by the package
 	);
 
-	my ($stdout, $stderr);
-	my $totalItems = @services;
+	my $totalItems = @services + 1;
 	my $counter = 1;
 
 	startDetail();
 
-	for (@services) {
-		my $sName = $_->[0];
-		my $task = $_->[1];
-		my $exitOnError = $_->[2];
+	$rs = iMSCP::HooksManager->getInstance()->trigger(
+		'beforeSetupRestartService', $main::imscpConfig{'IMSCP_NETWORK_SNAME'}
+	);
+	return $rs if $rs;
 
-		if($sName ne 'no' && -f "$main::imscpConfig{'INIT_SCRIPTS_DIR'}/$sName") {
+	$rs = step(
+		sub {
+			my ($stdout, $stderr);
+			my $rs = execute(
+				"$main::imscpConfig{'SERVICE_MNGR'} $main::imscpConfig{'IMSCP_NETWORK_SNAME'} restart",
+				\$stdout,
+				\$stderr
+			);
+			debug($stdout) if $stdout;
+			error($stderr) if $stderr && $rs;
+
+			$rs;
+		},
+		"Restarting $main::imscpConfig{'IMSCP_NETWORK_SNAME'} service", $totalItems, $counter
+	);
+	error("Unable to restart $main::imscpConfig{'IMSCP_NETWORK_SNAME'} service") if $rs;
+	return $rs if $rs;
+
+	$counter++;
+
+	$rs = iMSCP::HooksManager->getInstance()->trigger(
+		'afterSetupRestartService', $main::imscpConfig{'IMSCP_NETWORK_SNAME'}
+	);
+	return $rs if $rs;
+
+	my $serviceMngr = iMSCP::Service->getInstance();
+
+	for (@services) {
+		my ($sName, $pName) = @{$_};
+
+		if($sName ne 'no') {
 			$rs = iMSCP::HooksManager->getInstance()->trigger('beforeSetupRestartService', $sName);
 			return $rs if $rs;
 
 			$rs = step(
-				sub { execute("$main::imscpConfig{'SERVICE_MNGR'} $sName $_->[1] 2>/dev/null", \$stdout) },
-				"Restarting/Reloading $sName",
-				$totalItems,
-				$counter
+				sub { $serviceMngr->restart($sName, $pName); }, "Restarting $sName service", $totalItems, $counter
 			);
-			debug($stdout) if $stdout;
-			error("Unable to $task $sName") if $rs > 1 && $exitOnError;
-			$rs = 0 unless $rs > 1 && $exitOnError;
+			error("Unable to restart $sName service") if $rs;
 			return $rs if $rs;
 
 			$rs = iMSCP::HooksManager->getInstance()->trigger('afterSetupRestartService', $sName);

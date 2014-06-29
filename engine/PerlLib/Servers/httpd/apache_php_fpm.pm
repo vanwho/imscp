@@ -1466,7 +1466,7 @@ sub startPhpFpm
 
 	if($rs) {
 		# In case the service do not start, we must ensure that it's not because no conffile exists
-		# By default (new installs, no pool configuration file is created and so, the service remains stopped)
+		# By default (on new installs), no pool configuration file is created and so, the service remains stopped)
 		my @conffiles = iMSCP::Dir->new(
 			'dirname' => $self->{'phpfpmConfig'}->{'PHP_FPM_POOLS_CONF_DIR'}, 'fileType' => '.conf'
 		)->getFiles();
