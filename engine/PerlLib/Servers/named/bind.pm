@@ -101,7 +101,7 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeNamedPostInstall');
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterNamedPostInstall');
 }
@@ -201,7 +201,7 @@ sub postaddDmn($$)
 	$rs = $self->{'hooksManager'}->trigger('afterNamedPostAddDmn', $data);
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	0;
 }
@@ -275,7 +275,7 @@ sub postdeleteDmn($$)
 	$rs = $self->{'hooksManager'}->trigger('afterNamedPostDelDmn', $data);
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	0;
 }
@@ -478,7 +478,7 @@ sub postaddSub($$)
 	$rs = $self->{'hooksManager'}->trigger('afterNamedPostAddSub', $data);
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	0;
 }
@@ -607,7 +607,7 @@ sub postdeleteSub($$)
 	$rs = $self->{'hooksManager'}->trigger('afterNamedPostDelSub', $data);
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	0;
 }
@@ -651,6 +651,8 @@ sub restart
 sub _init
 {
 	my $self = $_[0];
+
+	$self->{'restart'} = 0;
 
 	$self->{'hooksManager'} = iMSCP::HooksManager->getInstance();
 
@@ -1146,7 +1148,7 @@ END
 	my $self = Servers::named::bind->getInstance();
 	my $rs = 0;
 
-	$rs = $self->restart() if defined $self->{'restart'} && $self->{'restart'} eq 'yes';
+	$rs = $self->restart() if $self->{'restart'};
 
 	$? = $exitCode || $rs;
 }

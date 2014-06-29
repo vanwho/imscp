@@ -1519,11 +1519,11 @@ sub restartPhpFpm
 
 	if($self->{'forceRestart'}) {
 		$rs = iMSCP::Service->getInstance()->restart($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}, 'php-fpm');
-		error("Unable to stop $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}") if $rs;
+		error("Unable to restart $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}") if $rs;
 		return $rs if $rs;
 	} else {
 		$rs = iMSCP::Service->getInstance()->reload($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}, 'php-fpm');
-		error("Unable to stop $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'} service") if $rs;
+		error("Unable to reload $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'} service") if $rs;
 		return $rs if $rs;
 	}
 
@@ -1606,11 +1606,11 @@ sub restartApache
 
 	if($self->{'forceRestart'}) {
 		$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'HTTPD_SNAME'});
-		error("Unable to stop $self->{'config'}->{'HTTPD_SNAME'}") if $rs;
+		error("Unable to restart $self->{'config'}->{'HTTPD_SNAME'}") if $rs;
 		return $rs if $rs;
 	} else {
 		$rs = iMSCP::Service->getInstance()->reload($self->{'config'}->{'PHP_FPM_SNAME'});
-		error("Unable to stop $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
+		error("Unable to reload $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
 		return $rs if $rs;
 	}
 

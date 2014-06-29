@@ -81,7 +81,16 @@ sub stop($$;$)
 	$processName ||= $serviceName;
 
 	$self->_runCommand("$self->{'service_provider'} $serviceName stop");
-	! $self->status($processName);
+
+	my $loopCount = 1;
+
+	do {
+		return 0 if $self->status($processName);
+		sleep(1);
+		$loopCount++;
+	} while($loopCount < 5);
+
+	1;
 }
 
 =item restart($serviceName, [$processName = $serviceName])

@@ -78,7 +78,7 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeSqldPostInstall', 'mysql');
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterSqldPostInstall', 'mysql');
 }
@@ -164,6 +164,8 @@ sub _init
 {
 	my $self = $_[0];
 
+	$self->{'restart'} = 0;
+
 	$self->{'hooksManager'} = iMSCP::HooksManager->getInstance();
 
 	$self->{'hooksManager'}->trigger(
@@ -193,7 +195,7 @@ END
 	my $self = Servers::sqld::mysql->getInstance();
 	my $rs = 0;
 
-	if($self->{'restart'} && $self->{'restart'} eq 'yes') {
+	if($self->{'restart'}) {
 		$rs |= $self->restart();
 	}
 

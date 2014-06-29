@@ -119,7 +119,7 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeFtpdPostInstall', 'proftpd');
 	return $rs if $rs;
 
-	$self->{'start'} = 'yes';
+	$self->{'start'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterFtpdPostInstall', 'proftpd');
 }
@@ -146,7 +146,7 @@ sub uninstall
 	$rs = $self->{'hooksManager'}->trigger('afterFtpdUninstall', 'proftpd');
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	0;
 }
@@ -234,7 +234,7 @@ sub stop
 	my $rs = $self->{'hooksManager'}->trigger('beforeFtpdStop');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'FTPD_SNAME'});
+	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'FTPD_SNAME'});
 	error("Unable to stop $self->{'config'}->{'FTPD_SNAME'} service") if $rs;
 	return $rs if $rs;
 
@@ -332,6 +332,9 @@ sub _init
 {
 	my $self = $_[0];
 
+	$self->{'start'} = 0;
+	$self->{'restart'} = 0;
+
 	$self->{'hooksManager'} = iMSCP::HooksManager->getInstance();
 
 	$self->{'hooksManager'}->trigger(
@@ -370,9 +373,9 @@ END
 	my $self = Servers::ftpd::proftpd->getInstance();
 	my $rs = 0;
 
-	if($self->{'start'} && $self->{'start'} eq 'yes') {
+	if($self->{'start'}) {
 		$rs = $self->start();
-	} elsif($self->{'restart'} && $self->{'restart'} eq 'yes') {
+	} elsif($self->{'restart'}) {
 		$rs = $self->restart();
 	}
 

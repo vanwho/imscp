@@ -99,7 +99,7 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforePoPostinstall', 'dovecot');
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterPoPostinstall', 'dovecot');
 }
@@ -351,6 +351,8 @@ sub _init
 {
 	my $self = $_[0];
 
+	$self->{'restart'} = 0;
+
 	$self->{'hooksManager'} = iMSCP::HooksManager->getInstance();
 
 	$self->{'hooksManager'}->trigger(
@@ -387,7 +389,7 @@ END
 	my $self = Servers::po::dovecot->getInstance();
 	my $rs = 0;
 
-	$rs = $self->restart() if $self->{'restart'} && $self->{'restart'} eq 'yes';
+	$rs = $self->restart() if $self->{'restart'};
 
 	$? = $exitCode || $rs;
 }

@@ -137,7 +137,7 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeMtaPostinstall', 'postfix');
 	return $rs if $rs;
 
-	$self->{'restart'} = 'yes';
+	$self->{'restart'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterMtaPostinstall', 'postfix');
 }
@@ -682,6 +682,8 @@ sub getTraffic
 sub _init
 {
 	my $self = $_[0];
+
+	$self->{'restart'} = 0;
 
 	$self->{'hooksManager'} = iMSCP::HooksManager->getInstance();
 
@@ -1405,7 +1407,7 @@ END
 		$rs |= $self->postmap($_);
 	}
 
-	if($self->{'restart'} && $self->{'restart'} eq 'yes') {
+	if($self->{'restart'}) {
 		$rs |= $self->restart();
 	}
 

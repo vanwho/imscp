@@ -1452,7 +1452,7 @@ sub stop
 	return $rs if $rs;
 
 	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'HTTPD_SNAME'});
-	error("Unable to start $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
+	error("Unable to stop $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
 	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterHttpdStop');
@@ -1475,11 +1475,11 @@ sub restart
 
 	if($self->{'forceRestart'}) {
 		$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'HTTPD_SNAME'});
-		error("Unable to stop $self->{'config'}->{'HTTPD_SNAME'}") if $rs;
+		error("Unable to restart $self->{'config'}->{'HTTPD_SNAME'}") if $rs;
 		return $rs if $rs;
 	} else {
 		$rs = iMSCP::Service->getInstance()->reload($self->{'config'}->{'HTTPD_SNAME'});
-		error("Unable to stop $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
+		error("Unable to reload $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
 		return $rs if $rs;
 	}
 
