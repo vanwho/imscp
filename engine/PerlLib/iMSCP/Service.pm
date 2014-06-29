@@ -46,46 +46,46 @@ use parent 'Common::SingletonClass';
 
 =over 4
 
-=item start($serviceName, [$processName = $serviceName])
+=item start($serviceName, [$processPattern = $serviceName])
 
  Start the given service
 
  Param string $serviceName Service name
- Param string $processName Process name (default to service name)
+ Param string $processPattern Process matching pattern (default to service name)
  Return int 0 on succcess, 1 on failure
 
 =cut
 
 sub start($$;$)
 {
-	my ($self, $serviceName, $processName) = @_;
-	$processName ||= $serviceName;
+	my ($self, $serviceName, $processPattern) = @_;
+	$processPattern ||= $serviceName;
 
 	$self->_runCommand("$self->{'service_provider'} $serviceName start");
-	$self->status($processName);
+	$self->status($processPattern);
 }
 
-=item stop($serviceName, [$processName = $serviceName])
+=item stop($serviceName, [$processPattern = $serviceName])
 
  Stop the given service
 
  Param string $serviceName Service name
- Param string $processName Process name (default to service name)
+ Param string $processPattern Process matching pattern (default to service name)
  Return int 0 on succcess, 1 on failure
 
 =cut
 
 sub stop($$;$)
 {
-	my ($self, $serviceName, $processName) = @_;
-	$processName ||= $serviceName;
+	my ($self, $serviceName, $processPattern) = @_;
+	$processPattern ||= $serviceName;
 
 	$self->_runCommand("$self->{'service_provider'} $serviceName stop");
 
 	my $loopCount = 1;
 
 	do {
-		return 0 if $self->status($processName);
+		return 0 if $self->status($processPattern);
 		sleep(1);
 		$loopCount++;
 	} while($loopCount < 5);
@@ -93,62 +93,63 @@ sub stop($$;$)
 	1;
 }
 
-=item restart($serviceName, [$processName = $serviceName])
+=item restart($serviceName, [$processPattern = $serviceName])
 
  Restart the given service
 
  Param string $serviceName Service name
- Param string $processName Process name (default to service name)
+ Param string $processPattern Process matching pattern (default to service name)
  Return int 0 on succcess, 1 on failure
 
 =cut
 
 sub restart($$;$)
 {
-	my ($self, $serviceName, $processName) = @_;
-	$processName ||= $serviceName;
+	my ($self, $serviceName, $processPattern) = @_;
+	$processPattern ||= $serviceName;
 
 	$self->_runCommand("$self->{'service_provider'} $serviceName restart");
-	$self->status($processName);
+	$self->status($processPattern);
 }
 
-=item reload($serviceName, [$processName = $serviceName])
+=item reload($serviceName, [$processPattern = $serviceName])
 
  Reload the given service
 
  Param string $serviceName Service name
- Param string $processName Process name (default to service name)
+ Param string $processPattern Process matching pattern (default to service name)
  Return int 0 on succcess, 1 on failure
 
 =cut
 
 sub reload($$;$)
 {
-	my ($self, $serviceName, $processName) = @_;
-	$processName ||= $serviceName;
+	my ($self, $serviceName, $processPattern) = @_;
+	$processPattern ||= $serviceName;
 
-	unless($self->status($processName)) { # In case the service is not running, we start it
-		$self->_runCommand("$self->{'service_provider'} $serviceName reload");
-	} else {
+	if($self->status($processPattern)) { # In case the service is not running, we start it
 		$self->_runCommand("$self->{'service_provider'} $serviceName start");
+	} else {
+		$self->_runCommand("$self->{'service_provider'} $serviceName reload");
 	}
 
-	$self->status($processName);
+	$self->status($processPattern);
 }
 
-=item status($processName)
+=item status($processPattern)
 
  Get status of the given service
 
+ Param string $processPattern Process matching pattern (default to service name)
  Return int 0 if the service is running, 1 if the service is not running
 
 =cut
 
 sub status($$)
 {
-	my ($self, $processName) = @_;
+	my ($self, $processPattern) = @_;
 
-	$self->_runCommand("$self->{'service_status_provider'} -o -f $processName");
+	$self->_runCommand("$self->{'service_status_provider'} -o -f $processPattern");
 }
 
 =back
