@@ -41,6 +41,7 @@ use iMSCP::Config;
 use iMSCP::File;
 use iMSCP::Dir;
 use iMSCP::Execute;
+use iMSCP::Service;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION

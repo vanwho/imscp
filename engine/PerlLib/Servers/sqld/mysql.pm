@@ -37,6 +37,7 @@ use warnings;
 use iMSCP::Debug;
 use iMSCP::HooksManager;
 use iMSCP::Execute;
+use iMSCP::Service;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION

@@ -36,13 +36,15 @@ use strict;
 use warnings;
 
 use iMSCP::Debug;
+use iMSCP::Config;
 use iMSCP::HooksManager;
 use iMSCP::Execute;
 use iMSCP::File;
 use iMSCP::TemplateParser;
 use iMSCP::Net;
+use iMSCP::Service;
 use File::Basename;
-use iMSCP::Config;
+
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION

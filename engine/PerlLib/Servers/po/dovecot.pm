@@ -41,6 +41,7 @@ use iMSCP::Config;
 use iMSCP::Execute;
 use iMSCP::File;
 use iMSCP::Dir;
+use iMSCP::Service;
 use Tie::File;
 use parent 'Common::SingletonClass';
 
