@@ -35,6 +35,9 @@ use strict;
 use warnings;
 
 use iMSCP::Debug;
+use iMSCP::SystemUser;
+use iMSCP::SystemGroup;
+use Package::FrontEnd;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION
@@ -55,15 +58,16 @@ sub uninstall
 {
 	my $self = $_[0];
 
-	my $rs = $self->_removeHttpdConfig();
+	my $rs = $self->_removeMasterWebUser();
+	return $rs if $rs;
+
+	$rs = $self->_removeHttpdConfig();
 	return $rs if $rs;
 
 	$rs = $self->_removePhpConfig();
 	return $rs if $rs;
 
 	$self->_removeInitScript();
-
-	0;
 }
 
 =back
@@ -84,7 +88,33 @@ sub _init
 {
 	my $self = $_[0];
 
+	$self->{'frontend'} = Package::FrontEnd;
+
+	$self->{'config'} = $self->{'frontend'}->{'config'};
+
 	$self;
+}
+
+=item _removeMasterWebUser()
+
+ Remove master Web user
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub _removeMasterWebUser
+{
+	my $self = $_[0];
+
+	my $rs = iMSCP::SystemUser->new('force' => 'yes')->delSystemUser(
+		$main::imscpConfig{'SYSTEM_USER_PREFIX'} . $main::imscpConfig{'SYSTEM_USER_MIN_UID'}
+	);
+	return $rs if $rs;
+
+	iMSCP::SystemGroup->getInstance()->delSystemGroup(
+		$main::imscpConfig{'SYSTEM_USER_PREFIX'} . $main::imscpConfig{'SYSTEM_USER_MIN_UID'}
+	);
 }
 
 =item _removeHttpdConfig()
@@ -99,6 +129,43 @@ sub _removeHttpdConfig
 {
 	my $self = $_[0];
 
+	my $rs = 0;
+
+	# Remove vhost files
+	for('00_master_ssl.conf', '00_master.conf') {
+		$rs = $self->{'frontend'}->disableSites($_);
+		return $rs if $rs;
+
+		if(-f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_") {
+			$rs = iMSCP::File->new(
+				'filename' => "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$_"
+			)->delFile();
+			return $rs if $rs;
+		}
+	}
+
+	# Remove imscp_fastcgi.conf file
+	if(-f "$self->{'config'}->{'HTTPD_CONF_DIR'}/imscp_fastcgi.conf") {
+		$rs = iMSCP::File->new(
+			'filename' => "$self->{'config'}->{'HTTPD_CONF_DIR'}/imscp_fastcgi.conf"
+		)->delFile();
+		return $rs if $rs;
+	}
+
+	# Remove imscp_php.conf file
+	if(-f "$self->{'config'}->{'HTTPD_CONF_DIR'}/conf.d/imscp_php.conf") {
+		$rs = iMSCP::File->new(
+			'filename' => "$self->{'config'}->{'HTTPD_CONF_DIR'}/conf.d/imscp_php.conf"
+		)->delFile();
+		return $rs if $rs;
+	}
+
+	# Re-enable default vhost
+	if(-f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/default") {
+		$rs = $self->{'frontend'}->enableSites('default')
+		return $rs if $rs;
+	}
+
 	0;
 }
 
@@ -110,11 +177,11 @@ sub _removeHttpdConfig
 
 =cut
 
-sub _removePhpConfig _removeInitScript()
+sub _removePhpConfig
 {
 	my $self = $_[0];
 
-	0;
+	iMSCP::Dir->new('dirname' => "$self->{'config'}->{'PHP_STARTER_DIR'}/master")->remove();
 }
 
 =item _removeInitScript()

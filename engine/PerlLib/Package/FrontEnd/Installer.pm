@@ -66,7 +66,7 @@ sub install
 	my $rs = $self->_setHttpdVersion();
 	return $rs if $rs;
 
-	$rs = $self->_addUser();
+	$rs = $self->_addMasterWebUser();
 	return $rs if $rs;
 
 	$rs = $self->_makeDirs();
@@ -214,15 +214,15 @@ sub _setHttpdVersion()
 	0;
 }
 
-=item _addUser()
+=item _addMasterWebUser()
 
- Add panel user
+ Add master Web user
 
  Return int 0 on success, other on failure
 
 =cut
 
-sub _addUser
+sub _addMasterWebUser
 {
 	my $self = $_[0];
 
