@@ -547,35 +547,34 @@ sub _buildHttpdConfig
 	# Build http vhost file
 
 	# Force HTTPS if needed
-#	if($main::imscpConfig{'BASE_SERVER_VHOST_PREFIX'} eq 'https://') {
-#		$rs = $self->{'hooksManager'}->register(
-#			'afterHttpdBuildConf',
-#			sub {
-#				my ($cfgTpl, $tplName) = @_;
-#
-#				if($tplName eq '00_master.conf') {
-#					$$cfgTpl = replaceBloc(
-#						"# SECTION custom BEGIN.\n",
-#						"# SECTION custom END.\n",
-#
-#						"    # SECTION custom BEGIN.\n" .
-#						getBloc(
-#							"# SECTION custom BEGIN.\n",
-#							"# SECTION custom END.\n",
-#							$$cfgTpl
-#						) .
-#						"    RewriteEngine On\n" .
-#						"    RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]\n" .
-#						"    # SECTION custom END.\n",
-#						$$cfgTpl
-#					);
-#				}
-#
-#				0;
-#			}
-#		);
-#		return $rs if $rs;
-#	}
+	if($main::imscpConfig{'BASE_SERVER_VHOST_PREFIX'} eq 'https://') {
+		$rs = $self->{'hooksManager'}->register(
+			'afterFrontEndBuildConf',
+			sub {
+				my ($cfgTpl, $tplName) = @_;
+
+				if($tplName eq '00_master.conf') {
+					$$cfgTpl = replaceBloc(
+						"# SECTION custom BEGIN.\n",
+						"# SECTION custom END.\n",
+
+						"    # SECTION custom BEGIN.\n" .
+						getBloc(
+							"# SECTION custom BEGIN.\n",
+							"# SECTION custom END.\n",
+							$$cfgTpl
+						) .
+						"    rewrite .* https://$host$request_uri redirect;\n" .
+						"    # SECTION custom END.\n",
+						$$cfgTpl
+					);
+				}
+
+				0;
+			}
+		);
+		return $rs if $rs;
+	}
 
 	# Build file
 	$rs = $self->{'frontend'}->buildConfFile('00_master.conf', $tplVars);
