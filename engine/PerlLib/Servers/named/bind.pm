@@ -1148,7 +1148,9 @@ END
 	my $self = Servers::named::bind->getInstance();
 	my $rs = 0;
 
-	$rs = $self->restart() if $self->{'restart'};
+	if($self->{'restart'} && $main::imscpConfig{'NAMED_SERVER'} ne 'external_server') {
+		$rs = $self->restart();
+	}
 
 	$? = $exitCode || $rs;
 }
