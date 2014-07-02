@@ -234,7 +234,7 @@ sub disableSites($$)
 		}
 	}
 
-	$self->{'hooksManager'}->trigger('afterHttpdDisableFrontEndSites', $sites);
+	$self->{'hooksManager'}->trigger('afterDisableFrontEndSites', $sites);
 }
 
 =item start()
@@ -321,7 +321,7 @@ sub restart
 	$self->{'hooksManager'}->trigger('afterFrontEndRestart');
 }
 
-=item buildConfFile($file, \%data, [\%options = {}])
+=item buildConfFile($file, [\%data], [\%options])
 
  Build the given configuration file
 
@@ -332,11 +332,12 @@ sub restart
 
 =cut
 
-sub buildConfFile($$$;$)
+sub buildConfFile($$;$$)
 {
 	my ($self, $file, $tplVars, $options) = @_;
 
-	$options ||= {};
+	$tplVars ||= { };
+	$options ||= { };
 
 	my ($name, $path, $suffix) = fileparse($file);
 

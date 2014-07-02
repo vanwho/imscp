@@ -170,7 +170,7 @@ sub _init
 
 	# PhpMyAdmin permissions must be set after FrontEnd base permissions
 	iMSCP::HooksManager->getInstance()->register(
-		'afterFrontEndSetPermissions', sub { $self->setPermissionsListener(@_) }
+		'afterFrontEndSetGuiPermissions', sub { $self->setPermissionsListener(@_) }
 	);
 
 	$self;

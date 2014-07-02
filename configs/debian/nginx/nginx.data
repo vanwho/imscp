@@ -1,17 +1,20 @@
 HTTPD_NAME = Nginx
 HTTPD_VERSION =
 
-HTTPD_USER = www-data
-HTTPD_GROUP = www-data
+HTTPD_WORKER_PROCESSES = 2
+HTTPD_WORKER_CONNECTIONS = 1024
+
+HTTPD_USER = nginx
+HTTPD_GROUP = nginx
 
 HTTPD_SNAME = nginx
 HTTPD_CONF_DIR = /etc/nginx
-HTTPD_MODS_AVAILABLE_DIR = /etc/nginx/mods-available
-HTTPD_MODS_ENABLED_DIR = /etc/nginx/mods-enabled
 HTTPD_SITES_AVAILABLE_DIR = /etc/nginx/sites-available
 HTTPD_SITES_ENABLED_DIR = /etc/nginx/sites-enabled
 HTTPD_ROOT_DIR = /var/www
 HTTPD_LOG_DIR = /var/log/nginx
+
+HTTPD_PID_FILE = /var/run/nginx.pid
 
 CMD_NGINX = /usr/sbin/nginx
 

@@ -221,7 +221,7 @@ sub _init()
 
 	# Filemanager permissions must be set after FrontEnd base permissions
 	iMSCP::HooksManager->getInstance()->register(
-		'afterFrontEndSetPermissions', sub { print "Set Filemanager permission\n"; $self->setPermissionsListener(@_) }
+		'afterFrontEndSetGuiPermissions', sub { $self->setPermissionsListener(@_) }
 	);
 
 	$self;

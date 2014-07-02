@@ -2024,24 +2024,11 @@ sub setupInitScripts
 	my $rs = iMSCP::HooksManager->getInstance()->trigger('beforeSetupInitScripts');
 	return $rs if $rs;
 
-	my ($rdata, $service, $stdout, $stderr);
-
 	for (
-		$main::imscpConfig{'IMSCP_NETWORK_SNAME'},
-		$main::imscpConfig{'IMSCP_DAEMON_SNAME'},
+		$main::imscpConfig{'IMSCP_NETWORK_SNAME'}, $main::imscpConfig{'IMSCP_DAEMON_SNAME'},
 		$main::imscpConfig{'IMSCP_PANEL_SNAME'}
-
 	) {
-		next if $_ eq 'no';
-
-		my $initScriptPath = "$main::imscpConfig{'INIT_SCRIPTS_DIR'}/$_";
-
-		if(! -f$initScriptPath) {
-			error("File $initScriptPath is missing");
-			return 1;
-		}
-
-		my $file = iMSCP::File->new('filename' => $initScriptPath);
+		my $file = iMSCP::File->new('filename' => "$main::imscpConfig{'INIT_SCRIPTS_DIR'}/$_");
 
 		$rs = $file->owner($main::imscpConfig{'ROOT_USER'}, $main::imscpConfig{'ROOT_GROUP'});
 		return $rs if $rs;
@@ -2049,17 +2036,16 @@ sub setupInitScripts
 		$rs = $file->mode(0755);
 		return $rs if $rs;
 
-		if($main::imscpConfig{'SERVICE_INSTALLER'} ne 'no') {
-			$rs = execute("$main::imscpConfig{'SERVICE_INSTALLER'} -f $_ remove", \$stdout, \$stderr);
-			debug($stdout) if $stdout;
-			error($stderr) if $stderr && $rs;
-			return $rs if $rs;
+		my ($stdout, $stderr);
+		$rs = execute("$main::imscpConfig{'SERVICE_INSTALLER'} -f $_ remove", \$stdout, \$stderr);
+		debug($stdout) if $stdout;
+		error($stderr) if $stderr && $rs;
+		return $rs if $rs;
 
-			$rs = execute("$main::imscpConfig{'SERVICE_INSTALLER'} $_ defaults", \$stdout, \$stderr);
-			debug($stdout) if $stdout;
-			error($stderr) if $stderr && $rs;
-			return $rs if $rs;
-		}
+		$rs = execute("$main::imscpConfig{'SERVICE_INSTALLER'} $_ defaults", \$stdout, \$stderr);
+		debug($stdout) if $stdout;
+		error($stderr) if $stderr && $rs;
+		return $rs if $rs;
 	}
 
 	iMSCP::HooksManager->getInstance()->trigger('afterSetupInitScripts');

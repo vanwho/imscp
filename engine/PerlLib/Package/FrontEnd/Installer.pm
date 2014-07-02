@@ -84,7 +84,7 @@ sub install
 
 =item setGuiPermissions()
 
- Set frontEnd permissions
+ Set frontEnd (GUI) permissions
 
 Return int 0 on success, other on failure
 
@@ -94,12 +94,12 @@ sub setGuiPermissions
 {
 	my $self = $_[0];
 
+	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndSetGuiPermissions');
+	return $rs if $rs;
+
 	my $panelUName = $main::imscpConfig{'SYSTEM_USER_PREFIX'}.$main::imscpConfig{'SYSTEM_USER_MIN_UID'};
 	my $panelGName = $main::imscpConfig{'SYSTEM_USER_PREFIX'}.$main::imscpConfig{'SYSTEM_USER_MIN_UID'};
 	my $guiRootDir = $main::imscpConfig{'GUI_ROOT_DIR'};
-
-	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdSetGuiPermissions');
-	return $rs if $rs;
 
 	$rs = setRights(
 		$guiRootDir,
@@ -140,7 +140,49 @@ sub setGuiPermissions
 	);
 	return $rs if $rs;
 
-	$self->{'hooksManager'}->trigger('afterHttpdSetGuiPermissions');
+	$self->{'hooksManager'}->trigger('afterFrontEndSetGuiPermissions');
+}
+
+=item setEnginePermissions()
+
+ Set frontEnd (engine) permissions
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub setEnginePermissions
+{
+	my $self = $_[0];
+
+	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndSetEnginePermissions');
+	return $rs if $rs;
+
+	my $panelUName = $main::imscpConfig{'SYSTEM_USER_PREFIX'} . $main::imscpConfig{'SYSTEM_USER_MIN_UID'};
+	my $panelGName = $main::imscpConfig{'SYSTEM_USER_PREFIX'} . $main::imscpConfig{'SYSTEM_USER_MIN_UID'};
+	my $rootUName = $main::imscpConfig{'ROOT_USER'};
+	my $rootGName = $main::imscpConfig{'ROOT_GROUP'};
+
+	$rs = setRights(
+		$self->{'config'}->{'HTTPD_CONF_DIR'},
+		{ 'user' => $rootUName, 'group' => $rootGName, 'dirmode' => '0755', 'filemode' => '0644', 'recursive' => 1 }
+	);
+	return $rs if $rs;
+
+	$rs = setRights(
+		$self->{'config'}->{'HTTPD_LOG_DIR'},
+			{ 'user' => $rootUName, 'group' => $rootGName, 'dirmode' => '0755', 'filemode' => '0640', 'recursive' => 1 }
+	);
+	return $rs if $rs;
+
+	$rs = setRights(
+		"$self->{'config'}->{'PHP_STARTER_DIR'}/master",
+		{ 'user' => $panelUName, 'group' => $panelGName, 'dirmode' => '0550', 'filemode' => '0640', 'recursive' => 1 }
+	);
+	return $rs if $rs;
+
+
+	$self->{'hooksManager'}->trigger('afterFrontEndSetEnginePermissions');
 }
 
 =back
@@ -365,12 +407,15 @@ sub _makeDirs
 	my $phpdir = $self->{'config'}->{'PHP_STARTER_DIR'};
 
 	for (
+		[$self->{'config'}->{'HTTPD_CONF_DIR'}, $rootUName, $rootUName, 0755],
+		[$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}, $rootUName, $rootUName, 0755],
+		[$self->{'config'}->{'HTTPD_SITES_ENABLED_DIR'}, $rootUName, $rootUName, 0755],
 		[$self->{'config'}->{'HTTPD_LOG_DIR'}, $rootUName, $rootUName, 0755],
 		[$phpdir, $rootUName, $rootGName, 0555],
 		["$phpdir/master", $panelUName, $panelGName, 0550],
 		["$phpdir/master/php5", $panelUName, $panelGName, 0550]
 	) {
-		$rs = iMSCP::Dir->new('dirname' => $_->[0])->make({ 'user' => $_->[1], 'group' => $_->[2], 'mode' => $_->[3]});
+		$rs = iMSCP::Dir->new('dirname' => $_->[0])->make({ 'user' => $_->[1], 'group' => $_->[2], 'mode' => $_->[3] });
 		return $rs if $rs;
 	}
 
@@ -490,8 +535,39 @@ sub _buildHttpdConfig
 	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndBuildHttpdConfig');
 	return $rs if $rs;
 
+	# Backup, build, store and install the nginx.conf file
+
+	# Backup file
+	if(-f "$self->{'wrkDir'}/nginx.conf") {
+		$rs = iMSCP::File->new(
+			'filename' => "$self->{'wrkDir'}/nginx.conf"
+		)->copyFile("$self->{'bkpDir'}/nginx.conf." . time);
+		return $rs if $rs;
+	}
+
+	# Build file
+	$rs = $self->{'frontend'}->buildConfFile(
+		"$self->{'cfgDir'}/nginx.conf",
+		{
+			HTTPD_USER => $self->{'config'}->{'HTTPD_USER'},
+			HTTPD_WORKER_PROCESSES => $self->{'config'}->{'HTTPD_WORKER_PROCESSES'},
+			HTTPD_WORKER_CONNECTIONS => $self->{'config'}->{'HTTPD_WORKER_CONNECTIONS'},
+			HTTPD_LOG_DIR => $self->{'config'}->{'HTTPD_LOG_DIR'},
+			HTTPD_PID_FILE => $self->{'config'}->{'HTTPD_PID_FILE'},
+			HTTPD_CONF_DIR => $self->{'config'}->{'HTTPD_CONF_DIR'},
+			HTTPD_LOG_DIR => $self->{'config'}->{'HTTPD_LOG_DIR'},
+			HTTPD_SITES_ENABLED_DIR => $self->{'config'}->{'HTTPD_SITES_ENABLED_DIR'}
+		}
+	);
+	return $rs if $rs;
+
+	# Install file
+	my $file = iMSCP::File->new('filename' => "$self->{'wrkDir'}/nginx.conf");
+	$rs = $file->copyFile("$self->{'config'}->{'HTTPD_CONF_DIR'}");
+
 	# Backup, build, store and install the imscp_fastcgi.conf file
 
+	# Backup file
 	if(-f "$self->{'wrkDir'}/imscp_fastcgi.conf") {
 		$rs = iMSCP::File->new(
 			'filename' => "$self->{'wrkDir'}/imscp_fastcgi.conf"
@@ -500,18 +576,17 @@ sub _buildHttpdConfig
 	}
 
 	# Build file
-	$rs = $self->{'frontend'}->buildConfFile(
-		"$self->{'cfgDir'}/imscp_fastcgi.conf", { }, { 'destination' => "$self->{'wrkDir'}/imscp_fastcgi.conf" }
-	);
+	$rs = $self->{'frontend'}->buildConfFile("$self->{'cfgDir'}/imscp_fastcgi.conf");
 	return $rs if $rs;
 
-	# Install file in production directory
-	my $file = iMSCP::File->new('filename' => "$self->{'wrkDir'}/imscp_fastcgi.conf");
+	# Install file
+	$file = iMSCP::File->new('filename' => "$self->{'wrkDir'}/imscp_fastcgi.conf");
 	$rs = $file->copyFile("$self->{'config'}->{'HTTPD_CONF_DIR'}");
 	return $rs if $rs;
 
 	# Backup, build, store and install imscp_php.conf file
 
+	# Backup file
 	if(-f "$self->{'wrkDir'}/imscp_php.conf") {
 		$rs = iMSCP::File->new(
 			'filename' => "$self->{'wrkDir'}/imscp_php.conf"
@@ -520,12 +595,10 @@ sub _buildHttpdConfig
 	}
 
 	# Build file
-	$rs = $self->{'frontend'}->buildConfFile(
-		"$self->{'cfgDir'}/imscp_php.conf", { }, { 'destination' => "$self->{'wrkDir'}/imscp_php.conf" }
-	);
+	$rs = $self->{'frontend'}->buildConfFile("$self->{'cfgDir'}/imscp_php.conf");
 	return $rs if $rs;
 
-	# Install file in production directory
+	# Install file
 	$file = iMSCP::File->new('filename' => "$self->{'wrkDir'}/imscp_php.conf");
 	$rs = $file->copyFile("$self->{'config'}->{'HTTPD_CONF_DIR'}/conf.d");
 	return $rs if $rs;
@@ -583,7 +656,7 @@ sub _buildHttpdConfig
 	$rs = $self->{'frontend'}->buildConfFile('00_master.conf', $tplVars);
 	return $rs if $rs;
 
-	# Install new file in production directory
+	# Install new file
 	$rs = iMSCP::File->new(
 		'filename' => "$self->{'wrkDir'}/00_master.conf"
 	)->copyFile(
@@ -627,9 +700,17 @@ sub _buildHttpdConfig
 		}
 	}
 
-	# Disable default site if any
+	# Disable default site if any (Nginx package as provided by Debian)
 	$rs = $self->{'frontend'}->disableSites('default');
 	return $rs if $rs;
+
+	if(-f "$self->{'config'}->{'HTTPD_CONF_DIR'}/conf.d/default.conf") { # Nginx package as provided by Nginx Team
+		$rs = iMSCP::File->new(
+			'filename' => "$self->{'config'}->{'HTTPD_CONF_DIR'}/conf.d/default.conf"
+		)->moveFile("$self->{'config'}->{'HTTPD_CONF_DIR'}/conf.d/default.conf.disabled");
+		return $rs if $rs;
+	} else {
+	}
 
 	$self->{'hooksManager'}->trigger('afterFrontEndBuildHttpdVhosts');
 }

@@ -6,7 +6,7 @@
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: starts imscp_panel
-# Description:       Starts The i-MSCP Control Panel
+# Description:       Starts The i-MSCP Control Panel (FCGI)
 ### END INIT INFO
 
 # Author: Laurent Declercq <l.declercq@nuxwin.com>

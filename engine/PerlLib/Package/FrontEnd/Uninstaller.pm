@@ -161,8 +161,13 @@ sub _removeHttpdConfig
 	}
 
 	# Re-enable default vhost
-	if(-f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/default") {
-		$rs = $self->{'frontend'}->enableSites('default')
+	if(-f "$self->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/default") { # Nginx as provided by Debian
+		$rs = $self->{'frontend'}->enableSites('default');
+		return $rs if $rs;
+	} elsif("$self->{'config'}->{'HTTPD_CONF_DIR'}/conf.d/default.conf.disabled") { # Nginx package as provided by Nginx
+		$rs = iMSCP::File->new(
+			'filename' => "$self->{'config'}->{'HTTPD_CONF_DIR'}/conf.d/default.conf.disabled"
+		)->moveFile("$self->{'config'}->{'HTTPD_CONF_DIR'}/conf.d/default.conf");
 		return $rs if $rs;
 	}
 

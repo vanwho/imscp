@@ -113,7 +113,7 @@ sub loadConfig
 	0;
 }
 
-=item installPreRequiredPackages
+=item installPreRequiredPackages()
 
  Trigger pre-required package installation from distro autoinstaller adapter
 
@@ -309,7 +309,7 @@ sub processDistroInstallFiles
 			return 1;
 		}
 
-		$file = -f ("$distroConfigDir/$_/install.xml")
+		$file = (-f "$distroConfigDir/$_/install.xml")
 			? "$distroConfigDir/$_/install.xml" : "$defaultConfigDir/$_/install.xml";
 
 		if(-f $file) {
@@ -321,7 +321,7 @@ sub processDistroInstallFiles
 	0;
 }
 
-=item
+=item buildImscpDaemon()
 
  Build i-MSCP daemon
 
@@ -381,9 +381,9 @@ sub installEngine
 
 	my $dir = iMSCP::Dir->new('dirname' => "$FindBin::Bin/engine");
 
-	my @configs = $dir->getDirs();
+	my @configDirs = $dir->getDirs();
 
-	for(@configs) {
+	for(@configDirs) {
 		if (-f "$FindBin::Bin/engine/$_/install.xml") {
 			unless(chdir "$FindBin::Bin/engine/$_") {
 				error("Unable to change path to $FindBin::Bin/engine/$_");
@@ -468,7 +468,7 @@ sub postBuild
 	iMSCP::HooksManager->getInstance()->trigger('afterPostBuild');
 }
 
-=item doImscpBackup
+=item doImscpBackup()
 
  Backup current i-MSCP installation (database and conffiles) if any
 
@@ -679,7 +679,7 @@ sub installTmp
 	$rs;
 }
 
-=item
+=item removeTmp()
 
  Delete build directory
 
@@ -725,10 +725,11 @@ sub checkCommandAvailability($)
 
 =over 4
 
-=item _processXmlFile()
+=item _processXmlFile($file)
 
  Process an install.xml file or distribution layout.xml file
 
+ Param string $file xml file path
  Return int 0 on success, other on failure ; A fatal error is raised in case a variable cannot be exported
 
 =cut
@@ -744,7 +745,7 @@ sub _processXmlFile($)
 
 	# Loading XML::Simple package
 	eval "use XML::Simple; 1";
-	fatal('Unable to load the XML::Simple perl module') if $@;
+	fatal("Unable to load the XML::Simple perl module: $@") if $@;
 
 	# Creating XML object
 	my $xml = XML::Simple->new('ForceArray' => 1, 'ForceContent' => 1);
@@ -761,54 +762,67 @@ sub _processXmlFile($)
 
 	# Process xml 'folders' nodes if any
 	for(@{$data->{'folders'}}) {
-		$_->{'content'} = _expandVars($_->{'content'}) if exists $_->{'content'};
-		$main::{$_->{'export'}} = $_->{'content'} if $_->{'export'};
-		$rs = _processFolder($_) if exists $_->{'content'};
-		return $rs if $rs;
+		if (exists $_->{'content'}) {
+			$_->{'content'} = _expandVars($_->{'content'});
+			$main::{$_->{'export'}} = $_->{'content'} if exists $_->{'export'};
+			$rs = _processFolder($_);
+			return $rs if $rs;
+		}
 	}
 
 	# Process xml 'copy_config' nodes if any
 	for(@{$data->{'copy_config'}}) {
-		$_->{'content'} = _expandVars($_->{'content'}) if exists $_->{'content'};
-		$rs = _copyConfig($_) if exists $_->{'content'};
-		return $rs if $rs;
+		if(exists $_->{'content'}) {
+			$_->{'content'} = _expandVars($_->{'content'});
+			$rs = _copyConfig($_);
+			return $rs if $rs;
+		}
 	}
 
 	# Process xml 'copy' nodes if any
 	for(@{$data->{'copy'}}) {
-		$_->{'content'} = _expandVars($_->{'content'}) if exists $_->{'content'};
-		$rs = _copy($_) if exists $_->{'content'};
-		return $rs if $rs;
+		if(exists $_->{'content'}) {
+			$_->{'content'} = _expandVars($_->{'content'});
+			$rs = _copy($_);
+			return $rs if $rs;
+		}
 	}
 
 	# Process xml 'create_file' nodes if any
 	for(@{$data->{'create_file'}}) {
-		$_->{'content'} = _expandVars($_->{'content'}) if exists $_->{'content'};
-		$rs = _createFile($_) if exists $_->{'content'};
-		return $rs if $rs;
+		if(exists $_->{'content'}) {
+			$_->{'content'} = _expandVars($_->{'content'});
+			$rs = _createFile($_);
+			return $rs if $rs;
+		}
 	}
 
 	# Process xml 'chmod_file' nodes if any
 	for(@{$data->{'chmod_file'}}) {
-		$_->{'content'} = _expandVars($_->{'content'}) if exists $_->{'content'};
-		$rs = _chmodFile($_) if $_->{'content'};
-		return $rs if $rs;
+		if(exists $_->{'content'}) {
+			$_->{'content'} = _expandVars($_->{'content'});
+			$rs = _chmodFile($_);
+			return $rs if $rs;
+		}
 	}
 
 	# Process xml 'chmod_file' nodes if any
 	for(@{$data->{'chown_file'}}) {
-		$_->{'content'} = _expandVars($_->{'content'}) if exists $_->{'content'};
-		$rs = _chownFile($_) if exists $_->{'content'};
-		return $rs if $rs;
+		if(exists $_->{'content'}) {
+			$_->{'content'} = _expandVars($_->{'content'});
+			$rs = _chownFile($_);
+			return $rs if $rs;
+		}
 	}
 
 	0;
 }
 
-=item _expandVars()
+=item _expandVars($string)
 
  Expand variables in the given string
 
+ Param string $string string containing variables to expands
  Return string
 
 =cut
@@ -817,24 +831,20 @@ sub _expandVars
 {
 	my $string = $_[0] || '';
 
-	debug("Input: $string");
-
 	for($string =~ /\$\{([^\}]+)\}/g) {
 		if(exists $main::{$_}) {
 			$string =~ s/\$\{$_\}/$main::{$_}/g;
 		} elsif(exists $main::imscpConfig{$_}) {
 			$string =~ s/\$\{$_\}/$main::imscpConfig{$_}/g;
 		} else {
-			fatal("Unable to expand variable \${$_}. Variable not found.");
+			fatal("Unable to expand variable \${$_}.");
 		}
 	}
-
-	debug("Output: $string");
 
 	$string;
 }
 
-=item _processFolder()
+=item _processFolder(\%$data)
 
  Process a folder node from an install.xml file
 
@@ -845,14 +855,14 @@ sub _expandVars
 =cut
 
 
-sub _processFolder
+sub _processFolder($)
 {
 	my $data = $_[0];
 
 	my $dir = iMSCP::Dir->new('dirname' => $data->{'content'});
 
 	# Needed to be sure to not keep any file from a previous build that has failed
-	if(defined $main::{'INST_PREF'} && $main::{'INST_PREF'} eq $data->{'content'} && -d $data->{'content'}) {
+	if(defined $main::{'INST_PREF'} && $main::{'INST_PREF'} eq $data->{'content'}) {
 		my $rs = $dir->remove();
 		return $rs if $rs;
 	}
@@ -868,7 +878,7 @@ sub _processFolder
 	$dir->make($options);
 }
 
-=item
+=item _copyConfig(\%$data)
 
  Process a copy_config node from an install.xml file
 
@@ -876,7 +886,7 @@ sub _processFolder
 
 =cut
 
-sub _copyConfig
+sub _copyConfig($)
 {
 	my $data = $_[0];
 
@@ -923,7 +933,7 @@ sub _copyConfig
 	0;
 }
 
-=item
+=item _copy(\%$data)
 
  Process the copy node from an install.xml file
 
@@ -931,7 +941,7 @@ sub _copyConfig
 
 =cut
 
-sub _copy
+sub _copy($)
 {
 	my $data = $_[0];
 
@@ -964,7 +974,7 @@ sub _copy
 	0;
 }
 
-=item _createFile()
+=item _createFile(\%$data)
 
  Create a file
 
@@ -972,12 +982,12 @@ sub _copy
 
 =cut
 
-sub _createFile
+sub _createFile($)
 {
 	iMSCP::File->new('filename' => $_[0]->{'content'})->save();
 }
 
-=item _chownFile()
+=item _chownFile(\%$data)
 
  Change file/directory owner and/or group recursively
 
@@ -985,7 +995,7 @@ sub _createFile
 
 =cut
 
-sub _chownFile
+sub _chownFile($)
 {
 	my $data = $_[0];
 
@@ -1003,7 +1013,7 @@ sub _chownFile
 	0;
 }
 
-=item _chmodFile()
+=item _chmodFile(\%$data)
 
  Process chmod_file from an install.xml file
 
@@ -1011,7 +1021,7 @@ sub _chownFile
 
 =cut
 
-sub _chmodFile
+sub _chmodFile($)
 {
 	my $data = $_[0];
 
