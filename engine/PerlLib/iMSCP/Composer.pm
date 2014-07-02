@@ -55,7 +55,7 @@ use parent 'Common::SingletonClass';
 
 =item registerPackage($package, [$packageVersion = 'dev-master'])
 
- Register the given composer package for installation.
+ Register the given composer package for installation
 
  Return int 0
 
@@ -80,7 +80,7 @@ sub registerPackage($$;$)
 
 =item _init()
 
- Called by getInstance(). Initialize instance of this class.
+ Called by getInstance(). Initialize instance of this class
 
  Return iMSCP::Composer
 
@@ -90,38 +90,47 @@ sub _init
 {
 	my $self = $_[0];
 
-	# Increase composer process timeout for slow connections
-	$ENV{'COMPOSER_PROCESS_TIMEOUT'} = 2000;
-
 	$self->{'toInstall'} = [];
 	$self->{'cacheDir'} = "$main::imscpConfig{'CACHE_DATA_DIR'}/packages";
 	$self->{'phpCmd'} = $main::imscpConfig{'CMD_PHP'} .
 		' -d memory_limit=512M -d allow_url_fopen=1' .
 		' -d suhosin.executor.include.whitelist=phar';
 
-	unless(iMSCP::Getopt->skipPackagesUpdate && -d $self->{'cacheDir'}) {
-		iMSCP::Dir->new(
-			'dirname' => $self->{'cacheDir'}
-		)->make() and fatal('Unable to create i-MSCP package cache directory');
+	# Increase composer process timeout for slow connections
+	$ENV{'COMPOSER_PROCESS_TIMEOUT'} = 2000;
 
-		# Override default composer home directory
-		$ENV{'COMPOSER_HOME'} = "$self->{'cacheDir'}/.composer";
+	# Override default composer home directory
+	$ENV{'COMPOSER_HOME'} = "$self->{'cacheDir'}/.composer";
 
-		# Cleanup packages cache directory if asked by user - This will cause all packages to be fetched again
-		$self->_cleanCacheDir() if iMSCP::Getopt->cleanPackagesCache;
+	iMSCP::HooksManager->getInstance()->register(
+		'afterSetupPreInstallAddons', sub {
+			iMSCP::Dialog->factory()->endGauge();
 
-		# Schedule package installation (done after packages preinstallation)
-		iMSCP::HooksManager->getInstance()->register(
-			'afterSetupPreInstallPackages', sub { iMSCP::Dialog->factory()->endGauge(); $self->_installPackages() }
-		);
-	}
+			my $rs = iMSCP::Dir->new('dirname' => $self->{'cacheDir'})->make();
+			return $rs if $rs;
+
+			# Cleanup i-MSCP packages cache directory if asked by user
+			$rs = $self->_cleanCacheDir() if iMSCP::Getopt->cleanPackagesCache;
+			return $rs if $rs;
+
+			$rs = $self->_getComposer();
+			return $rs if $rs;
+
+			# Skip the packages update if asked by user but only if all requirement for package versions are meets
+			if( ! iMSCP::Getopt->skipAddonsUpdate || $self->_checkRequirements()) {
+				$rs = $self->_installPackages() if $self->_checkRequirements();
+			}
+
+			$rs;
+		}
+	);
 
 	$self;
 }
 
 =item _installPackages()
 
- Install or update packages in package cache repository.
+ Install or update packages in package cache repository
 
  Return 0 on success, other on failure
 
@@ -134,21 +143,20 @@ sub _installPackages
 	my $rs = $self->_buildComposerFile();
 	return $rs if $rs;
 
-	$rs = $self->_getComposer();
-	return $rs if $rs;
-
 	iMSCP::Dialog->factory()->infobox(
 '
 Fetching i-MSCP packages from GitHub.
 
-Please wait, depending of your connection, this may take few minutes.
+Please wait, depending on your connection, this may take few minutes.
 '
 	);
 
 	# The update option is used here but composer will automatically fallback to install mode when needed
 	my ($stdout, $stderr);
 	$rs = execute(
-		"$self->{'phpCmd'} $self->{'cacheDir'}/composer.phar -d=$self->{'cacheDir'} update", \$stdout, \$stderr
+		"$self->{'phpCmd'} $self->{'cacheDir'}/composer.phar --no-ansi -d=$self->{'cacheDir'} update",
+		\$stdout,
+		\$stderr
 	);
 	debug($stdout) if $stdout;
 	error($stderr) if $stderr && $rs;
@@ -159,7 +167,7 @@ Please wait, depending of your connection, this may take few minutes.
 
 =item _buildComposerFile()
 
- Build composer.json file.
+ Build composer.json file
 
  Return 0 on success, other on failure
 
@@ -183,7 +191,7 @@ sub _buildComposerFile
 
 =item _getComposer()
 
- Get composer.phar.
+ Get composer.phar
 
  Return 0 on success, other on failure
 
@@ -240,7 +248,9 @@ Please wait, depending on your connection, this may take few seconds...
 		);
 
 		$rs = execute(
-			"$self->{'phpCmd'} $self->{'cacheDir'}/composer.phar -d=$self->{'cacheDir'} self-update", \$stdout, \$stderr
+			"$self->{'phpCmd'} $self->{'cacheDir'}/composer.phar --no-ansi -d=$self->{'cacheDir'} self-update",
+			\$stdout,
+			\$stderr
 		);
 		debug($stdout) if $stdout;
 		error($stderr) if $stderr && $rs;
@@ -257,7 +267,7 @@ Please wait, depending on your connection, this may take few seconds...
 
 =item _getComposerFileTpl()
 
- Get composer.json template.
+ Get composer.json template
 
  Return string composer.json template file content
 
@@ -277,7 +287,7 @@ EOF
 
 =item _cleanCacheDir()
 
- Clean i-MSCP packages cache.
+ Clean i-MSCP packages cache
 
  Return 0 on success, other on failure
 
@@ -295,6 +305,43 @@ sub _cleanCacheDir
 		debug($stdout) if $stdout;
 		error($stderr) if $stderr && $rs;
 		error('Unable to clean packages cache directory') if $rs && ! $stderr;
+	}
+
+	$rs;
+}
+
+=item _checkRequirements()
+
+ Check package version requirements
+
+ Return int 0 if all requirements are meet, 1 otherwise
+
+=cut
+
+sub _checkRequirements
+{
+	my $self = $_[0];
+
+	return 1 unless -d $self->{'cacheDir'};
+
+	my $rs = 0;
+
+	for(@{$self->{'toInstall'}}) {
+		my ($package, $version) = $_ =~ /"(.*)":"(.*)"/;
+
+		my @cmd = (
+			$self->{'phpCmd'},
+			"$self->{'cacheDir'}/composer.phar",
+			'--no-ansi',
+			"-d=$self->{'cacheDir'}",
+			'show', '--installed', escapeShell($package), escapeShell($version)
+		);
+
+		my ($stdout, $stderr);
+		$rs = execute("@cmd", \$stdout, \$stderr);
+		debug($stdout) if $stdout;
+		debug(sprintf("Required version (%s) of package %s not found in cache directory.", $package, $version)) if $rs;
+		last if $rs;
 	}
 
 	$rs;
