@@ -103,7 +103,7 @@ sub _init
 	$ENV{'COMPOSER_HOME'} = "$self->{'cacheDir'}/.composer";
 
 	iMSCP::HooksManager->getInstance()->register(
-		'afterSetupPreInstallAddons', sub {
+		'afterSetupPreInstallPackages', sub {
 			iMSCP::Dialog->factory()->endGauge();
 
 			my $rs = iMSCP::Dir->new('dirname' => $self->{'cacheDir'})->make();
@@ -117,7 +117,7 @@ sub _init
 			return $rs if $rs;
 
 			# Skip the packages update if asked by user but only if all requirement for package versions are meets
-			if( ! iMSCP::Getopt->skipAddonsUpdate || $self->_checkRequirements()) {
+			if(! iMSCP::Getopt->skipAddonsUpdate || $self->_checkRequirements()) {
 				$rs = $self->_installPackages() if $self->_checkRequirements();
 			}
 
@@ -314,7 +314,7 @@ sub _cleanCacheDir
 
  Check package version requirements
 
- Return int 0 if all requirements are meet, 1 otherwise
+ Return int 0 if all requirements are meets, 1 otherwise
 
 =cut
 
