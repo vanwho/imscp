@@ -171,14 +171,14 @@ sub restart
 	my $rs = $self->{'hooksManager'}->trigger('beforeMtaRestart');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'MTA_SNAME'}, 'postfix/master');
+	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'MTA_SNAME'}, '-f postfix/master');
 	error("Unable to restart $self->{'config'}->{'MTA_SNAME'} service") if $rs;
 	return $rs if $rs;
 
 	$self->{'hooksManager'}->trigger('afterMtaRestart');
 }
 
-=item postmap($filename, [$filetype = hash])
+=item postmap($filename, [$filetype = 'hash'])
 
  Postmap the file
 

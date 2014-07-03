@@ -1462,11 +1462,11 @@ sub startPhpFpm
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdStartPhpFpm');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->start($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}, 'php-fpm');
+	$rs = iMSCP::Service->getInstance()->start($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'});
 
 	if($rs) {
 		# In case the service do not start, we must ensure that it's not because no conffile exists
-		# By default (on new installs), no pool configuration file is created and so, the service remains stopped)
+		# By default (on new installs), no pool configuration file is created and so, the service cannot start)
 		my @conffiles = iMSCP::Dir->new(
 			'dirname' => $self->{'phpfpmConfig'}->{'PHP_FPM_POOLS_CONF_DIR'}, 'fileType' => '.conf'
 		)->getFiles();
@@ -1495,7 +1495,7 @@ sub stopPhpFpm
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdStopPhpFpm');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->stop($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}, 'php-fpm');
+	$rs = iMSCP::Service->getInstance()->stop($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'});
 	error("Unable to stop $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'} service") if $rs;
 	return $rs if $rs;
 
@@ -1518,11 +1518,11 @@ sub restartPhpFpm
 	return $rs if $rs;
 
 	if($self->{'forceRestart'}) {
-		$rs = iMSCP::Service->getInstance()->restart($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}, 'php-fpm');
+		$rs = iMSCP::Service->getInstance()->restart($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'});
 		error("Unable to restart $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}") if $rs;
 		return $rs if $rs;
 	} else {
-		$rs = iMSCP::Service->getInstance()->reload($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}, 'php-fpm');
+		$rs = iMSCP::Service->getInstance()->reload($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'});
 		error("Unable to reload $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'} service") if $rs;
 		return $rs if $rs;
 	}
@@ -1609,7 +1609,7 @@ sub restartApache
 		error("Unable to restart $self->{'config'}->{'HTTPD_SNAME'}") if $rs;
 		return $rs if $rs;
 	} else {
-		$rs = iMSCP::Service->getInstance()->reload($self->{'config'}->{'PHP_FPM_SNAME'});
+		$rs = iMSCP::Service->getInstance()->reload($self->{'config'}->{'HTTPD_SNAME'});
 		error("Unable to reload $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
 		return $rs if $rs;
 	}

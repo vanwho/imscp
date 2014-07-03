@@ -2523,10 +2523,10 @@ sub setupRestartServices
 	return $rs if $rs;
 
 	my @services = (
-		# ['service name', 'process name', 'ignore error if 0, exit on error']
-		[$main::imscpConfig{'IMSCP_DAEMON_SNAME'}, 'imscp_daemon'],
-		[$main::imscpConfig{'POSTGREY_SNAME'}, 'postgrey'], # FIXME This should be done by a package
-		[$main::imscpConfig{'POLICYD_WEIGHT_SNAME'}, 'policyd-weight'] # FIXME This should be done by the package
+		# ['service name', 'process matching pattern as expected by the pgrep/pkill commands'
+		[ $main::imscpConfig{'IMSCP_DAEMON_SNAME'}, 'imscp_daemon' ],
+		[ $main::imscpConfig{'POSTGREY_SNAME'}, '-u postgrey -f postgrey' ],
+		[ $main::imscpConfig{'POLICYD_WEIGHT_SNAME'}, 'policyd-weight']
 	);
 
 	my $totalItems = @services + 1;
@@ -2567,14 +2567,14 @@ sub setupRestartServices
 	my $serviceMngr = iMSCP::Service->getInstance();
 
 	for (@services) {
-		my ($sName, $pName) = @{$_};
+		my ($sName, $pPattern) = @{$_};
 
 		if($sName ne 'no') {
 			$rs = iMSCP::HooksManager->getInstance()->trigger('beforeSetupRestartService', $sName);
 			return $rs if $rs;
 
 			$rs = step(
-				sub { $serviceMngr->restart($sName, $pName); }, "Restarting $sName service", $totalItems, $counter
+				sub { $serviceMngr->restart($sName, $pPattern); }, "Restarting $sName service", $totalItems, $counter
 			);
 			error("Unable to restart $sName service") if $rs;
 			return $rs if $rs;

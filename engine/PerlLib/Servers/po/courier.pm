@@ -283,19 +283,19 @@ sub start
 	error("Unable to start $self->{'config'}->{'AUTHDAEMON_SNAME'} service") if $rs;
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'POPD_SNAME'}, 'pop3d.pid');
+	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'POPD_SNAME'}, '-f pop3d.pid');
 	error("Unable to start $self->{'config'}->{'POPD_SNAME'} service") if $rs;
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'POPD_SSL_SNAME'}, 'pop3d-ssl.pid');
+	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'POPD_SSL_SNAME'}, '-f pop3d-ssl.pid');
 	error("Unable to start $self->{'config'}->{'POPD_SSL_SNAME'} service") if $rs;
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'IMAPD_SNAME'}, 'imapd.pid');
+	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'IMAPD_SNAME'}, '-f imapd.pid');
 	error("Unable to start $self->{'config'}->{'IMAPD_SNAME'} service") if $rs;
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'IMAPD_SSL_SNAME'}, 'imapd-ssl.pid');
+	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'IMAPD_SSL_SNAME'}, '-f imapd-ssl.pid');
 	error("Unable to start $self->{'config'}->{'IMAPD_SSL_SNAME'} service") if $rs;
 	return $rs if $rs;
 
@@ -321,19 +321,19 @@ sub stop
 	error("Unable to stop $self->{'config'}->{'AUTHDAEMON_SNAME'} service") if $rs;
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'POPD_SNAME'}, 'pop3d.pid');
+	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'POPD_SNAME'}, '-f pop3d.pid');
 	error("Unable to stop $self->{'config'}->{'POPD_SNAME'} service") if $rs;
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'POPD_SSL_SNAME'}, 'pop3d-ssl.pid');
+	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'POPD_SSL_SNAME'}, '-f pop3d-ssl.pid');
 	error("Unable to stop $self->{'config'}->{'POPD_SSL_SNAME'} service") if $rs;
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'IMAPD_SNAME'}, 'imapd.pid');
+	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'IMAPD_SNAME'}, '-f imapd.pid');
 	error("Unable to stop $self->{'config'}->{'IMAPD_SNAME'} service") if $rs;
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'IMAPD_SSL_SNAME'}, 'imapd-ssl.pid');
+	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'IMAPD_SSL_SNAME'}, '-f imapd-ssl.pid');
 	error("Unable to stop $self->{'config'}->{'IMAPD_SSL_SNAME'} service") if $rs;
 	return $rs if $rs;
 
@@ -359,19 +359,19 @@ sub restart
 	error("Unable to restart $self->{'config'}->{'AUTHDAEMON_SNAME'} service") if $rs;
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'POPD_SNAME'}, 'pop3d.pid');
+	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'POPD_SNAME'}, '-f pop3d.pid');
 	error("Unable to restart $self->{'config'}->{'POPD_SNAME'} service") if $rs;
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'POPD_SSL_SNAME'}, 'pop3d-ssl.pid');
+	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'POPD_SSL_SNAME'}, '-f pop3d-ssl.pid');
 	error("Unable to restart $self->{'config'}->{'POPD_SSL_SNAME'} service") if $rs;
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'IMAPD_SNAME'}, 'imapd.pid');
+	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'IMAPD_SNAME'}, '-f imapd.pid');
 	error("Unable to restart $self->{'config'}->{'IMAPD_SNAME'} service") if $rs;
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'IMAPD_SSL_SNAME'}, 'imapd-ssl.pid');
+	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'IMAPD_SSL_SNAME'}, '-f imapd-ssl.pid');
 	error("Unable to restart $self->{'config'}->{'IMAPD_SSL_SNAME'} service") if $rs;
 	return $rs if $rs;
 

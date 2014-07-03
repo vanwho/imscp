@@ -652,7 +652,7 @@ sub installTmp
 
 	# i-MSCP daemon must be stopped before changing any file on the files system
 	if(-x "$main::imscpConfig{'INIT_SCRIPTS_DIR'}/$main::imscpConfig{'IMSCP_DAEMON_SNAME'}") {
-		my $rs = iMSCP::Service->getInstance()->stop($main::imscpConfig{'IMSCP_DAEMON_SNAME'}, 'imscp_daemon');
+		my $rs = iMSCP::Service->getInstance()->stop($main::imscpConfig{'IMSCP_DAEMON_SNAME'});
 		error("Unable to stop $main::imscpConfig{'IMSCP_DAEMON_SNAME'} service") if $rs;
 		return $rs if $rs ;
 	}

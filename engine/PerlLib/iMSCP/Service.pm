@@ -51,7 +51,7 @@ use parent 'Common::SingletonClass';
  Start the given service
 
  Param string $serviceName Service name
- Param string $processPattern Process matching pattern (default to service name)
+ Param string $processPattern Pattern as expected by the pgrep/pkill commands (default to service name)
  Return int 0 on succcess, 1 on failure
 
 =cut
@@ -63,6 +63,15 @@ sub start($$;$)
 	$processPattern ||= $serviceName;
 
 	$self->_runCommand("$self->{'service_provider'} $serviceName start");
+
+	my $loopCount = 0;
+
+	do {
+		return 0 unless $self->status($processPattern);
+		sleep 1;
+		$loopCount++;
+	} while ($loopCount < 5);
+
 	$self->status($processPattern);
 }
 
@@ -71,7 +80,7 @@ sub start($$;$)
  Stop the given service
 
  Param string $serviceName Service name
- Param string $processPattern Process matching pattern (default to service name)
+ Param string $processPattern Pattern as expected by the pgrep/pkill commands (default to service name)
  Return int 0 on succcess, 1 on failure
 
 =cut
@@ -84,16 +93,25 @@ sub stop($$;$)
 
 	$self->_runCommand("$self->{'service_provider'} $serviceName stop");
 
-	my $loopCount = 1;
+	my $loopCount = 0;
 
 	do {
 		return 0 if $self->status($processPattern);
-		sleep(1);
+		sleep 1;
 		$loopCount++;
-	} while($loopCount < 5);
+	} while ($loopCount < 5);
 
-	# Try with pkill in last resort
-	$self->_runCommand("$main::imscpConfig{'CMD_PKILL'} -KILL -f $processPattern");
+	# Try by sending TERM signal (soft way)
+	$self->_runCommand("$main::imscpConfig{'CMD_PKILL'} -TERM $processPattern");
+
+	sleep 3;
+
+	return 0 if $self->status($processPattern);
+
+	# Try by sending KILL signal (hard way)
+	$self->_runCommand("$main::imscpConfig{'CMD_PKILL'} -KILL $processPattern");
+
+	sleep 2;
 
 	! $self->status($processPattern);
 }
@@ -103,7 +121,7 @@ sub stop($$;$)
  Restart the given service
 
  Param string $serviceName Service name
- Param string $processPattern Process matching pattern (default to service name)
+ Param string $processPattern Pattern as expected by the pgrep/pkill commands (default to service name)
  Return int 0 on succcess, 1 on failure
 
 =cut
@@ -115,6 +133,15 @@ sub restart($$;$)
 	$processPattern ||= $serviceName;
 
 	$self->_runCommand("$self->{'service_provider'} $serviceName restart");
+
+	my $loopCount = 0;
+
+	do {
+		return 0 unless $self->status($processPattern);
+		sleep 1;
+		$loopCount++;
+	} while ($loopCount < 5);
+
 	$self->status($processPattern);
 }
 
@@ -123,7 +150,7 @@ sub restart($$;$)
  Reload the given service
 
  Param string $serviceName Service name
- Param string $processPattern Process matching pattern (default to service name)
+ Param string $processPattern Pattern as expected by the pgrep/pkill commands (default to service name)
  Return int 0 on succcess, 1 on failure
 
 =cut
@@ -140,6 +167,14 @@ sub reload($$;$)
 		$self->_runCommand("$self->{'service_provider'} $serviceName reload");
 	}
 
+	my $loopCount = 0;
+
+	do {
+		return 0 unless $self->status($processPattern);
+		sleep 1;
+		$loopCount++;
+	} while ($loopCount < 10);
+
 	$self->status($processPattern);
 }
 
@@ -147,7 +182,7 @@ sub reload($$;$)
 
  Get status of the given service
 
- Param string $processPattern Process matching pattern (default to service name)
+ Param string $processPattern Pattern as expected by the pgrep/pkill commands (default to service name)
  Return int 0 if the service is running, 1 if the service is not running
 
 =cut
@@ -156,7 +191,7 @@ sub status($$)
 {
 	my ($self, $processPattern) = @_;
 
-	$self->_runCommand("$self->{'service_status_provider'} -o -f $processPattern");
+	$self->_runCommand("$self->{'service_status_provider'} $processPattern");
 }
 
 =back
@@ -197,7 +232,6 @@ sub _runCommand($$)
 
 	my ($stdout, $stderr);
 	my $rs = execute($command, \$stdout, \$stderr);
-	debug($stdout) if $stdout;
 	debug($stderr) if $stderr;
 	return 1 if $rs;
 

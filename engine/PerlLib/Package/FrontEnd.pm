@@ -257,9 +257,7 @@ sub start
 
 	my $panelUName = $main::imscpConfig{'SYSTEM_USER_PREFIX'}.$main::imscpConfig{'SYSTEM_USER_MIN_UID'};
 
-	$rs = iMSCP::Service->getInstance()->start(
-		$main::imscpConfig{'IMSCP_PANEL_SNAME'}, "$self->{'config'}->{'PHP_CGI_BIN'} -u $panelUName"
-	);
+	$rs = iMSCP::Service->getInstance()->start($main::imscpConfig{'IMSCP_PANEL_SNAME'}, "-u $panelUName php5-cgi");
 	error("Unable to start imscp_panel (FCGI manager) service") if $rs;
 	return $rs if $rs;
 
@@ -287,9 +285,7 @@ sub stop
 
 	my $panelUName = $main::imscpConfig{'SYSTEM_USER_PREFIX'}.$main::imscpConfig{'SYSTEM_USER_MIN_UID'};
 
-	$rs = iMSCP::Service->getInstance()->stop(
-		$main::imscpConfig{'IMSCP_PANEL_SNAME'}, "$self->{'config'}->{'PHP_CGI_BIN'} -u $panelUName"
-	);
+	$rs = iMSCP::Service->getInstance()->stop($main::imscpConfig{'IMSCP_PANEL_SNAME'}, "-u $panelUName php5-cgi");
 	error("Unable to stop imscp_panel (FCGI manager) service") if $rs;
 	return $rs if $rs;
 
@@ -317,9 +313,7 @@ sub restart
 
 	my $panelUName = $main::imscpConfig{'SYSTEM_USER_PREFIX'}.$main::imscpConfig{'SYSTEM_USER_MIN_UID'};
 
-	$rs = iMSCP::Service->getInstance()->restart(
-		$main::imscpConfig{'IMSCP_PANEL_SNAME'}, "$self->{'config'}->{'PHP_CGI_BIN'} -u $panelUName"
-	);
+	$rs = iMSCP::Service->getInstance()->restart($main::imscpConfig{'IMSCP_PANEL_SNAME'}, "-u $panelUName php5-cgi");
 	error("Unable to restart imscp_panel (FCGI manager) service") if $rs;
 	return $rs if $rs;
 

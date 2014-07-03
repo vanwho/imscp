@@ -627,7 +627,7 @@ sub restart
 	my $rs = $self->{'hooksManager'}->trigger('beforeNamedRestart');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'NAMED_SNAME'}, 'bind');
+	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'NAMED_SNAME'}, 'named');
 	error("Unable to restart $self->{'config'}->{'NAMED_SNAME'} service") if $rs;
 	return $rs if $rs;
 
