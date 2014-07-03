@@ -100,7 +100,7 @@ case "$1" in
     reload|force-reload)
         log_warning_msg "Reloading not supported"
         ;;
-        restart)
+    restart)
         log_daemon_msg "Restarting $DESC" "$NAME"
         do_stop
         case "$?" in

@@ -180,7 +180,7 @@ sub uninstallPackages
 		}
 
 		my $rs = execute(
-			"$command -y remove @{$self->{'packagesToUninstall'}} --auto-remove --purge --no-install-recommends",
+			"$command -y remove @{$self->{'packagesToUninstall'}} --auto-remove --purge",
 			($preseed || $main::noprompt) ? \$stdout : undef, \$stderr
 		);
 		debug($stdout) if $stdout;
@@ -221,9 +221,10 @@ sub installPackages
 		unshift @command, ('UCF_FORCE_CONFFMISS=1 '); # Force installation of missing conffile which are managed by UCF
 
 		push @command, "apt-get -y -o DPkg::Options::='--force-confnew' -o Dpkg::Options::='--force-confask' " .
-			"--reinstall install @{$self->{'packagesToInstall'}} --auto-remove --purge";
+			"--reinstall install @{$self->{'packagesToInstall'}} --auto-remove --purge --no-install-recommends";
 	} else {
-		push @command, "apt-get -y install @{$self->{'packagesToInstall'}} --auto-remove --purge";
+		push @command, "apt-get -y -o DPkg::Options::='--force-confnew' DPkg::Options::='--force-confmiss' " .
+			"install @{$self->{'packagesToInstall'}} --no-install-recommends --auto-remove --purge";
 	}
 
 	my ($stdout, $stderr);

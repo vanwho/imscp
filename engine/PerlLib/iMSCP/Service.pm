@@ -59,6 +59,7 @@ use parent 'Common::SingletonClass';
 sub start($$;$)
 {
 	my ($self, $serviceName, $processPattern) = @_;
+
 	$processPattern ||= $serviceName;
 
 	$self->_runCommand("$self->{'service_provider'} $serviceName start");
@@ -78,6 +79,7 @@ sub start($$;$)
 sub stop($$;$)
 {
 	my ($self, $serviceName, $processPattern) = @_;
+
 	$processPattern ||= $serviceName;
 
 	$self->_runCommand("$self->{'service_provider'} $serviceName stop");
@@ -90,7 +92,10 @@ sub stop($$;$)
 		$loopCount++;
 	} while($loopCount < 5);
 
-	1;
+	# Try with pkill in last resort
+	$self->_runCommand("$main::imscpConfig{'CMD_PKILL'} -KILL -f $processPattern");
+
+	! $self->status($processPattern);
 }
 
 =item restart($serviceName, [$processPattern = $serviceName])
@@ -106,6 +111,7 @@ sub stop($$;$)
 sub restart($$;$)
 {
 	my ($self, $serviceName, $processPattern) = @_;
+
 	$processPattern ||= $serviceName;
 
 	$self->_runCommand("$self->{'service_provider'} $serviceName restart");
@@ -125,6 +131,7 @@ sub restart($$;$)
 sub reload($$;$)
 {
 	my ($self, $serviceName, $processPattern) = @_;
+
 	$processPattern ||= $serviceName;
 
 	if($self->status($processPattern)) { # In case the service is not running, we start it

@@ -107,8 +107,7 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndPostInstall');
 	return $rs if $rs;
 
-	$rs = $self->start();
-	return $rs if $rs;
+	$self->{'start'} = 1;
 
 	$self->{'hooksManager'}->trigger('afterFrontEndPostInstall');
 }
@@ -256,8 +255,10 @@ sub start
 	error("Unable to start $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
 	return $rs if $rs;
 
+	my $panelUName = $main::imscpConfig{'SYSTEM_USER_PREFIX'}.$main::imscpConfig{'SYSTEM_USER_MIN_UID'};
+
 	$rs = iMSCP::Service->getInstance()->start(
-		$main::imscpConfig{'IMSCP_PANEL_SNAME'}, $self->{'config'}->{'PHP_CGI_BIN'}
+		$main::imscpConfig{'IMSCP_PANEL_SNAME'}, "$self->{'config'}->{'PHP_CGI_BIN'} -u $panelUName"
 	);
 	error("Unable to start imscp_panel (FCGI manager) service") if $rs;
 	return $rs if $rs;
@@ -280,12 +281,14 @@ sub stop
 	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndStop');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->start("$self->{'config'}->{'HTTPD_SNAME'}");
+	$rs = iMSCP::Service->getInstance()->stop("$self->{'config'}->{'HTTPD_SNAME'}");
 	error("Unable to stop $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
 	return $rs if $rs;
 
+	my $panelUName = $main::imscpConfig{'SYSTEM_USER_PREFIX'}.$main::imscpConfig{'SYSTEM_USER_MIN_UID'};
+
 	$rs = iMSCP::Service->getInstance()->stop(
-		$main::imscpConfig{'IMSCP_PANEL_SNAME'}, $self->{'config'}->{'PHP_CGI_BIN'}
+		$main::imscpConfig{'IMSCP_PANEL_SNAME'}, "$self->{'config'}->{'PHP_CGI_BIN'} -u $panelUName"
 	);
 	error("Unable to stop imscp_panel (FCGI manager) service") if $rs;
 	return $rs if $rs;
@@ -312,8 +315,10 @@ sub restart
 	error("Unable to restart $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
 	return $rs if $rs;
 
+	my $panelUName = $main::imscpConfig{'SYSTEM_USER_PREFIX'}.$main::imscpConfig{'SYSTEM_USER_MIN_UID'};
+
 	$rs = iMSCP::Service->getInstance()->restart(
-		$main::imscpConfig{'IMSCP_PANEL_SNAME'}, $self->{'config'}->{'PHP_CGI_BIN'}
+		$main::imscpConfig{'IMSCP_PANEL_SNAME'}, "$self->{'config'}->{'PHP_CGI_BIN'} -u $panelUName"
 	);
 	error("Unable to restart imscp_panel (FCGI manager) service") if $rs;
 	return $rs if $rs;
