@@ -223,7 +223,7 @@ sub installPackages
 		push @command, "apt-get -y -o DPkg::Options::='--force-confnew' -o Dpkg::Options::='--force-confask' " .
 			"--reinstall install @{$self->{'packagesToInstall'}} --auto-remove --purge --no-install-recommends";
 	} else {
-		push @command, "apt-get -y -o DPkg::Options::='--force-confnew' DPkg::Options::='--force-confmiss' " .
+		push @command, "apt-get -y -o DPkg::Options::='--force-confnew' -o DPkg::Options::='--force-confmiss' " .
 			"install @{$self->{'packagesToInstall'}} --no-install-recommends --auto-remove --purge";
 	}
 
