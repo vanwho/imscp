@@ -138,13 +138,7 @@ sub postinstall
 	return $rs if $rs;
 
 	$self->{'hooksManager'}->register(
-		'beforeSetupRestartServices', sub {
-		 	my $services = $_[0];
-
-		 	push @{$services}, [ sub { $self->restart(); }, 'SMTP' ];
-
-		 	0;
-		}
+		'beforeSetupRestartServices', sub { push @{$_[0]}, [ sub { $self->restart(); }, 'SMTP' ]; 0; }
 	);
 
 	$self->{'hooksManager'}->trigger('afterMtaPostinstall', 'postfix');

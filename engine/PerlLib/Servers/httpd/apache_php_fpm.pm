@@ -132,23 +132,11 @@ sub postinstall
 	return $rs if $rs;
 
 	$self->{'hooksManager'}->register(
-		'beforeSetupRestartServices', sub {
-		 	my $services = $_[0];
-
-		 	push @{$services}, [ sub { $self->startPhpFpm(); }, 'PHP5-FPM' ];
-
-		 	0;
-		}
+		'beforeSetupRestartServices', sub { push @{$_[0]}, [ sub { $self->startPhpFpm(); }, 'PHP5-FPM' ]; 0; }
 	);
 
 	$self->{'hooksManager'}->register(
-		'beforeSetupRestartServices', sub {
-		 	my $services = $_[0];
-
-		 	push @{$services}, [ sub { $self->startApache(); }, 'HTTPD' ];
-
-		 	0;
-		}
+		'beforeSetupRestartServices', sub { push @{$_[0]}, [ sub { $self->startApache(); }, 'HTTPD' ]; 0; }
 	);
 
 	$self->{'hooksManager'}->trigger('afterHttpdPostInstall', 'apache_php_fpm');

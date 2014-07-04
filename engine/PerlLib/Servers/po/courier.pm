@@ -122,13 +122,7 @@ sub postinstall
 	return $rs if $rs;
 
 	$self->{'hooksManager'}->register(
-		'beforeSetupRestartServices', sub {
-		 	my $services = $_[0];
-
-		 	push @{$services}, [ sub { $self->start(); }, 'IMAP/POP3' ];
-
-		 	0;
-		}
+		'beforeSetupRestartServices', sub { push @{$_[0]}, [ sub { $self->start(); }, 'IMAP/POP3' ]; 0; }
 	);
 
 	$self->{'hooksManager'}->trigger('afterPoPostinstall', 'courier');

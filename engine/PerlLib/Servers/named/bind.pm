@@ -102,13 +102,7 @@ sub postinstall
 	return $rs if $rs;
 
 	$self->{'hooksManager'}->register(
-		'beforeSetupRestartServices', sub {
-		 	my $services = $_[0];
-
-		 	push @{$services}, [ sub { $self->restart(); }, 'DNS' ];
-
-		 	0;
-		}
+		'beforeSetupRestartServices', sub { push @{$_[0]}, [ sub { $self->restart(); }, 'DNS' ]; 0; }
 	) if $main::imscpConfig{'NAMED_SERVER'} ne 'external_server';
 
 	$self->{'hooksManager'}->trigger('afterNamedPostInstall');
