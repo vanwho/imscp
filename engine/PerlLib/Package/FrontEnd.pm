@@ -107,7 +107,15 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeFrontEndPostInstall');
 	return $rs if $rs;
 
-	$self->{'start'} = 1;
+	$self->{'hooksManager'}->register(
+		'beforeSetupRestartServices', sub {
+		 	my $services = $_[0];
+
+		 	push @{$services}, [ sub { $self->start(); }, 'frontEnd' ];
+
+		 	0;
+		}
+	);
 
 	$self->{'hooksManager'}->trigger('afterFrontEndPostInstall');
 }
@@ -459,17 +467,19 @@ sub _buildConf($$$$)
 
 END
 {
-	my $exitCode = $?;
-	my $self = Package::FrontEnd->getInstance();
-	my $rs = 0;
+	unless($main::execmode && $main::execmode eq 'setup') {
+		my $exitCode = $?;
+		my $self = Package::FrontEnd->getInstance();
+		my $rs = 0;
 
-	if($self->{'start'}) {
-		$rs = $self->start();
-	} elsif($self->{'restart'}) {
-		$rs = $self->restart();
+		if($self->{'start'}) {
+			$rs = $self->start();
+		} elsif($self->{'restart'}) {
+			$rs = $self->restart();
+		}
+
+		$? = $exitCode || $rs;
 	}
-
-	$? = $exitCode || $rs;
 }
 
 =back

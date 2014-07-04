@@ -137,7 +137,15 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeMtaPostinstall', 'postfix');
 	return $rs if $rs;
 
-	$self->{'restart'} = 1;
+	$self->{'hooksManager'}->register(
+		'beforeSetupRestartServices', sub {
+		 	my $services = $_[0];
+
+		 	push @{$services}, [ sub { $self->restart(); }, 'SMTP' ];
+
+		 	0;
+		}
+	);
 
 	$self->{'hooksManager'}->trigger('afterMtaPostinstall', 'postfix');
 }
@@ -1407,8 +1415,10 @@ END
 		$rs |= $self->postmap($_);
 	}
 
-	if($self->{'restart'}) {
-		$rs |= $self->restart();
+	unless($main::execmode && $main::execmode eq 'setup') {
+		if($self->{'restart'}) {
+			$rs |= $self->restart();
+		}
 	}
 
 	$? = $exitCode || $rs;

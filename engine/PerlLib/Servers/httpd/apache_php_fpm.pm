@@ -131,7 +131,25 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeHttpdPostInstall', 'apache_php_fpm');
 	return $rs if $rs;
 
-	$self->{'start'} = 1;
+	$self->{'hooksManager'}->register(
+		'beforeSetupRestartServices', sub {
+		 	my $services = $_[0];
+
+		 	push @{$services}, [ sub { $self->startPhpFpm(); }, 'PHP5-FPM' ];
+
+		 	0;
+		}
+	);
+
+	$self->{'hooksManager'}->register(
+		'beforeSetupRestartServices', sub {
+		 	my $services = $_[0];
+
+		 	push @{$services}, [ sub { $self->startApache(); }, 'HTTPD' ];
+
+		 	0;
+		}
+	);
 
 	$self->{'hooksManager'}->trigger('afterHttpdPostInstall', 'apache_php_fpm');
 }
@@ -2152,19 +2170,21 @@ sub _cleanTemplate($$$)
 
 END
 {
-	my $exitCode = $?;
-	my $self = Servers::httpd::apache_php_fpm->getInstance();
-	my $rs = 0;
+	unless($main::execmode && $main::execmode eq 'setup') {
+		my $exitCode = $?;
+		my $self = Servers::httpd::apache_php_fpm->getInstance();
+		my $rs = 0;
 
-	if($self->{'start'}) {
-		$rs = $self->startPhpFpm();
-		$rs |= $self->startApache();
-	} elsif($self->{'restart'}) {
-		$rs = $self->restartPhpFpm();
-		$rs |= $self->restartApache();
+		if($self->{'start'}) {
+			$rs = $self->startPhpFpm();
+			$rs |= $self->startApache();
+		} elsif($self->{'restart'}) {
+			$rs = $self->restartPhpFpm();
+			$rs |= $self->restartApache();
+		}
+
+		$? = $exitCode || $rs;
 	}
-
-	$? = $exitCode || $rs;
 }
 
 =back

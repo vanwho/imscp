@@ -101,7 +101,15 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeNamedPostInstall');
 	return $rs if $rs;
 
-	$self->{'restart'} = 1;
+	$self->{'hooksManager'}->register(
+		'beforeSetupRestartServices', sub {
+		 	my $services = $_[0];
+
+		 	push @{$services}, [ sub { $self->restart(); }, 'DNS' ];
+
+		 	0;
+		}
+	) if $main::imscpConfig{'NAMED_SERVER'} ne 'external_server';
 
 	$self->{'hooksManager'}->trigger('afterNamedPostInstall');
 }
@@ -1144,15 +1152,17 @@ sub _generateSoalSerialNumber($$;$)
 
 END
 {
-	my $exitCode = $?;
-	my $self = Servers::named::bind->getInstance();
-	my $rs = 0;
+	unless($main::execmode && $main::execmode eq 'setup' || $main::imscpConfig{'NAMED_SERVER'} eq 'external_server') {
+		my $exitCode = $?;
+		my $self = Servers::named::bind->getInstance();
+		my $rs = 0;
 
-	if($self->{'restart'} && $main::imscpConfig{'NAMED_SERVER'} ne 'external_server') {
-		$rs = $self->restart();
+		if($self->{'restart'} && $main::imscpConfig{'NAMED_SERVER'} ne 'external_server') {
+			$rs = $self->restart();
+		}
+
+		$? = $exitCode || $rs;
 	}
-
-	$? = $exitCode || $rs;
 }
 
 =back

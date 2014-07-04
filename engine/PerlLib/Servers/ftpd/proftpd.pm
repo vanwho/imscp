@@ -119,7 +119,15 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeFtpdPostInstall', 'proftpd');
 	return $rs if $rs;
 
-	$self->{'start'} = 1;
+	$self->{'hooksManager'}->register(
+		'beforeSetupRestartServices', sub {
+		 	my $services = $_[0];
+
+		 	push @{$services}, [ sub { $self->start(); }, 'FTP' ];
+
+		 	0;
+		}
+	);
 
 	$self->{'hooksManager'}->trigger('afterFtpdPostInstall', 'proftpd');
 }
@@ -369,17 +377,19 @@ sub _init
 
 END
 {
-	my $exitCode = $?;
-	my $self = Servers::ftpd::proftpd->getInstance();
-	my $rs = 0;
+	unless($main::execmode && $main::execmode eq 'setup') {
+		my $exitCode = $?;
+		my $self = Servers::ftpd::proftpd->getInstance();
+		my $rs = 0;
 
-	if($self->{'start'}) {
-		$rs = $self->start();
-	} elsif($self->{'restart'}) {
-		$rs = $self->restart();
+		if($self->{'start'}) {
+			$rs = $self->start();
+		} elsif($self->{'restart'}) {
+			$rs = $self->restart();
+		}
+
+		$? = $exitCode || $rs;
 	}
-
-	$? = $exitCode || $rs;
 }
 
 =back

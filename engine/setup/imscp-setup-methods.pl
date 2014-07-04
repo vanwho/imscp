@@ -2519,25 +2519,29 @@ sub setupPostInstallPackages
 # Restart all services needed by i-MSCP
 sub setupRestartServices
 {
-	my $rs = iMSCP::HooksManager->getInstance()->trigger('beforeSetupRestartServices');
+	my @services = ();
+
+	my $rs = iMSCP::HooksManager->getInstance()->trigger('beforeSetupRestartServices', \@services);
 	return $rs if $rs;
 
-	my @services = (
-		# ['service name', 'process matching pattern as expected by the pgrep/pkill commands'
-		[ $main::imscpConfig{'IMSCP_DAEMON_SNAME'}, 'imscp_daemon' ],
-		[ $main::imscpConfig{'POSTGREY_SNAME'}, '-u postgrey -f postgrey' ],
-		[ $main::imscpConfig{'POLICYD_WEIGHT_SNAME'}, 'policyd-weight']
-	);
+	my $serviceMngr = iMSCP::Service->getInstance();
+
+	unshift @services, [
+		sub { $serviceMngr->restart($main::imscpConfig{'POSTGREY_SNAME'}, '-u postgrey -f postgrey'); }, 'POSTGREY'
+	];
+
+	unshift @services, [
+		sub { $serviceMngr->restart($main::imscpConfig{'POLICYD_WEIGHT_SNAME'}, 'policyd-weight'); }, 'POLICYD WEIGHT'
+	];
+
+	unshift @services, [
+	 	sub { $serviceMngr->restart($main::imscpConfig{'IMSCP_DAEMON_SNAME'}, 'imscp_daemon'); }, 'i-MSCP DAEMON'
+	];
 
 	my $totalItems = @services + 1;
 	my $counter = 1;
 
 	startDetail();
-
-	$rs = iMSCP::HooksManager->getInstance()->trigger(
-		'beforeSetupRestartService', $main::imscpConfig{'IMSCP_NETWORK_SNAME'}
-	);
-	return $rs if $rs;
 
 	$rs = step(
 		sub {
@@ -2552,36 +2556,19 @@ sub setupRestartServices
 
 			$rs;
 		},
-		"Restarting $main::imscpConfig{'IMSCP_NETWORK_SNAME'} service", $totalItems, $counter
+		"Restarting i-MSCP NETWORK service...", $totalItems, $counter
 	);
 	error("Unable to restart $main::imscpConfig{'IMSCP_NETWORK_SNAME'} service") if $rs;
 	return $rs if $rs;
 
 	$counter++;
 
-	$rs = iMSCP::HooksManager->getInstance()->trigger(
-		'afterSetupRestartService', $main::imscpConfig{'IMSCP_NETWORK_SNAME'}
-	);
-	return $rs if $rs;
-
-	my $serviceMngr = iMSCP::Service->getInstance();
-
 	for (@services) {
-		my ($sName, $pPattern) = @{$_};
+		my ($sub, $sName) = @{$_};
 
-		if($sName ne 'no') {
-			$rs = iMSCP::HooksManager->getInstance()->trigger('beforeSetupRestartService', $sName);
-			return $rs if $rs;
-
-			$rs = step(
-				sub { $serviceMngr->restart($sName, $pPattern); }, "Restarting $sName service", $totalItems, $counter
-			);
-			error("Unable to restart $sName service") if $rs;
-			return $rs if $rs;
-
-			$rs = iMSCP::HooksManager->getInstance()->trigger('afterSetupRestartService', $sName);
-			return $rs if $rs;
-		}
+		$rs = step($sub, "Restarting $sName service...", $totalItems, $counter);
+		error("Unable to restart $sName service") if $rs;
+		return $rs if $rs;
 
 		$counter++;
 	}

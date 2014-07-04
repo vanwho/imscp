@@ -78,7 +78,15 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforeSqldPostInstall', 'mysql');
 	return $rs if $rs;
 
-	$self->{'restart'} = 1;
+	$self->{'hooksManager'}->register(
+		'beforeSetupRestartServices', sub {
+		 	my $services = $_[0];
+
+		 	push @{$services}, [ sub { $self->restart(); }, 'SQL' ];
+
+		 	0;
+		}
+	) if $main::imscpConfig{'SQL_SERVER'} ne 'remote_server';
 
 	$self->{'hooksManager'}->trigger('afterSqldPostInstall', 'mysql');
 }
@@ -191,15 +199,17 @@ sub _init
 
 END
 {
-	my $exitCode = $?;
-	my $self = Servers::sqld::mysql->getInstance();
-	my $rs = 0;
+	unless($main::execmode && $main::execmode eq 'setup' || $main::imscpConfig{'SQL_SERVER'} eq 'remote_server') {
+		my $exitCode = $?;
+		my $self = Servers::sqld::mysql->getInstance();
+		my $rs = 0;
 
-	if($self->{'restart'} && $main::imscpConfig{'SQL_SERVER'} ne 'remote_server') {
-		$rs |= $self->restart();
+		if($self->{'restart'}) {
+			$rs |= $self->restart();
+		}
+
+		$? = $exitCode || $rs;
 	}
-
-	$? = $exitCode || $rs;
 }
 
 =back

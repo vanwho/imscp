@@ -99,7 +99,15 @@ sub postinstall
 	my $rs = $self->{'hooksManager'}->trigger('beforePoPostinstall', 'dovecot');
 	return $rs if $rs;
 
-	$self->{'restart'} = 1;
+	$self->{'hooksManager'}->register(
+		'beforeSetupRestartServices', sub {
+		 	my $services = $_[0];
+
+		 	push @{$services}, [ sub { $self->restart(); }, 'IMAP/POP3' ];
+
+		 	0;
+		}
+	);
 
 	$self->{'hooksManager'}->trigger('afterPoPostinstall', 'dovecot');
 }
@@ -385,13 +393,15 @@ sub _init
 
 END
 {
-	my $exitCode = $?;
-	my $self = Servers::po::dovecot->getInstance();
-	my $rs = 0;
+	unless($main::execmode && $main::execmode eq 'setup') {
+		my $exitCode = $?;
+		my $self = Servers::po::dovecot->getInstance();
+		my $rs = 0;
 
-	$rs = $self->restart() if $self->{'restart'};
+		$rs = $self->restart() if $self->{'restart'};
 
-	$? = $exitCode || $rs;
+		$? = $exitCode || $rs;
+	}
 }
 
 =back

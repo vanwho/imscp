@@ -52,6 +52,8 @@ newDebug('imscp-build.log');
 # Entering in silent mode
 silent(1);
 
+$main::execmode = 'setup' unless $main::execmode;
+
 # Load config
 loadConfig() and fatal('Unable to load main configuration file');
 
@@ -84,7 +86,7 @@ verbose(iMSCP::Getopt->debug || $main::imscpConfig{'DEBUG'} || 0);
 $main::reconfigure = iMSCP::Getopt->reconfigure;
 
 # Global variable that holds questions
-%main::questions = () if ! %main::questions;
+%main::questions = () unless %main::questions;
 
 # Handle the preseed option
 my $preseedFile = iMSCP::Getopt->preseed;
