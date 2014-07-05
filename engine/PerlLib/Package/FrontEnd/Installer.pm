@@ -545,13 +545,32 @@ sub _buildHttpdConfig
 		return $rs if $rs;
 	}
 
+	my $nbCPUcores = $self->{'config'}->{'HTTPD_WORKER_PROCESSES'};
+
+	if($nbCPUcores eq 'auto') {
+		my ($stdout, $stderr);
+		$rs = execute(
+			"$main::imscpConfig{'CMD_GREP'} processor /proc/cpuinfo | $main::imscpConfig{'CMD_WC'} -l", \$stdout
+		);
+		debug($stdout) if $stdout;
+		debug('Unable to detect number of CPU cores. nginx worker_processes value set to 2') if $rs;
+
+		unless($rs) {
+			chomp($stdout);
+			$nbCPUcores = $stdout;
+		} else {
+			$nbCPUcores = 2;
+		}
+	}
+
 	# Build file
 	$rs = $self->{'frontend'}->buildConfFile(
 		"$self->{'cfgDir'}/nginx.conf",
 		{
 			HTTPD_USER => $self->{'config'}->{'HTTPD_USER'},
-			HTTPD_WORKER_PROCESSES => $self->{'config'}->{'HTTPD_WORKER_PROCESSES'},
+			HTTPD_WORKER_PROCESSES => $nbCPUcores,
 			HTTPD_WORKER_CONNECTIONS => $self->{'config'}->{'HTTPD_WORKER_CONNECTIONS'},
+			HTTPD_RLIMIT_NOFILE => $self->{'config'}->{'HTTPD_RLIMIT_NOFILE'},
 			HTTPD_LOG_DIR => $self->{'config'}->{'HTTPD_LOG_DIR'},
 			HTTPD_PID_FILE => $self->{'config'}->{'HTTPD_PID_FILE'},
 			HTTPD_CONF_DIR => $self->{'config'}->{'HTTPD_CONF_DIR'},
