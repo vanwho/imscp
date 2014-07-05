@@ -21,25 +21,17 @@
  * @subpackage  Client
  * @copyright   2010-2014 by i-MSCP team
  * @author      Laurent Declercq <l.declercq@nuxwin.com>
- * @author      iMSCP Team
  * @link        http://www.i-mscp.net i-MSCP Home Site
  * @license     http://www.gnu.org/licenses/gpl-2.0.txt GPL v2
  */
 
 /***********************************************************************************************************************
- * Script short description:
- *
- * This script allows PhpMyAdmin authentication from i-MSCP
- */
-
-/*******************************************************************************
- * Script functions
+ * Functions
  */
 
 /**
- * Get PhpMyadmin login credentials.
+ * Get PhpMyadmin login credentials
  *
- * @author Laurent Declercq <l.declercq@nuxwin.com>
  * @access private
  * @param  int $dbUserId Database user unique identifier
  * @return mixed Array that contains login credentials, FALSE otherwise
@@ -68,27 +60,25 @@ function _client_pmaGetLoginCredentials($dbUserId)
 }
 
 /**
- * Creates all cookies for PhpMyAdmin.
+ * Creates all cookies for PhpMyAdmin
  *
- * @author Laurent Declercq <l.declercq@nuxwin.com>
  * @access private
- * @param  array $cookies Array that contains cookies definitions for PhpMyadmin
+ * @param  array|string $cookies Array or string which contains cookies definitions for PhpMyadmin
  * @return void
  */
 function _client_pmaCreateCookies($cookies)
 {
-	foreach ($cookies as $cookie) {
+	foreach ((array)$cookies as $cookie) {
 		header("Set-Cookie: $cookie", false);
 	}
 }
 
 /**
- * Set PhpMyAdmin language according language set in panel.
+ * Set PhpMyAdmin language according language set in panel
  *
  * Note: If panel language doesn't match any language available for PMA, language
  * is set to English (en).
  *
- * @author Laurent Declercq <l.declercq@nuxwin.com>
  * @access private
  * @param string $location PMA URI location
  * @return string PMA URI location
@@ -104,9 +94,8 @@ function _client_pmaSetLanguage($location)
 }
 
 /**
- * PhpMyAdmin authentication.
+ * PhpMyAdmin authentication
  *
- * @author Laurent Declercq <l.declercq@nuxwin.com>
  * @param  int $dbUserId Database user unique identifier
  * @return bool FALSE on faillure
  */
@@ -118,9 +107,11 @@ function client_pmaAuth($dbUserId)
 		$postData = http_build_query(
 			array(
 				'pma_username' => $credentials[0],
-				'pma_password' => stripcslashes($credentials[1])));
+				'pma_password' => stripcslashes($credentials[1])
+			)
+		);
 	} else {
-		set_page_message(tr('Wrong SQL user identifier.'), 'error');
+		set_page_message(tr('Unknown SQL user'), 'error');
 		return false;
 	}
 
@@ -169,11 +160,12 @@ function client_pmaAuth($dbUserId)
 	}
 
 	set_page_message(tr('An error occurred during authentication.'), 'error');
+
 	return false;
 }
 
 /***********************************************************************************************************************
- * Main program
+ * Main
  */
 
 // Include core library
@@ -181,14 +173,10 @@ require_once 'imscp-lib.php';
 
 iMSCP_Events_Aggregator::getInstance()->dispatch(iMSCP_Events::onClientScriptStart);
 
-// Check for login
 check_login('user');
 
-/**
- *  Dispatches the request
- */
 if (!customerHasFeature('sql') || !isset($_GET['id'])) {
 	showBadRequestErrorPage();
-} elseif(!client_pmaAuth((int)$_GET['id'])) {
+} elseif (!client_pmaAuth((int)$_GET['id'])) {
 	redirectTo('sql_manage.php');
 }

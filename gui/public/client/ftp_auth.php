@@ -20,27 +20,18 @@
  * @package     iMSCP_Core
  * @subpackage  Client_Ftp
  * @copyright   2010-2014 by i-MSCP team
- * @author      iMSCP Team
  * @author      Laurent Declercq <l.declercq@nuxwin.com>
  * @link        http://www.i-mscp.net i-MSCP Home Site
  * @license     http://www.gnu.org/licenses/gpl-2.0.txt GPL v2
  */
 
 /***********************************************************************************************************************
- * Script short description:
- *
- * This script allows AjaxPlorer authentication from i-MSCP (onClick login)
- *
- */
-
-/***********************************************************************************************************************
- *  Script functions
+ *  Functions
  */
 
 /**
  * Get ftp login credentials
  *
- * @author Laurent Declercq <l.declercq@nuxwin.com>
  * @access private
  * @param  int $userId FTP User
  * @return array Array that contains login credentials or FALSE on failure
@@ -61,24 +52,19 @@ function _getLoginCredentials($userId)
 	";
 	$stmt = exec_query($query, array($userId, $_SESSION['user_id']));
 
-	if ($stmt->rowCount()) {
-		return $stmt->fetchRow(PDO::FETCH_NUM);
-	} else {
-		return false;
-	}
+	return $stmt->fetchRow(PDO::FETCH_NUM);
 }
 
 /**
  * Creates all cookies for Pydio (AjaXplorer)
  *
- * @author Laurent Declercq <l.declercq@nuxwin.com>
  * @access private
- * @param  array $cookies Array that contains cookies definitions for ajaxplorer
+ * @param  array|string $cookies Array or string which contains cookies definitions for ajaxplorer
  * @return void
  */
 function _ajaxplorerCreateCookies($cookies)
 {
-	foreach ($cookies as $cookie) {
+	foreach ((array)$cookies as $cookie) {
 		header("Set-Cookie: $cookie", false);
 	}
 }
@@ -86,25 +72,26 @@ function _ajaxplorerCreateCookies($cookies)
 /**
  * Pydio (AjaXplorer) authentication
  *
- * @author Laurent Declercq <l.declercq@nuxwin.com>
  * @param  int $userId ftp username
- * @return bool TRUE on success, FALSE otherwise
+ * @return bool FALSE on failure
  */
 function _ajaxplorerAuth($userId)
 {
-	if(file_exists(GUI_ROOT_DIR . '/data/tmp/failedAJXP.log')) {
+	if (file_exists(GUI_ROOT_DIR . '/data/tmp/failedAJXP.log')) {
 		@unlink(GUI_ROOT_DIR . '/data/tmp/failedAJXP.log');
 	}
 
-	if(! ($credentials = _getLoginCredentials($userId))) {
-		set_page_message(tr('Unknown FTP user id.'), 'error');
+	$credentials = _getLoginCredentials($userId);
+
+	if (!$credentials) {
+		set_page_message(tr('Unknown FTP user.'), 'error');
 		return false;
 	}
 
 	$contextOptions = array();
 
 	// Prepares Pydio (AjaXplorer) absolute Uri to use
-	if (!empty($_SERVER['HTTPS'])) {
+	if (isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS'])) {
 		$port = ($_SERVER['SERVER_PORT'] != '443') ? ':' . $_SERVER['SERVER_PORT'] : '';
 		$ajaxplorerUri = "https://{$_SERVER['SERVER_NAME']}$port/ftp/";
 
@@ -167,16 +154,18 @@ function _ajaxplorerAuth($userId)
 
 	stream_context_set_default($contextOptions);
 
+	# TODO Parse the full response and display error message on authentication failure
 	$headers = get_headers("{$ajaxplorerUri}?secure_token={$secureToken}", true);
 
 	_ajaxplorerCreateCookies($headers['Set-Cookie']);
 
 	redirectTo($ajaxplorerUri);
+
 	exit;
 }
 
 /***********************************************************************************************************************
- * Main script
+ * Main
  */
 
 // Include core library
@@ -184,19 +173,15 @@ require_once 'imscp-lib.php';
 
 iMSCP_Events_Aggregator::getInstance()->dispatch(iMSCP_Events::onClientScriptStart);
 
-// Check login
 check_login('user');
 
 /** @var $cg iMSCP_Config_Handler_File */
 $cfg = iMSCP_Registry::get('config');
 
-if(!customerHasFeature('ftp') || !(isset($cfg->FILEMANAGER_PACKAGE) && $cfg->FILEMANAGER_PACKAGE == 'AjaXplorer')) {
+if (!customerHasFeature('ftp') || !(isset($cfg['FILEMANAGER_ADDON']) && $cfg['FILEMANAGER_ADDON'] == 'AjaXplorer')) {
 	showBadRequestErrorPage();
 }
 
-/**
- *  Dispatches the request
- */
 if (isset($_GET['id'])) {
 	if (!_ajaxplorerAuth(clean_input($_GET['id']))) {
 		redirectTo('ftp_accounts.php');
