@@ -118,7 +118,7 @@ sub _init
 
 			# Skip the packages update if asked by user but only if all requirement for package versions are meets
 			if(! iMSCP::Getopt->skipPackagesUpdate || $self->_checkRequirements()) {
-				$rs = $self->_installPackages() if $self->_checkRequirements();
+				$rs = $self->_installPackages();
 			}
 
 			$rs;
