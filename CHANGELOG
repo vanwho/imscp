@@ -45,6 +45,7 @@ ENGINE
 GUI
 	Fixed: AjaXplorer (Pydio) Autologon feature is broken
 	Fixed: Feature custom_dns_record is not known by the customerHasFeature() function
+	Fixed: Unable to list domain aliases by name (search feature / reseller level)
 
 INSTALLER
 	Added: Dialog box allowing to setup the public IP for servers which are inside a private LAN
@@ -53,6 +54,9 @@ INSTALLER
 	Fixed: Installer hangs while packages installation (Debian Jessie)
 	Fixed: Unable to migrate from ispCP (linked to the infinite loop in iMSCP_Update_Database::dropIndexByColumn())
 	Updated: Preseed template file according new parameters
+
+PLUGINS
+	Fixed: Loading of plugins must not fail silently
 
 VENDOR:
 	Added: Net::Domain::TLD version 1.72 from CPAN (This allow to have last available TLDs list for this module)
@@ -92,7 +96,7 @@ ENGINE
 DATABASE
 	Fixed: Wrong column definition in update r176
 
-Distro
+DISTROS
 	Fixed: PHP5-FPM instance is lost in some contexts which causes errors 500 - Ubuntu Trusty Thar
 
 GUI
